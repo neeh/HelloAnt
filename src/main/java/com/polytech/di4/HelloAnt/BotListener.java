@@ -5,9 +5,12 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class BotListener implements Runnable
 {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(BotListener.class);
 	private static BotListener instance;
 	private ServerSocket listener;
 	private BotListenerCallback callback;
@@ -42,29 +45,17 @@ public class BotListener implements Runnable
 	public void run()
 	{
 		Socket socket;
-		Bot bot;
 		while (true)
 		{
 			try
 			{
 				socket = listener.accept();
-				//bot = getBot(token, socket);
-				//callback.botCreated(bot);
+				new Thread(new BotAuthenticator(socket, callback)).start();
 			}
 			catch (IOException e)
 			{
 				e.printStackTrace();
 			}
-			//new 
 		}
-	}
-	
-	private Bot getBot(String token, Socket socket)
-	{
-		if(token == "123abc")
-		{
-			return new Bot("Roger", socket, 1200d);
-		}
-		return null;
 	}
 }
