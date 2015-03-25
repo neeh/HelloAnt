@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
  * @class
  * @author Nicolas
  */
-public class Bot {
+public class Bot
+{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);
 	private String pseudo;
 	private Socket socket;
@@ -25,7 +26,8 @@ public class Bot {
 	 * @param socket the socket used to communicate with the bot
 	 * @param score  the current game score of the bot
 	 */
-	public Bot(String pseudo, Socket socket, double score) {
+	public Bot(String pseudo, Socket socket, double score)
+	{
 		this.pseudo = pseudo;
 		this.socket = socket;
 		printWriter = null;
@@ -36,7 +38,8 @@ public class Bot {
 	 * Gets the pseudonym of a bot.
 	 * @return the pseudonym of the bot
 	 */
-	public String getPseudo() {
+	public String getPseudo()
+	{
 		return pseudo;
 	}
 
@@ -44,7 +47,8 @@ public class Bot {
 	 * Sets the pseudonym of a bot.
 	 * @param pseudo the new pseudonym of the bot
 	 */
-	public void setPseudo(String pseudo) {
+	public void setPseudo(String pseudo)
+	{
 		this.pseudo = pseudo;
 	}
 
@@ -52,7 +56,8 @@ public class Bot {
 	 * Gets the socket of a bot.
 	 * @return the socket used to communicate with the bot
 	 */
-	public Socket getSocket() {
+	public Socket getSocket()
+	{
 		return socket;
 	}
 
@@ -60,15 +65,22 @@ public class Bot {
 	 * Sets the socket of a bot and updates its print writer.
 	 * @param socket the new socker used to communicate with the bot
 	 */
-	public void setSocket(Socket socket) {
+	public void setSocket(Socket socket)
+	{
 		this.socket = socket;
-		if (socket != null) {
-			try {
+		if (socket != null)
+		{
+			try
+			{
 				printWriter = new PrintWriter(socket.getOutputStream());
-			} catch(IOException e) {
-				LOGGER.error("Cannot create PrintWriter");
 			}
-		} else {
+			catch(IOException e)
+			{
+				LOGGER.error("Cannot create PrintWriter for bot " + pseudo);
+			}
+		}
+		else
+		{
 			printWriter = null;
 		}
 	}
@@ -77,7 +89,8 @@ public class Bot {
 	 * Gets the score of a bot.
 	 * @return the game score of the bot
 	 */
-	public double getScore() {
+	public double getScore()
+	{
 		return score;
 	}
 
@@ -85,7 +98,8 @@ public class Bot {
 	 * Sets the score of a bot.
 	 * @param score the new game score of the bot
 	 */
-	public void setScore(double score) {
+	public void setScore(double score)
+	{
 		this.score = score;
 	}
 	
@@ -93,7 +107,8 @@ public class Bot {
 	 * Send a message to a bot using its bot socket.
 	 * @param message the message to send to the bot
 	 */
-	public void send(String message) {
+	public void send(String message)
+	{
 		printWriter.println(message);
 	}
 	
