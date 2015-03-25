@@ -5,9 +5,12 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class BotListener implements Runnable
 {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(BotListener.class);
 	private static BotListener instance;
 	private ServerSocket listener;
 	private BotListenerCallback callback;
