@@ -15,8 +15,7 @@ public class Bot {
 	 * @param socket the socket used to communicate with the bot
 	 * @param score  the current game score of the bot
 	 */
-	public Bot(String pseudo, Socket socket, double score)
-	{
+	public Bot(String pseudo, Socket socket, double score) {
 		super();
 		this.pseudo = pseudo;
 		this.socket = socket;
