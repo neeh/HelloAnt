@@ -104,15 +104,27 @@ public class Interface {
 				e1.printStackTrace();
 			}
 			
-			try {
+			try 
+			{
 				RegisterSocket test = new RegisterSocket(botNameString,serverIp);
-			} catch (IOException e1) {
+				if (test.getResult()!=null)
+				{
+				tokenLab.setText(test.getResult());
+				}
+				
+			} 
+			
+			catch (IOException e1) 
+			{
 				// TODO Auto-generated catch block
 				javax.swing.JOptionPane.showMessageDialog(null,e1.getMessage());
 			}
-			 catch (JSONException e2) {
+			 catch (JSONException e2) 
+			{
 				javax.swing.JOptionPane.showMessageDialog(null,e2.getMessage());
-			 }
-		}
+			}
+			
+			
+		}	
 	}
 }

@@ -12,14 +12,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RegisterSocket
-{	private String result;
+{	
+	private String result;
 	 	
-	public RegisterSocket(String botName, InetAddress serverIp) throws IOException, JSONException {
+	public RegisterSocket(String botName, InetAddress serverIp) throws IOException, JSONException 
+	{
 		PrintWriter out;
 		BufferedReader in;
 		Socket socket;
 		
-		socket = new Socket(serverIp,2015);
+		socket = new Socket(serverIp,12345);
 		
 		
 		JSONObject message = new JSONObject();
@@ -42,16 +44,26 @@ public class RegisterSocket
 		String test = reponseJson.getJSONObject("content").getString("nickname");
 		if (test!=null)
 		{
-			this.result=test;
+			this.setResult(test);
 		}
 		else 
 		{
 			javax.swing.JOptionPane.showMessageDialog(null,"This nickname already exists"); 
 		}
 		
-		
+
 		socket.close();
 		
+	}
+
+	public String getResult() 
+	{
+		return result;
+	}
+
+	public void setResult(String result) 
+	{
+		this.result = result;
 	}
 	
 	
