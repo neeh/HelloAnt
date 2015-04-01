@@ -11,6 +11,7 @@ public class GameServer implements BotListenerCallback
 	{
 		botListener = new Thread(BotListener.init(12345, this));
 		botListener.start();
+		botList = new ArrayList<Bot>();
 	}
 
 	public void botCreated(Bot newBot)

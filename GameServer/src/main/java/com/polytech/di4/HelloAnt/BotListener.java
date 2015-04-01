@@ -27,6 +27,8 @@ public class BotListener implements Runnable
 		catch (IOException e)
 		{
 			e.printStackTrace();
+			LOGGER.error("Listening thread could not be initialized");
+			//TODO: kill the app ? maybe
 		}
 	}
 	
@@ -55,6 +57,7 @@ public class BotListener implements Runnable
 			catch (IOException e)
 			{
 				e.printStackTrace();
+				LOGGER.error("Error while listening to clients");
 			}
 		}
 	}

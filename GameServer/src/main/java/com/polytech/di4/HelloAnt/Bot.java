@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 public class Bot
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);
-	private String pseudo;
+	private String nickname;
 	private Socket socket;
 	private PrintWriter printWriter;
 	private double score;
@@ -26,9 +26,9 @@ public class Bot
 	 * @param socket the socket used to communicate with the bot
 	 * @param score  the current game score of the bot
 	 */
-	public Bot(String pseudo, Socket socket, double score)
+	public Bot(String nickname, Socket socket, double score)
 	{
-		this.pseudo = pseudo;
+		this.nickname = nickname;
 		this.socket = socket;
 		printWriter = null;
 		this.score = score;
@@ -38,18 +38,18 @@ public class Bot
 	 * Gets the pseudonym of a bot.
 	 * @return the pseudonym of the bot
 	 */
-	public String getPseudo()
+	public String getNickname()
 	{
-		return pseudo;
+		return nickname;
 	}
 
 	/**
 	 * Sets the pseudonym of a bot.
 	 * @param pseudo the new pseudonym of the bot
 	 */
-	public void setPseudo(String pseudo)
+	public void setNickname(String nickname)
 	{
-		this.pseudo = pseudo;
+		this.nickname = nickname;
 	}
 
 	/**
@@ -74,9 +74,9 @@ public class Bot
 			{
 				printWriter = new PrintWriter(socket.getOutputStream());
 			}
-			catch (IOException e)
+			catch(IOException e)
 			{
-				LOGGER.error("Cannot create PrintWriter for bot " + pseudo);
+				LOGGER.error("Cannot create PrintWriter for bot " + nickname);
 			}
 		}
 		else
