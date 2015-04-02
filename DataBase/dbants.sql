@@ -1,11 +1,16 @@
 
+-- MYSQL DATABASE: dbants
+-- 03/04/2015 12:16AM
+-- hekat
+
 /* Inserts a bot into the game server DB.
  * @param pname The name of the bot
  * @return rtoken The token generated for the bot
  */
---DROP FUNCTION IF EXISTS dbants.NewBot;
+DELIMITER ;
+DROP FUNCTION IF EXISTS NewBot;
 DELIMITER $$
-CREATE FUNCTION dbants.NewBot(pname VARCHAR(16) CHARSET utf8)
+CREATE FUNCTION NewBot(pname VARCHAR(16) CHARSET utf8)
 	RETURNS CHAR(32) CHARSET utf8
 	DETERMINISTIC
 	CONTAINS SQL
@@ -15,61 +20,26 @@ BEGIN
 	SELECT COUNT(*) INTO n FROM bots WHERE name = pname;
 	IF n = 0 THEN
 		REPEAT
-			SET rtoken := MD5(CURRENT_TIMESTAMP + FLOOR(RAND() * 8E3)); -- use CONCAT instead of +
+			SET rtoken := MD5(CONCAT(CURRENT_TIMESTAMP, FLOOR(RAND() * 8E3)));
 			SELECT COUNT(*) INTO n FROM bots WHERE token = rtoken;
 		UNTIL n = 0
 		END REPEAT;
-		INSERT INTO bots VALUES ('', pname, rtoken, '', NOW(), NULL, NULL);
+		INSERT INTO bots(name, token, subscriptionDate) VALUES (pname, rtoken, NOW());
 	END IF;
 	RETURN rtoken;
 END$$
 
---Example
-DELIMITER ;
-SELECT NewBot('myBot56');
-
---todo: unit tests
-
-
-/* Inserts a bot into the game server DB.
- * @param[in] pname The name of the bot
- * @param[out] ptoken The token generated for the bot
- * @param[out] perror The procedure error code (0: success, 1: bot name already taken)
- */
---DROP PROCEDURE IF EXISTS dbants.AddBot;
-DELIMITER $$
-CREATE PROCEDURE dbants.AddBot(IN pname VARCHAR(16) CHARSET utf8, OUT ptoken CHAR(32) CHARSET utf8, OUT perror TINYINT)
-	CONTAINS SQL
-BEGIN
-	DECLARE res TINYINT;
-	SET perror := 0;
-	SELECT COUNT(*) INTO res FROM bots WHERE name = pname;
-	IF res = 0 THEN
-		REPEAT
-			SET ptoken := MD5(CURRENT_TIMESTAMP + FLOOR(RAND() * 8E3)); -- use CONCAT instead of +
-			SELECT COUNT(*) INTO res FROM bots WHERE token = ptoken;
-		UNTIL res = 0
-		END REPEAT;
-		INSERT INTO bots VALUES ('', pname, ptoken, '', NOW(), NULL, NULL);
-	ELSE
-		SET perror := 1;
-	END IF;
-END$$
-
---Example
-DELIMITER ;
-SET @token := NULL, @error := 0;
-CALL AddBot('mybot56', @token, @error);
-SELECT @token, @error;
-
+-- SELECT NewBot('myBot56');
+-- todo: unit tests
 
 /* Logins a bot on the game server
  * @param ptoken The token generated for the bot
  * @return rname The name of the bot (NULL if login failed)
  */
---DROP FUNCTION IF EXISTS dbants.Login;
+DELIMITER ;
+DROP FUNCTION IF EXISTS Login;
 DELIMITER $$
-CREATE FUNCTION dbants.Login(ptoken CHAR(32) CHARSET utf8, pIP CHAR(15) CHARSET utf8)
+CREATE FUNCTION Login(ptoken CHAR(32) CHARSET utf8, pIP CHAR(15) CHARSET utf8)
 	RETURNS VARCHAR(16) CHARSET utf8
 	READS SQL DATA
 BEGIN
@@ -78,36 +48,57 @@ BEGIN
 	if rname IS NOT NULL THEN
 		UPDATE bots SET lastLoginDate = NOW(), lastIP = pIP WHERE token = ptoken LIMIT 1;
 	END IF;
-	--todo: should return more than just the name!
+	-- todo: return bot score
 	RETURN rname;
 END$$
 
---Example
-DELIMITER ;
-SELECT Login(tok, '146.23.189.75');
-
+-- SELECT Login(tok, '146.23.189.75');
 
 /* Updates the base score value and scales all bot scores.
  * @param pbasescore The new base score value
  * @param pbackup Whether to backup before updating table scheme and bot entries.
  */
---DROP PROCEDURE IF EXISTS dbants.UpdateBaseScore;
-DELIMITER $$
-CREATE PROCEDURE dbants.UpdateBaseScore(IN pbasescore SMALLINT UNSIGNED, IN pbackup BOOLEAN)
+-- DELIMITER ;
+-- DROP PROCEDURE IF EXISTS UpdateBaseScore;
+/*DELIMITER $$
+CREATE PROCEDURE UpdateBaseScore(IN pbasescore SMALLINT UNSIGNED, IN pbackup BOOLEAN)
 	CONTAINS SQL
 BEGIN
 	IF pbackup THEN
-		COMMIT; --todo
-		SAVEPOINT; --??
+		-- COMMIT;
+		-- SAVEPOINT;
 	END IF;
 	DECLARE basescore SMALLINT UNSIGNED;
 	DECLARE ratio FLOAT;
 	SELECT DEFAULT(score) INTO basescore FROM bots LIMIT 1;
 	SET ratio := pbasescore / basescore;
-	UPDATE bots SET VALUES--todo ;
+	-- UPDATE bots SET VALUES
 	ALTER TABLE bots ALTER COLUMN score SET DEFAULT pbasescore;
-END$$
+END$$*/
 
---Example
+-- CALL UpdateBaseScore(2000, TRUE);
+
 DELIMITER ;
-CALL UpdateBaseScore(2000, TRUE);
+
+-- Table structure for table "bots"
+CREATE TABLE IF NOT EXISTS bots (
+	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	name VARCHAR(16) NOT NULL,
+	token CHAR(32) NOT NULL,
+	score SMALLINT(5) UNSIGNED NOT NULL DEFAULT '1200',
+	subscriptionDate DATETIME NOT NULL,
+	lastLoginDate DATETIME DEFAULT NULL,
+	lastIP CHAR(15) DEFAULT NULL,
+	PRIMARY KEY (id),
+	UNIQUE KEY name (name, token)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8;
+
+-- Dumping data for table "bots"
+INSERT INTO bots(id, name, token, score, subscriptionDate, lastLoginDate, lastIP) VALUES
+(1, 'neeh', 'zef4ze6eerg1er21g3f545v4zc1ze313', 1200, '2015-03-25 09:26:37', NULL, NULL),
+(2, 'test', 'abc', 1200, '2015-03-25 18:15:28', '2015-03-25 22:31:51', '146.23.189.75'),
+(3, 'marco18', '28624b77912520ec68173c4f1b8325dd', 1200, '2015-03-25 18:24:05', NULL, NULL),
+(4, 'jerome', 'b29f14bf1ca41f631d2967495848c462', 1200, '2015-03-25 21:13:35', NULL, NULL),
+(5, 'truc89', 'fa3698ca8471bfb09b7cbc855d7bf8ca', 1200, '2015-03-25 21:14:13', NULL, NULL),
+(6, 'roger1', '772775173343d36278f8e53af8fffb36', 1200, '2015-04-01 12:46:25', NULL, NULL),
+(7, 'MyPoLyTeChBoT', '8c4a7a0a3e01d0724643811ff253712d', 1200, '2015-04-01 12:47:44', NULL, NULL);
