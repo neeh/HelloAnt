@@ -1,0 +1,73 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+<title>Game Server Protocol</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<h1>Game Server Protocol</h1>
+Definition of messages exchanges between game server and game bots.
+<h2>Client message format</h2>
+<pre>
+{
+	type: <a href="#types">message type</a>,
+	content: <i>depends on type</i>
+}
+</pre>
+<h2>Server message format</h2>
+<pre>
+{
+	type: <a href="#types">message type</a>,
+	error: <a href="#errors">error ID</a>
+	message: <i>legible string describing the response/error (english)</i>,
+	content: <i>depends on type</i>
+}
+</pre>
+<h2 id="types">Message types</h2>
+<ul>
+<li>[b2s]
+<ul>
+<li><a href="chgtok.html">chgtok</a></li>
+<li><a href="connect.html">connect</a></li>
+<li><a href="token.html">token</a></li>
+</ul>
+</li>
+<li>[s2b]
+<ul>
+<li><a href="gamestart.html">gamestart</a></li>
+<li><a href="gameend.html">gameend</a></li>
+<li><a href="gameround.html">gameround</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="errors">Errors</h2>
+General errors are from 0 to 100 (see below.)
+<pre>content: null</pre>
+<table style="width:400px;border:1px solid black;">
+<thead>
+<tr>
+<th>ID</th>
+<th>message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Spam mute</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Too long</td>
+</tr>
+<tr>
+<td>100+</td>
+<td>Error specific to message type</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

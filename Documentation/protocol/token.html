@@ -1,0 +1,51 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+<title>type: "token"</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<h1>type: "token"</h1>
+Create a bot on the game server.
+<h2>Client request</h2>
+<pre>
+{
+	type: "token",
+	content: {
+		nick: "mybot"
+	}
+}
+</pre>
+<h2>Server response</h2>
+<pre>
+{
+	type: "token",
+	error: 0,
+	message: "Bot created",
+	content: {
+		token: "21014616ea7d673e04046a132b6593ad"
+	}
+}
+</pre>
+<h2>Errors</h2>
+<pre>content: null</pre>
+<table style="width:400px;border:1px solid black;">
+<thead>
+<tr>
+<th>ID</th>
+<th>message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>101</td>
+<td>Nickname already exists</td>
+</tr>
+<tr>
+<td>102</td>
+<td>Invalid nickname (see <a href="nickspecs.html">nickname specifications</a>)</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+<title>type: "gameround"</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<h1>type: "gameround"</h1>
+<strong style="color:red;">Warning: work in progress!</strong><br />
+Communication during one game round.
+<h2>Server info</h2>
+<pre>
+{
+	type: "gameround",
+	error: 0,
+	message: "State of the game"
+	content: {
+		ants: [
+			[64, 86],
+			[56, 83],
+			[60, 81],
+			[24, 38],
+			[16, 35],
+			[20, 33],
+			[10, 11],
+			[31, 68],
+			[73, 82],
+			[40, 80],
+			[3, 14],
+			[0, 32],
+			[59, 6],
+			[38, 66],
+			[19, 54],
+			[52, 8],
+			[33, 34],
+			[43, 62],
+			[12, 56],
+			[8, 48],
+			[71, 20],
+			[78, 18],
+			[50, 59],
+			[48, 0],
+			[73, 45],
+			[33, 93],
+			[6, 32],
+			[46, 80],
+		],
+		map: [
+			// *: not visible?
+			"",
+			""
+		]
+	}
+}
+</pre>
+<h2>Client response</h2>
+<pre>
+{
+	type: "gameround",
+	content: {
+		move: "nns--enwns-ss--newens--ewnswnsssnes-"
+	}
+}
+</pre>
+<h2>Warning</h2>
+"content" depends on the type of game implemented in the game server via the Game class.
+</body>
+</html>
