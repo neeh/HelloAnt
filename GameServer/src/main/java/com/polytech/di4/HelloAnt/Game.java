@@ -19,9 +19,9 @@ public abstract class Game
 	 * When true, only one bot is allowed to play during a game round.
 	 * That's the way chess game is played, for example.
 	 * When false, all the bot have to send their actions during a game round.
-	 * @note Some weird games may be very tricky to design. We recommend you put this
+	 * @note some weird games may be very tricky to design. We recommend you put this
 	 * boolean to false and then manually manage the 'curBot' identifier and the
-	 * 'curRound' counter in the 'update' method
+	 * 'curRound' counter in the 'update' method in this case.
 	 */
 	private Boolean oneBotPerTurn;
 	
@@ -55,7 +55,7 @@ public abstract class Game
 	
 	/**
 	 * The current round identifier of the game.
-	 * @note The counter should be manually incremented in the update method
+	 * @note the counter should be manually incremented in the update method.
 	 */
 	private int curRound;
 	
@@ -67,7 +67,7 @@ public abstract class Game
 	
 	/**
 	 * Gets the current round identifier of the game.
-	 * @return The current round identifier
+	 * @return the current round identifier.
 	 */
 	public int getCurRound()
 	{
@@ -76,7 +76,7 @@ public abstract class Game
 	
 	/**
 	 * Gets the maximum round count of the game.
-	 * @return The max round count
+	 * @return the max round count.
 	 */
 	public int getMaxRound()
 	{
@@ -90,7 +90,7 @@ public abstract class Game
 	
 	/**
 	 * Returns whether the current game state validates the game ending conditions.
-	 * @return true is the game is finished, false otherwise
+	 * @return true is the game is finished, false otherwise.
 	 */
 	public abstract Boolean isFinished();
 	
@@ -107,25 +107,25 @@ public abstract class Game
 	
 	/**
 	 * Generates the content of a 'gameround' message for a specific bot.
-	 * @param bot The bot that will receive the message
-	 * @return The content of the 'gameround' message
-	 * @see Documentation/gameround.html
+	 * @param bot the bot that will receive the message.
+	 * @return the content of the 'gameround' message.
+	 * @see Documentation/protocol/gameround.html
 	 */
 	public abstract JSONObject genGameRoundMessageContent(Bot bot);
 	
 	/**
 	 * Generates the content of a 'gamestart' message for a specific bot.
-	 * @param bot The bot that will receive the message
-	 * @return The content of the 'gamestart' message
-	 * @see Documentation/gamestart.html
+	 * @param bot the bot that will receive the message.
+	 * @return the content of the 'gamestart' message.
+	 * @see Documentation/protocol/gamestart.html
 	 */
 	public abstract JSONObject genGameStartMessageContent(Bot bot);
 	
 	/**
 	 * Generates the content of a 'gameend' message for a specific bot.
-	 * @param bot The bot that will receive the message
-	 * @return The content of the 'gameend' message
-	 * @see Documentation/gameend.html
+	 * @param bot the bot that will receive the message.
+	 * @return the content of the 'gameend' message.
+	 * @see Documentation/protocol/gameend.html
 	 */
 	public abstract JSONObject genGameEndMessageContent(Bot bot);
 }
