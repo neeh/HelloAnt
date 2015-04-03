@@ -6,7 +6,10 @@
 DELIMITER ;
 
 -- Drop existing database routines
+DROP FUNCTION IF EXISTS GenTok;
+DROP FUNCTION IF EXISTS GenTokAvail;
 DROP FUNCTION IF EXISTS NewBot;
+DROP FUNCTION IF EXISTS ChgTok;
 DROP PROCEDURE IF EXISTS Login;
 DROP PROCEDURE IF EXISTS UpdateBotScores;
 
@@ -40,7 +43,35 @@ DELIMITER $$
 
 -- Define database routines
 
-/* Inserts a bot into the game server DB.
+/* Generates a 128bit-token.
+ * @return The generated 128-bit token
+ */
+CREATE FUNCTION GenTok()
+	RETURNS CHAR(32) CHARSET utf8
+	DETERMINISTIC
+	NO SQL
+BEGIN
+	RETURN MD5(CONCAT(CURRENT_TIMESTAMP, FLOOR(RAND() * 8E3)));
+END$$
+
+/* Generates a token which is not already used by a bot.
+ * @return The generated 128-bit token
+ */
+CREATE FUNCTION GenTokAvail()
+	RETURNS CHAR(32) CHARSET utf8
+	READS SQL DATA
+BEGIN
+	DECLARE rtoken CHAR(32) CHARSET utf8 DEFAULT NULL;
+	DECLARE n TINYINT;
+	REPEAT
+		SET rtoken := GenTok();
+		SELECT COUNT(*) INTO n FROM bots WHERE token = rtoken;
+	UNTIL n = 0
+	END REPEAT;
+	RETURN rtoken;
+END$$
+
+/* Inserts a bot into the game server.
  * SELECT NewBot('nick');
  * @param pnick The nickname of the bot
  * @return rtoken The token generated for the bot
@@ -54,17 +85,33 @@ BEGIN
 	DECLARE n TINYINT;
 	SELECT COUNT(*) INTO n FROM bots WHERE nick = pnick;
 	IF n = 0 THEN
-		REPEAT
-			SET rtoken := MD5(CONCAT(CURRENT_TIMESTAMP, FLOOR(RAND() * 8E3)));
-			SELECT COUNT(*) INTO n FROM bots WHERE token = rtoken;
-		UNTIL n = 0
-		END REPEAT;
+		SET rtoken := GenTokAvail();
 		INSERT INTO bots(nick, token, subscriptionDate) VALUES (pnick, rtoken, NOW());
 	END IF;
 	RETURN rtoken;
 END$$
 
 -- todo: unit tests
+
+/* Generates a new token for a bot.
+ * SELECT ChgTok('abc');
+ * @param ptoken The current token of the bot
+ * @return rtoken The new token generated for the bot (NULL if no bot associated with ptoken)
+ */
+CREATE FUNCTION ChgTok(ptoken CHAR(32) CHARSET utf8)
+	RETURNS CHAR(32) CHARSET utf8
+	DETERMINISTIC
+	CONTAINS SQL
+BEGIN
+	DECLARE rtoken CHAR(32) CHARSET utf8 DEFAULT NULL;
+	DECLARE n TINYINT;
+	SELECT COUNT(*) INTO n FROM bots WHERE token = ptoken;
+	IF n = 1 THEN
+		SET rtoken := GenTokAvail();
+		UPDATE bots SET token = rtoken WHERE token = ptoken LIMIT 1;
+	END IF;
+	RETURN rtoken;
+END$$
 
 /* Logins a bot on the game server
  * CALL Login('abc', '146.23.189.75', @onick, @oscore, @oerror);
