@@ -18,8 +18,17 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-
-public class Interface {
+/**
+ * 
+ * Class which permit to instance an interface for inscription.
+ * There is a text field for the bot name  and one for the server address.
+ * When the user click on the enter button, the bot name is sent to the game server via socket using the RegisterSocket class.
+ * @see RagisterSocket
+ * @author Benjamin
+ *
+ */
+public class Interface 
+{
 
 	private JFrame window= new JFrame("Log the new bot");
 	private JPanel pan= new JPanel();
@@ -116,7 +125,6 @@ public class Interface {
 			
 			catch (IOException e1) 
 			{
-				// TODO Auto-generated catch block
 				javax.swing.JOptionPane.showMessageDialog(null,e1.getMessage());
 			}
 			 catch (JSONException e2) 

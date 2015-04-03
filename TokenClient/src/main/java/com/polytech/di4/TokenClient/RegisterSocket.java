@@ -1,5 +1,20 @@
 package com.polytech.di4.TokenClient;
-
+/**
+ * 
+ * This class implements client socket communication with the Game Server.
+ * When the constructor is called, a client socket is created with the address parameter.
+ * The second parameter is the bot name which needs to be sent.
+ * It is encapsulated in JSON format.  
+ * The JSON answer of the game server is either null or an alphanumeric token.
+ * If it's null an error window pops-up.
+ * If it's not, the token is stocked in the result attribute.
+ * @param botName
+ * 	The submitted bot name
+ * @param serverIp
+ * 	The game server IP address
+ * @result
+ * 	The attribute of the instance of this class.
+ */
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +43,7 @@ public class RegisterSocket
 		message.put("type","token");
 		
 		JSONObject content = new JSONObject();
-		content.put("nickname","roger");
+		content.put("nickname",botName);
 		
 		message.put("content", content);
 		
