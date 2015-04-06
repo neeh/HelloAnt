@@ -1,36 +1,30 @@
 <DOCTYPE html>
 <html lang="en">
 <head>
-<title>connect</title>
+<title>killbot</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-<h1>connect</h1>
-Connect a bot on the game server.
+<h1>killbot</h1>
+Remove a bot on the game server.
 <h2>Client request</h2>
 <pre>
 {
-	"type": "connect",
+	"type": "killbot",
 	"content": {
 		"token": "21014616ea7d673e04046a132b6593ad",
-		"mode": "training"
 	}
 }
 </pre>
 <h2>Server response</h2>
 <pre>
 {
-	"type": "connect",
+	"type": "killbot",
 	"error": 0,
-	"message": "Connected in training mode",
-	"content": {
-		"nick": "mybot",
-		"score": 1200
-	}
+	"message": "Bot removed",
 }
 </pre>
 <h2>Errors</h2>
-<p style="font-family:monospace;text-decoration:line-through;">"content":</p>
 <table style="width:400px;border:1px solid black;">
 <thead>
 <tr>
@@ -45,11 +39,7 @@ Connect a bot on the game server.
 </tr>
 <tr>
 <td>102</td>
-<td>Bot <i>%NICK%</i> is already connected</td>
-</tr>
-<tr>
-<td>102</td>
-<td>Already connected with bot <i>%NICK%</i></td>
+<td>Bot is connected</td>
 </tr>
 </tbody>
 </table>

@@ -9,10 +9,10 @@
 The replay format for ant game.
 <pre>
 {
-	status: ["survived", "survived"],
-	replaydata: {
-		cutoff: "rank stabilized",
-		food: [
+	"status": ["survived", "survived"],
+	"replaydata": {
+		"cutoff": "rank stabilized",
+		"food": [
 			// [row, col, turn_pop, turn_gath, player? (opt)]
 			// a food unit poping at round 0 will be visible at round 1
 			// a food unit harvested at round 16 will be effective at round 17
@@ -91,7 +91,7 @@ The replay format for ant game.
 			[6, 39, 177, 181],
 			[46, 87, 177, 181]
 		],
-		ants: [
+		"ants": [
 			// [x, y, turn_pop, turn_dth, owner, moves]
 			// 'moves' are EFFECTIVE moves (not the ones sent by the bot)
 			[61, 81, 0, 181, 0, "weeennnnnnnnnnnnnnnnnsswwwnnnnnwwwwwwwwwwwwwwnnsssswwwwwwwwnnnnnnnnwwwnnnnnnneeeeeeeeeeeeessnnnwwwwwwwwwwwwnnnwwwwwwwsswweeenewwenwwwwwwwwwwwwwnewwesnnn----------------------snswww"],
@@ -161,29 +161,29 @@ The replay format for ant game.
 			[61, 81, 173, 181, 0, "sssseee"],
 			[61, 81, 180, 181, 0, ""]
 		],
-		hive_history: [
+		"hive_history": [
 			// for each bot, for each round, the number of ant(s) in the hive
 			[0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 2, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 2, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 3, 2],
 			[0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		],
-		player_seed: 6736285183680103612,
-		hills: [
+		"player_seed": 6736285183680103612,
+		"hills": [
 			// [x, y, owner, turn_dth]
 			[61, 81, 0, 181],
 			[21, 33, 1, 180]
 		],
-		food_rate: 5,
-		revision: 3,
-		map: {
+		"food_rate": 5,
+		"revision": 3,
+		"map": {
 			// . = cell
 			// % = wall/void
 			// * = ?
 			// a = ?
 			// A = ?
 			// b = ?
-			cols: 96,
-			rows: 80,
-			data: [
+			"cols": 96,
+			"rows": 80,
+			"data": [
 				".%%%%%%%................................%%.%...%...%%%%%%%..%%%%%%.....%........................", 
 				".%%%%%%%%..................................%......%%%%%%%%.%%%%%%%%%%%%%..........%.......%.%%..", 
 				"........%%...............................%%%%%%%..%%%%%%%%%%%%%%%%%%%%%%%%%..%%%%%%%..%...%%%%..", 
@@ -266,44 +266,44 @@ The replay format for ant game.
 				"..%%%%%%............................%%.%%%.....%..%%%%%%%%...%%%.......%........................"
 			],
 		},
-		bonus: [0, 0],
-		winning_turn: 180,
-		scores: [
+		"bonus": [0, 0],
+		"winning_turn": 180,
+		"scores": [
 			// for each bot, for each round, current gamescore of the bot
 			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3],
 			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
 		],
-		ranking_turn: 180,
-		spawnradius2: 1,
-		engine_seed: -310720084928460439,
-		viewradius2: 77,
-		loadtime: 3000,
-		turns: 1000,
-		attackradius2: 5,
-		players: 2,
-		food_turn: 26,
-		food_start: 175,
-		turntime: 500
+		"ranking_turn": 180,
+		"spawnradius2": 1,
+		"engine_seed": -310720084928460439,
+		"viewradius2": 77,
+		"loadtime": 3000,
+		"turns": 1000,
+		"attackradius2": 5,
+		"players": 2,
+		"food_turn": 26,
+		"food_start": 175,
+		"turntime": 500
 	},
-	rank: [0, 1],
-	post_id: 974,
-	matchup_id: 353119,
-	challenge: "ants",
-	playerturns: [180, 180],
-	score: [3, 0],
-	replayformat: "json",
-	location: "aichallenge.org",
-	game_length: 180,
-	playernames: ["EvgeniyS", "eskymaci"],
-	submission_ids: ["18648", "36176"],
-	user_ids: ["2010", "7252"],
-	challenge_rank: ["329", "344"],
-	challenge_skill: ["68.3690377473831", "67.9315816164017"],
-	user_url: "http:\/\/aichallenge.org\/profile.php?user=~",
-	game_url: "http:\/\/aichallenge.org\/visualizer.php?game=~",
-	date: "2011-12-24T01:56:06+00:00",
-	game_id: 346184,
-	worker_id: "748"
+	"rank": [0, 1],
+	"post_id": 974,
+	"matchup_id": 353119,
+	"challenge": "ants",
+	"playerturns": [180, 180],
+	"score": [3, 0],
+	"replayformat": "json",
+	"location": "aichallenge.org",
+	"game_length": 180,
+	"playernames": ["EvgeniyS", "eskymaci"],
+	"submission_ids": ["18648", "36176"],
+	"user_ids": ["2010", "7252"],
+	"challenge_rank": ["329", "344"],
+	"challenge_skill": ["68.3690377473831", "67.9315816164017"],
+	"user_url": "http:\/\/aichallenge.org\/profile.php?user=~",
+	"game_url": "http:\/\/aichallenge.org\/visualizer.php?game=~",
+	"date": "2011-12-24T01:56:06+00:00",
+	"game_id": 346184,
+	"worker_id": "748"
 }
 </pre>
 </body>

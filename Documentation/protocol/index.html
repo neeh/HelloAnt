@@ -10,26 +10,32 @@ Definition of messages exchanges between game server and game bots.
 <h2>Client message format</h2>
 <pre>
 {
-	type: <a href="#types">message type</a>,
-	content: <i>depends on type</i>
+	"type": <a href="#types">message type</a>,
+	"content": <i>depends on type</i>
 }
 </pre>
 <h2>Server message format</h2>
 <pre>
 {
-	type: <a href="#types">message type</a>,
-	error: <a href="#errors">error ID</a>
-	message: <i>legible string describing the response/error (english)</i>,
-	content: <i>depends on type</i>
+	"type": <a href="#types">message type</a>,
+	"error": <a href="#errors">error ID</a>
+	"message": <i>legible string describing the response/error (english)</i>,
+	["content": <i>depends on type</i>]
 }
 </pre>
 <h2 id="types">Message types</h2>
+<span style="color:green">implemented</span><br />
+<span style="color:red">not yet implemented</span><br />
 <ul>
 <li>[b2s]
 <ul>
-<li><a href="chgtok.html">chgtok</a></li>
-<li><a href="connect.html">connect</a></li>
-<li><a href="token.html">token</a></li>
+<li><a href="gameactions.html" style="color:green">gameactions</a></li>
+<li><a href="connect.html" style="color:red">connect</a></li>
+<li><a href="disconnect.html" style="color:green">disconnect</a></li>
+<li><a href="setmode.html" style="color:green">setmode</a></li>
+<li><a href="token.html" style="color:green">token</a></li>
+<li><a href="chgtok.html" style="color:green">chgtok</a></li>
+<li><a href="killbot.html" style="color:green">killbot</a></li>
 </ul>
 </li>
 <li>[s2b]
@@ -37,13 +43,14 @@ Definition of messages exchanges between game server and game bots.
 <li><a href="gamestart.html">gamestart</a></li>
 <li><a href="gameend.html">gameend</a></li>
 <li><a href="gameround.html">gameround</a></li>
+<li><a href="gamemute.html">gamemute</a></li>
 </ul>
 </li>
 </ul>
 <h2 id="errors">Errors</h2>
 General errors are from 0 to 100 (see below.)
-<pre>content: null</pre>
-<table style="width:400px;border:1px solid black;">
+<p style="font-family:monospace;text-decoration:line-through;">"content":</p>
+<table style="width:500px;border:1px solid black;">
 <thead>
 <tr>
 <th>ID</th>
@@ -57,15 +64,23 @@ General errors are from 0 to 100 (see below.)
 </tr>
 <tr>
 <td>1</td>
-<td>Spam mute</td>
+<td>Malformed message, check the syntax in the documentation</td>
 </tr>
 <tr>
 <td>2</td>
-<td>Too long</td>
+<td>Unknown command <i>%TYPE%</i></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Not connected</td>
 </tr>
 <tr>
 <td>100+</td>
-<td>Error specific to message type</td>
+<td><i>Error specific to message type</i></td>
+</tr>
+<tr>
+<td>800</td>
+<td>Not implemented yet</td>
 </tr>
 </tbody>
 </table>

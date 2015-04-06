@@ -1,0 +1,55 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+<title>gameactions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<h1>gameactions</h1>
+<strong style="color:red;">Warning: work in progress!</strong><br />
+Send bot actions for a game round.
+<h2>Client request</h2>
+<pre>
+{
+	"type": "gameactions",
+	"content": {
+		"moves": "nns--enwns-ss--newens--ewnswnsssnes-"
+	}
+}
+</pre>
+<h2>Server response</h2>
+<pre>
+{
+	"type": "gameactions",
+	"error": 0,
+	"message": "OK",
+}
+</pre>
+<h2 id="errors">Errors</h2>
+<p>Server respond only when error?</p>
+<table style="width:400px;border:1px solid black;">
+<thead>
+<tr>
+<th>ID</th>
+<th>message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>101</td>
+<td>Not in a game</td>
+</tr>
+<tr>
+<td>102</td>
+<td>You were muted for this game</td>
+</tr>
+<tr>
+<td>103</td>
+<td>Not your turn</td>
+</tr>
+</tbody>
+</table>
+<h2>Warning</h2>
+<span style="font-family:monospace">"content":</span> depends on the type of game implemented in the game server via the Game class.
+</body>
+</html>

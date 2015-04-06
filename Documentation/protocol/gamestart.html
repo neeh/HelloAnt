@@ -1,26 +1,26 @@
 <DOCTYPE html>
 <html lang="en">
 <head>
-<title>type: "gamestart"</title>
+<title>gamestart</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-<h1>type: "gamestart"</h1>
+<h1>gamestart</h1>
 <strong style="color:red;">Warning: work in progress!</strong><br />
 Informs the bot that it was put in game.
 <h2>Server info</h2>
 <pre>
 {
-	type: "gamestart",
-	error: 0,
-	message: "A game just started"
-	content: {
-		map: {
-			cols: 400,
-			rows: 300,
-			bots: 4,
-			hill: [250, 126],
-			foodspawns: [
+	"type": "gamestart",
+	"error": 0,
+	"message": "A game just started"
+	"content": {
+		"map": {
+			"cols": 400,
+			"rows": 300,
+			"bots": 4,
+			"hill": [250, 126],
+			"foodspawns": [
 				[45, 90],
 				[227, 5],
 				[360, 201]
@@ -30,6 +30,6 @@ Informs the bot that it was put in game.
 }
 </pre>
 <h2>Warning</h2>
-"content" depends on the type of game implemented in the game server via the Game class.
+<span style="font-family:monospace">"content":</span> depends on the type of game implemented in the game server via the Game class.
 </body>
 </html>

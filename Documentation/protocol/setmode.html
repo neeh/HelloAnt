@@ -1,34 +1,30 @@
 <DOCTYPE html>
 <html lang="en">
 <head>
-<title>chgtok</title>
+<title>setmode</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-<h1>chgtok</h1>
-Change the token of a bot.
+<h1>setmode</h1>
+Change the gaming mode of a bot.
 <h2>Client request</h2>
 <pre>
 {
-	"type": "chgtok",
+	"type": "setmode",
 	"content": {
-		"token": "21014616ea7d673e04046a132b6593ad"
+		"mode": "regular"
 	}
 }
 </pre>
 <h2>Server response</h2>
 <pre>
 {
-	"type": "chgtok",
+	"type": "setmode",
 	"error": 0,
-	"message": "Token changed",
-	"content": {
-		"token": "5b78c68d96d8d3121ce0f7f56ce35704"
-	}
+	"message": "Mode changed to regular,
 }
 </pre>
 <h2>Errors</h2>
-<p style="font-family:monospace;text-decoration:line-through;">"content":</p>
 <table style="width:400px;border:1px solid black;">
 <thead>
 <tr>
@@ -39,7 +35,11 @@ Change the token of a bot.
 <tbody>
 <tr>
 <td>101</td>
-<td>Token does not exist</td>
+<td>Unknown mode <i>%MODE%</i></td>
+</tr>
+<tr>
+<td>102</td>
+<td>Already in regular/training mode</td>
 </tr>
 </tbody>
 </table>
