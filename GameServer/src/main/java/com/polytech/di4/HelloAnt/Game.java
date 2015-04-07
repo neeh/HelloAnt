@@ -2,6 +2,7 @@ package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -12,6 +13,7 @@ import org.json.JSONObject;
  * @class
  * @author Nicolas
  */
+@SuppressWarnings("unused")
 public abstract class Game
 {
 	/**
@@ -23,7 +25,7 @@ public abstract class Game
 	 * boolean to false and then manually manage the 'curBot' identifier and the
 	 * 'curRound' counter in the 'update' method in this case.
 	 */
-	private Boolean oneBotPerTurn;
+	private Boolean oneBotPerRound;
 	
 	/**
 	 * The list of bots in the game.
@@ -49,7 +51,7 @@ public abstract class Game
 	
 	/**
 	 * The identifier of the bot (in the 'bots' list) which is currently playing.
-	 * Only relevant when 'oneBotPerTurn' is true.
+	 * Only relevant when 'oneBotPerRound' is true.
 	 */
 	private int curBot;
 	
@@ -84,6 +86,15 @@ public abstract class Game
 	}
 	
 	/**
+	 * Returns how the game should be played.
+	 * @return true if only one bot can play per round, false otherwise.
+	 */
+	public Boolean isOneBotPerRound()
+	{
+		return oneBotPerRound;
+	}
+	
+	/**
 	 * Initialize the game state.
 	 */
 	public abstract void init();
@@ -104,6 +115,20 @@ public abstract class Game
 	 * Updates the game state using bot actions.
 	 */
 	public abstract void update(/*ArrayList<Action> actions*/);
+	
+	/**
+	 * Receives actions of the bots for the current round.
+	 * Returns the error ID associated with the message: 103 when the bot is playing
+	 * whereas it's not its turn, 102 when the bot was muted for the game, 0 otherwise.
+	 * @see Documentation/protocol/gameactions.html
+	 * @param bot the bot who give the actions.
+	 * @param content the content of the "gameactions" message.
+	 * @return the error ID of the "gameactions" message.
+	 * @throws JSONException if the content is not correctly formed.
+	 */
+	public int receiveActions(Bot bot, JSONObject content) throws JSONException {
+		return 0;
+	}
 	
 	/**
 	 * Generates the content of a 'gameround' message for a specific bot.
