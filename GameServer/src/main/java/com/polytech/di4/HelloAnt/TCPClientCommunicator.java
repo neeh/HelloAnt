@@ -149,12 +149,7 @@ public class TCPClientCommunicator implements Runnable {
 	 * @return true if the nickname is valid, false otherwise.
 	 */
 	private Boolean isValidNickname(String nick) {
-		String  regex = "^[a-zA-Z][a-zA-Z0-9]{3,16}$";
-		if(nick.matches(regex)){
-			return true;
-		}else{
-			return false;
-		}
+		return nick.matches("^[a-zA-Z][a-zA-Z0-9]{3,16}$");
 	}
 	
 	/**
@@ -171,7 +166,6 @@ public class TCPClientCommunicator implements Runnable {
 		else if (type.equals("disconnect"))	execDisconnect(content);
 		else if (type.equals("setmode"))	execSetMode(content);
 		else if (type.equals("token"))		execToken(content);
-		else if (type.equals("chgtok"))		execChangeToken(content);
 		else if (type.equals("killbot"))	execKillBot(content);
 		else {
 			// Notify the client we cannot treat its command.
@@ -364,35 +358,6 @@ public class TCPClientCommunicator implements Runnable {
 		}
 		// Finally, send the response to the client.
 		sendMessage("token", error, outputMessage, outputContent);
-	}
-	
-	/**
-	 * Executes a "chgtok" client command and then sends back to the client a report
-	 * describing the operation(s) performed or the failure of the command and the reason
-	 * of the failure.
-	 * @see Documentation/protocol/chgtok.html
-	 * @param content the content of the "chgtok" command, should contains the current
-	 *        token of the bot.
-	 * @throws JSONException if the content is not correctly formed.
-	 */
-	private void execChangeToken(JSONObject content) throws JSONException {
-		// Response message parameters:
-		int error = 0;
-		String outputMessage;
-		JSONObject outputContent = null;
-		// Get the token to change
-		String token = content.getString("token");
-		String newToken = dbi.changeToken(token);
-		if (newToken != null) {
-			outputContent = new JSONObject();
-			outputContent.put("token", newToken);
-			outputMessage = "Token changed";
-		} else {
-			error = 101;
-			outputMessage = "Token does not exist";
-		}
-		// Finally, send the response to the client.
-		sendMessage("chgtok", error, outputMessage, outputContent);
 	}
 	
 	/**
