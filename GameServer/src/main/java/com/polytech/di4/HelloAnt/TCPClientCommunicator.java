@@ -149,7 +149,24 @@ public class TCPClientCommunicator implements Runnable {
 	 * @return true if the nickname is valid, false otherwise.
 	 */
 	private Boolean isValidNickname(String nick) {
-		return true;
+		String  regex = "^[a-zA-Z][a-zA-Z0-9]{3,16}$";
+		int i, j;
+		int count = 0;
+		if(nick.matches(regex)){
+			char[] ch = nick.toCharArray();
+			for(i = 0; i < ch.length; i++){
+				for(j = i; ch[j] == ch[i]; j++){
+					count++;
+					if(count > 2){
+						return false;
+					}
+				}
+				count = 0;
+			}
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	/**
