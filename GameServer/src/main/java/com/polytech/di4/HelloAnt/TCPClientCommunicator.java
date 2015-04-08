@@ -150,19 +150,7 @@ public class TCPClientCommunicator implements Runnable {
 	 */
 	private Boolean isValidNickname(String nick) {
 		String  regex = "^[a-zA-Z][a-zA-Z0-9]{3,16}$";
-		int i, j;
-		int count = 0;
 		if(nick.matches(regex)){
-			char[] ch = nick.toCharArray();
-			for(i = 0; i < ch.length; i++){
-				for(j = i; ch[j] == ch[i]; j++){
-					count++;
-					if(count > 2){
-						return false;
-					}
-				}
-				count = 0;
-			}
 			return true;
 		}else{
 			return false;
@@ -349,9 +337,12 @@ public class TCPClientCommunicator implements Runnable {
 		JSONObject outputContent = null;
 		// Check if the bot is already connected, the token demand might be an error...
 		if (!isConnected()) {
-			String nick = content.getString("nick");
+			String nick = content.getString("nickname");
+			System.out.println(nick);
+			System.out.println(isValidNickname("coucou"));
 			// Check the validity of the desired nickname
 			if (isValidNickname(nick)) {
+				
 				String token = dbi.createBot(nick);
 				if (token != null) {
 					outputContent = new JSONObject();
