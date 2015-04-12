@@ -13,6 +13,11 @@ public class Bot {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);
 	
 	/**
+	 * The communicator used to communicate with the bot.
+	 */
+	private TCPClientCommunicator com;
+	
+	/**
 	 * The nickname of the bot.
 	 * The string has to respect some conventions.
 	 * @see Documentation/protocol/nickspecs.html
@@ -42,15 +47,25 @@ public class Bot {
 	/**
 	 * Creates a new bot.
 	 * @constructor
+	 * @param com the communicator used to communicate with the bot.
 	 * @param nick the nickname of the bot.
 	 * @param mode the gaming mode chosen by the bot.
 	 * @param score the current game score of the bot.
 	 */
-	public Bot(String nick, BotMode mode, double score) {
+	public Bot(TCPClientCommunicator com, String nick, BotMode mode, double score) {
+		this.com = com;
 		this.nick = nick;
 		this.mode = mode;
 		this.game = null;
 		this.score = score;
+	}
+	
+	/**
+	 * Gets the communicator used to communicate with the bot.
+	 * @return the client communicator.
+	 */
+	public TCPClientCommunicator getCommunicator() {
+		return com;
 	}
 	
 	/**

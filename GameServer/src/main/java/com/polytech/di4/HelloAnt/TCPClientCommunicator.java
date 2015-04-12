@@ -153,6 +153,48 @@ public class TCPClientCommunicator implements Runnable {
 	}
 	
 	/**
+	 * Sends a "gamestate" message to the client. The client is supposed to return its
+	 * actions within a given time interval.
+	 * @see Documentation/protocol/gamestate.html
+	 * @param content the object representing the current game state.
+	 */
+	public void sendGameStateMessage(JSONObject content) {
+		sendMessage("gamestate", 0, "Current state of the game, please return your "
+				+ "actions", content);
+	}
+	
+	/**
+	 * Sends a "gamestart" message to the client indicating that a game just started for
+	 * him.
+	 * @see Documentation/protocol/gamestart.html
+	 * @param content the object representing the starting game state.
+	 */
+	public void sendGameStartMessage(JSONObject content) {
+		sendMessage("gamestart", 0, "A game just started", content);
+	}
+	
+	/**
+	 * Sends a "gameend" message to the client indicating that the game just ended.
+	 * @see Documentation/protocol/gameend.html
+	 * @param content the object representing the ending game state and replay data.
+	 */
+	public void sendGameEndMessage(JSONObject content) {
+		sendMessage("gameend", 0, "The game ended", content);
+	}
+	
+	/**
+	 * Sends a "gamemute" message to the client indicating that the client was muted for
+	 * this game and hence, can no longer send "gameactions" message until it receives a
+	 * new "gamestate" message.
+	 * @see Documentation/protocol/gamemute.html
+	 * @param content the object giving the reason(s) and additional information(s) about
+	 *        the mute.
+	 */
+	public void sendGameMuteMessage(JSONObject content) {
+		sendMessage("gamemute", 0, "You are muted until the end of the game", content);
+	}
+	
+	/**
 	 * Executes a client command.
 	 * @see Documentation/protocol/
 	 * @param msgObj the JSON message containing the command.
@@ -400,7 +442,7 @@ public class TCPClientCommunicator implements Runnable {
 	 * @param message a legible string describing the message.
 	 * @param content the content of the message, depends on the type of message.
 	 */
-	public void sendMessage(String type, int error, String message, JSONObject content) {
+	private void sendMessage(String type, int error, String message, JSONObject content) {
 		// The JSONObject containing the message.
 		JSONObject msgObj = new JSONObject();
 		try {

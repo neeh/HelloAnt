@@ -1,20 +1,20 @@
 <DOCTYPE html>
 <html lang="en">
 <head>
-<title>gameround</title>
+<title>gamestate</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-<h1>gameround</h1>
+<h1>gamestate</h1>
 <strong style="color:red;">Warning: work in progress!</strong><br />
 Communication during one game round.<br />
-Once you received a "gameround" message, you have a certain amount of time to send back your actions in a "gameactions" messages otherwise you will receive a "gamemute" message meaning you cannot play in this game anymore.
+Once you received a "gamestate" message, you have a certain amount of time to send back your actions in a "gameactions" messages otherwise you will receive a "gamemute" message meaning you cannot play in this game anymore.
 <h2>Server info</h2>
 <pre>
 {
-	"type": "gameround",
+	"type": "gamestate",
 	"error": 0,
-	"message": "State of the game"
+	"message": "Current state of the game, please give your actions"
 	"content": {
 		"ants": [
 			[64, 86],
