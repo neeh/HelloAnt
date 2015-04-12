@@ -220,8 +220,8 @@ public class TCPClientCommunicator implements Runnable {
 	 * describing the operation(s) performed or the failure of the command and the reason
 	 * of the failure.
 	 * @see Documentation/protocol/gameactions.html
-	 * @param content the content of the "gameactions" command, should contains a list of
-	 *        moves solely.
+	 * @param content the content of the "gameactions" command, depends on the type of
+	 *        game implemented.
 	 * @throws JSONException if the content is not correctly formed.
 	 */
 	private void execGameActions(JSONObject content) throws JSONException {
@@ -234,7 +234,9 @@ public class TCPClientCommunicator implements Runnable {
 			if (bot.isInGame()) {
 				// Send bot actions to the game.
 				error = bot.getGame().receiveActions(bot, content);
-				if (error == 103) {
+				if (error == 104) {
+					outputMessage = "Too late";
+				} else if (error == 103) {
 					outputMessage = "Not your turn";
 				} else if (error == 102) {
 					outputMessage = "You were muted for this game";

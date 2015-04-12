@@ -135,10 +135,11 @@ public abstract class Game
 	
 	/**
 	 * Receives actions of the bots for the current round.
-	 * Returns the error ID associated with the message: 103 when the bot is playing
-	 * whereas it's not its turn, 102 when the bot was muted for the game, 0 otherwise.
+	 * Returns the error ID associated with the message: 104 if the bot was too late to
+	 * give its actions, 103 when the bot is playing whereas it's not its turn, 102 when
+	 * the bot was muted for the game, 0 otherwise.
 	 * @see Documentation/protocol/gameactions.html
-	 * @param bot the bot who give the actions.
+	 * @param bot the bot who gave the actions.
 	 * @param content the content of the "gameactions" message.
 	 * @return the error ID of the "gameactions" message.
 	 * @throws JSONException if the content is not correctly formed.
@@ -153,11 +154,16 @@ public abstract class Game
 				if (System.currentTimeMillis() - info.getGamestateTimestampMs() <=
 					responseDelayMs) {
 					executeActions(bot, content);
+					// If all the bots played this round, run to the next round!
+					return 0;
 				}
 				info.setPlayed(true);
 				info.setMuted(true);
 				bot.getCommunicator().sendGameMuteMessage(genGameMuteMessageContent("Too "
 						+ "late"));
+				// Here, we don't have to test whether all the bots played for the round
+				// because the game is gonna be updated very soon.
+				return 104;
 			}
 			return 103;
 		}
