@@ -24,38 +24,44 @@ public class GameManager implements Runnable
 		
 	}
 	
-private ArrayList<ArrayList<Bot>> findCompatibleLists(HashMap<Bot, Vector<Bot>> botMap)
+public ArrayList<ArrayList<Bot>> findCompatibleLists(HashMap<Bot, Vector<Bot>> botMap)
 	{
 		ArrayList<ArrayList<Bot>> toMatch = new ArrayList<>();
 		
 		Set<Bot> botSet = botMap.keySet();
 		for(Bot b : botSet)
 		{
+			System.out.println("Itération sur le bot nommé " + b.getNick());
 			Vector<Bot> botVect = botMap.get(b);
 			
-			int[] posToTest = new int[NB_PLAYERS-1];
+			int[] posToTest = new int[NB_PLAYERS];
 			for(int i=0; i<posToTest.length; i++)
 			{
 				posToTest[i]=i;
 			}
 			boolean isFinished = (posToTest[0] == botVect.size()-NB_PLAYERS);
+			System.out.println("FINI ? " + (isFinished));
 			
 			while(!isFinished)
 			{
-				boolean isPresent = false;
+				boolean isPresent = true;
 				for(int pos : posToTest)
 				{
-					isPresent = (isPresent &&  botMap.get(botVect.elementAt(pos)).contains(botVect.elementAt(pos)));
+					isPresent = (isPresent && botMap.get(botVect.elementAt(pos)).contains(botVect.elementAt(pos)));
+					System.out.println("Test présence " + botVect.elementAt(pos).getNick() + " : " + isPresent);
 				}
-				if(isPresent){
+				if(isPresent)
+				{
 					ArrayList<Bot> toAdd = new ArrayList<>();
 					for(int pos : posToTest)
 					{
 						toAdd.add(botVect.elementAt(pos));
 					}
-					toMatch.add(toAdd);
+					if(!toMatch.contains(toAdd))
+						toMatch.add(toAdd);
 				}
-				isFinished = incrementPosToTest(posToTest, botVect);
+				isFinished = !incrementPosToTest(posToTest, botVect);
+				System.out.println("FINI ? " + (isFinished));
 			}
 		}
 		return toMatch;
