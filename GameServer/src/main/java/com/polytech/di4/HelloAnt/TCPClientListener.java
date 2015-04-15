@@ -22,11 +22,11 @@ public class TCPClientListener implements Runnable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TCPClientListener.class);
 	
 	/**
-	 * The reference to the game server.
+	 * TODO: update doc
 	 * The listener will call the 'handleClient' method from that class when a client is
 	 * connecting on the socket server.
 	 */
-	private GameServer gamesrv;
+	private TCPClientListenerCallback eventCallback;
 	
 	/**
 	 * The server socket used to accept incoming TCP communications.
@@ -44,8 +44,8 @@ public class TCPClientListener implements Runnable {
 	 * @constructor
 	 * @param gamesrv a reference to the class in charge of handling arriving clients.
 	 */
-	public TCPClientListener(GameServer gamesrv) {
-		this.gamesrv = gamesrv;
+	public TCPClientListener(TCPClientListenerCallback eventCallback) {
+		this.eventCallback = eventCallback;
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class TCPClientListener implements Runnable {
 		while (true) {
 			try {
 				Socket socket = srvsock.accept();
-				gamesrv.addClient(new TCPClientCommunicator(socket));
+				eventCallback.handleClient(new TCPClientCommunicator(socket, eventCallback));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

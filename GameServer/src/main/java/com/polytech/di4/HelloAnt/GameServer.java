@@ -8,7 +8,8 @@ import java.util.ArrayList;
  * @class
  * @author Nicolas
  */
-public class GameServer {
+public class GameServer implements TCPClientListenerCallback
+{
 	private TCPClientListener listener;
 	private Thread listenerThread;
 	// private GameManager gamemgr;
@@ -25,7 +26,7 @@ public class GameServer {
 	 * That's why its constructor is declared as private.
 	 * @param port the port to listen for client interactions.
 	 */
-	private GameServer(int port) {
+	public GameServer(int port) {
 		// Setup the database.
 		DBInterface.init("dbants", "root", "");
         clients = new ArrayList<TCPClientCommunicator>();
@@ -41,13 +42,10 @@ public class GameServer {
 	 * This method is the callback of the client listener.
 	 * @param client the client to add
 	 */
-    public void addClient(TCPClientCommunicator client) {
-    	clients.add(client);
+	@Override
+	public void handleClient(TCPClientCommunicator newClient)
+	{
+		clients.add(newClient);
     	System.out.println(clients.size()); // Oops!
-    }
-    
-    public static void main(String[] args) {
-        System.out.println("Hello Ant!");
-        new GameServer(33601);
-    }
+	}
 }
