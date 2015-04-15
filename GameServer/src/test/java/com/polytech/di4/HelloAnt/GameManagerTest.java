@@ -129,9 +129,6 @@ public class GameManagerTest extends TestCase
 		hm.put(e, vE);
 		hm.put(f, vF);
 
-		System.out.println(hm.get(a).elementAt(3).getNick());
-
-
 		ArrayList<ArrayList<Bot>> list = gm.findCompatibleLists(hm);
 		System.out.println("\n\n MATCHUPS POSSIBLES \n");
 		for(int i=0; i<list.size(); i++)
