@@ -1,5 +1,6 @@
 package com.polytech.di4.HelloAnt;
 
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -38,6 +39,8 @@ public class DBInterface {
 	private PreparedStatement isOnlineStmt;
 	private PreparedStatement disconnectStmt;
 	private PreparedStatement createBotStmt;
+	private PreparedStatement loginSelectStmt;
+	private PreparedStatement loginUpdateStmt;
 	private PreparedStatement changeTokenStmt;
 	private PreparedStatement removeBotStmt;
 	
@@ -67,6 +70,8 @@ public class DBInterface {
 			disconnectStmt = conn.prepareStatement("UPDATE bots SET status = 0 WHERE nick"
 					+ " = ?;");
 			createBotStmt = conn.prepareStatement("SELECT NewBot(?);");
+			loginSelectStmt = conn.prepareStatement("SELECT status, nick, score FROM bots WHERE token = ? LIMIT 1;");
+			loginUpdateStmt = conn.prepareStatement("UPDATE bots SET lastLoginDate = NOW(), lastIP = ? WHERE token = ? LIMIT 1;");
 			changeTokenStmt = conn.prepareStatement("SELECT ChgTok(?);");
 			removeBotStmt = conn.prepareStatement("DELETE FROM bots WHERE token = ?;");
 		} catch (SQLException e) {
@@ -147,9 +152,40 @@ public class DBInterface {
 		return count > 0;
 	}
 	
-	public String login(String token) {
-		// we have to return nickname + score -> structure?
-		return null;
+	public Bot login(String token, TCPClientCommunicator com, BotMode mode, String ip) throws BotLoginException
+	{
+		Bot bot = null;
+		ResultSet result;
+		
+		try
+		{
+			loginSelectStmt.setString(1, token);
+			result = loginSelectStmt.executeQuery();
+			if(result.next())
+			{
+				if(result.getBoolean(1) == false)
+				{
+					bot = new Bot(com, result.getString(2), mode, result.getDouble(3));
+					loginUpdateStmt.setString(1, ip);
+					loginUpdateStmt.setString(2, token);
+					loginUpdateStmt.executeQuery();
+				}
+				else
+				{
+					throw new BotLoginException(2);
+				}
+			}
+			else
+			{
+				throw new BotLoginException(1);
+			}
+			//loginSelectStmt.setString(1, token);
+		}
+		catch (SQLException e)
+		{
+			logSQLException("Cannot execute the SQL statements for logging a bot", e);
+		}
+		return bot;
 	}
 	
 	/**
@@ -157,12 +193,16 @@ public class DBInterface {
 	 * is identified by its nickname.
 	 * @param nick the nickname of the bot to disconnect.
 	 */
-	public void disconnect(String nick) {
-		try {
+	public void disconnect(String nick)
+	{
+		try
+		{
 			// Here, we don't have to care about SQL injections because we're
 			// disconnecting the bot using a prepared statement.
 			disconnectStmt.setString(1, nick);
-		} catch (SQLException e) {
+		}
+		catch (SQLException e)
+		{
 			logSQLException("Cannot execute the SQL statement for disconnecting a bot",
 					e);
 		}
@@ -176,20 +216,65 @@ public class DBInterface {
 	 * @return the generated token for the created bot OR null if the nickname is already
 	 *         taken by another bot.
 	 */
-	public String createBot(String nick) {
+	public String createBot(String nick)
+	{
 		// The token that will be returned.
 		String token = null;
 		ResultSet result = null;
-		try {
+		try
+		{
 			// Here, we don't have to care about SQL injections because we're creating the
 			// bot using prepared statement + MySQL stored function.
 			createBotStmt.setString(1, nick);
 			result = createBotStmt.executeQuery();
-			if (result.next()) {
+			if (result.next())
+			{
 				token = result.getString(1);
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e)
+		{
 			logSQLException("Cannot execute the SQL statement for creating a bot", e);
+		}
+		finally
+		{
+			// Release ResultSet.
+			if (result != null)
+			{
+				try
+				{
+					result.close();
+				}
+				catch (SQLException e)
+				{
+					
+				}
+				result = null;
+			}
+		}
+		return token;
+	}
+	
+	/**
+	 * Attempts to change the token of the existing bot having the token provided.
+	 * Returns null if the token is not present in the data base.
+	 * @param token the token to change.
+	 * @return the new generated token for the bot OR null if the token does not exist.
+	 */
+	public String changeToken(String token) {
+		// The new token that will be returned.
+		String newToken = null;
+		ResultSet result = null;
+		try {
+			// Here, we don't have to care about SQL injections because we're changing the
+			// token using prepared statement + MySQL stored function.
+			changeTokenStmt.setString(1, token);
+			result = changeTokenStmt.executeQuery();
+			if (result.next()) {
+				newToken = result.getString(1);
+			}
+		} catch (SQLException e) {
+			logSQLException("Cannot execute the SQL statement for changing a token", e);
 		} finally {
 			// Release ResultSet.
 			if (result != null) {
@@ -199,7 +284,7 @@ public class DBInterface {
 				result = null;
 			}
 		}
-		return token;
+		return newToken;
 	}
 	
 	/**

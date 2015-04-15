@@ -37,6 +37,7 @@ public class TCPClientCommunicator implements Runnable {
 	 * Creating a new thread enables us to listen to multiple client at the same time.
 	 * @see Thread
 	 */
+	private TCPClientListenerCallback eventCallback;
 	private Thread clientThread;
 	private PrintWriter __writer__;
 	private BufferedReader __reader__;
@@ -56,8 +57,9 @@ public class TCPClientCommunicator implements Runnable {
 	 * @constructor
 	 * @param socket the socket of the TCP client.
 	 */
-	public TCPClientCommunicator(Socket socket) {
+	public TCPClientCommunicator(Socket socket, TCPClientListenerCallback eventCallback) {
 		this.socket = socket;
+		this.eventCallback = eventCallback;
 		// Create the client thread.
 		clientThread = new Thread(this);
 		try {
@@ -117,12 +119,9 @@ public class TCPClientCommunicator implements Runnable {
 		muted = false;
 	}
 	
-	/**
-	 * Closes the communicator with the client.
-	 * The server will no longer listen to this client. If the client was connected with
-	 * a bot, it will be disconnected.
-	 */
-	public void close() {
+	// TODO: doc
+	private void disconnect()
+	{
 		if (isConnected()) {
 			if (bot.isInGame()) {
 				// TODO: remove the bot from this game.
@@ -130,6 +129,15 @@ public class TCPClientCommunicator implements Runnable {
 			// Notify the database the bot is out.
 			dbi.disconnect(bot.getNick());
 		}
+	}
+
+	/**
+	 * Closes the communicator with the client.
+	 * The server will no longer listen to this client. If the client was connected with
+	 * a bot, it will be disconnected.
+	 */
+	public void close() {
+		disconnect();
 		// TODO: remove the client from the clients array on the game server.
 		// Once the client is removed on the 'clients' array, there is no more reference
 		// to this instance in the server so it should be garbage collected soon.
@@ -140,8 +148,16 @@ public class TCPClientCommunicator implements Runnable {
 		// before effectivly closing the thread... Thread.interrupt() may also causes
 		// problems in case the caller is the thread!
 		// TODO: close the socket
+		clientThread.interrupt();
 	}
 	
+	// TODO: doc
+	private void _close()
+	{
+		disconnect();
+		closed = true;
+	}
+
 	/**
 	 * Tests whether a nickname is valid according to the nickname specifications.
 	 * @see Documentation/protocol/nickspecs.html
@@ -273,12 +289,43 @@ public class TCPClientCommunicator implements Runnable {
 		String outputMessage;
 		JSONObject outputContent = null;
 		// First, check if the client is not already connected with a bot.
-		if (isConnected()) {
+		if (isConnected() == false) {
 			// unimplemented
-			error = 800;
-			outputMessage = "Not implemented yet";
+			/*error = 800;
+			outputMessage = "Not implemented yet";*/
+			BotMode mode = BotMode.REGULAR;
+			//check mode string
+			//if(content.getBoolean("training"))
+			//{
+			//	mode = BotMode.TRAINING;
+			//}
+			String ip = socket.getInetAddress().getHostAddress();
+			try
+			{
+				Bot bot = dbi.login(content.getString("token"), this, mode, ip);
+				outputMessage = "Connected";
+				this.bot = bot;
+			}
+			catch (BotLoginException e)
+			{
+				switch (e.getErrorNumber())
+				{
+				case 1:
+					error = 101;
+					outputMessage = "Token does not exist";
+					break;
+				case 2:
+					error = 102;
+					outputMessage = "Bot '" + bot.getNick() + "' is already connected";
+					break;
+				default:
+					error = 801;
+					outputMessage = "Unknown error";
+					break;
+				}
+			}
 		} else {
-			error = 102;
+			error = 103;
 			outputMessage = "Already connected with bot '" + bot.getNick() + "'";
 		}
 		// Finally, send the response to the client.
