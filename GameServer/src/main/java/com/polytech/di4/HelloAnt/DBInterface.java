@@ -203,38 +203,6 @@ public class DBInterface {
 	}
 	
 	/**
-	 * Attempts to change the token of the existing bot having the token provided.
-	 * Returns null if the token is not present in the data base.
-	 * @param token the token to change.
-	 * @return the new generated token for the bot OR null if the token does not exist.
-	 */
-	public String changeToken(String token) {
-		// The new token that will be returned.
-		String newToken = null;
-		ResultSet result = null;
-		try {
-			// Here, we don't have to care about SQL injections because we're changing the
-			// token using prepared statement + MySQL stored function.
-			changeTokenStmt.setString(1, token);
-			result = changeTokenStmt.executeQuery();
-			if (result.next()) {
-				newToken = result.getString(1);
-			}
-		} catch (SQLException e) {
-			logSQLException("Cannot execute the SQL statement for changing a token", e);
-		} finally {
-			// Release ResultSet.
-			if (result != null) {
-				try {
-					result.close();
-				} catch (SQLException e) {}
-				result = null;
-			}
-		}
-		return newToken;
-	}
-	
-	/**
 	 * Attempts to remove the bot having to provided token in the database.
 	 * Returns false if the token is not present in the data base.
 	 * @param token the token of the bot to remove.

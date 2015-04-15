@@ -93,46 +93,87 @@ public class Interface
     		clpbrd.setContents (stringSelection, null);
     	}
 	}
+/**
+ * Listener linked with the enter button.
+ * It sends the botName with the server address given in serverAddressField.
+ * It tests the conformity of the botname.
+ * @uses isBotNameValid
+ * @uses RegisterSocket
+ * @author Benjamin
+ *
+ */
 
-
-	private class ListenerSend implements ActionListener{ 
+	private class ListenerSend implements ActionListener
+	{ 
 	
 		public void actionPerformed(ActionEvent e)
 		{
 			String botNameString = new String (botNameField.getText());
-			//String serverAddressString = new String (serverAddressField.getText());
-			
-			InetAddress serverIp=null;
-			try
+			if (isBotNameValid(botNameString))
 			{
-				serverIp = InetAddress.getByName(serverAddressField.getText());
-			}
-			catch (UnknownHostException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			try 
-			{
-				RegisterSocket test = new RegisterSocket(botNameString,serverIp);
-				if (test.getResult()!=null)
+				InetAddress serverIp=null;
+				try
 				{
-				tokenLab.setText(test.getResult());
+					serverIp = InetAddress.getByName(serverAddressField.getText());
 				}
+				catch (UnknownHostException e1)
+				{
+					javax.swing.JOptionPane.showMessageDialog(null,e1.getMessage()+" ne correspond pas à une adresse de serveur.");
+					return;
+				}
+			
+				try 
+				{
+					RegisterSocket test = new RegisterSocket(botNameString,serverIp);
+					if (test.getResult()!=null)
+					{
+						tokenLab.setText(test.getResult());
+					}
 				
-			} 
+				} 
 			
-			catch (IOException e1) 
-			{
-				javax.swing.JOptionPane.showMessageDialog(null,e1.getMessage());
+				catch (IOException e1) 
+				{
+					javax.swing.JOptionPane.showMessageDialog(null,e1.getMessage());
+					return;
+				}
+				catch (JSONException e2) 
+				{
+					javax.swing.JOptionPane.showMessageDialog(null,e2.getMessage());
+					return;
+				}
+			
 			}
-			 catch (JSONException e2) 
-			{
-				javax.swing.JOptionPane.showMessageDialog(null,e2.getMessage());
-			}
-			
-			
 		}	
 	}
+	/**
+	 * Checks if the bot name is correct. It must uses alphanumeric characters. 3 minimum, 16 max.
+	 * @param botName
+	 * @return true if the bot name is correct.
+	 * @see nickname specifications
+	 */
+	public boolean  isBotNameValid(String botName)
+	{
+		if(botName.length()<3 ||botName.length()>16)
+		{
+			javax.swing.JOptionPane.showMessageDialog(null,"The botName must contains between 3 and 16 caracters.");
+			return false;
+		}
+		if(!Character.isUpperCase(botName.charAt(0)))
+		{
+			javax.swing.JOptionPane.showMessageDialog(null,"The bot name must start with uppercase.");
+			return false;
+		}
+		for(int i=0;i<botName.length();++i)
+		{
+			if(!(Character.isAlphabetic(botName.charAt(i))||Character.isDigit(botName.charAt(i))))
+			{
+				javax.swing.JOptionPane.showMessageDialog(null,"The bot name must contains alphanumeric caracters.");
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 }

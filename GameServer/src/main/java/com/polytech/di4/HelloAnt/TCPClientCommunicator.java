@@ -149,7 +149,49 @@ public class TCPClientCommunicator implements Runnable {
 	 * @return true if the nickname is valid, false otherwise.
 	 */
 	private Boolean isValidNickname(String nick) {
-		return true;
+		return nick.matches("^[a-zA-Z][a-zA-Z0-9]{3,16}$");
+	}
+	
+	/**
+	 * Sends a "gamestate" message to the client. The client is supposed to return its
+	 * actions within a given time interval.
+	 * @see Documentation/protocol/gamestate.html
+	 * @param content the object representing the current game state.
+	 */
+	public void sendGameStateMessage(JSONObject content) {
+		sendMessage("gamestate", 0, "Current state of the game, please return your "
+				+ "actions", content);
+	}
+	
+	/**
+	 * Sends a "gamestart" message to the client indicating that a game just started for
+	 * him.
+	 * @see Documentation/protocol/gamestart.html
+	 * @param content the object representing the starting game state.
+	 */
+	public void sendGameStartMessage(JSONObject content) {
+		sendMessage("gamestart", 0, "A game just started", content);
+	}
+	
+	/**
+	 * Sends a "gameend" message to the client indicating that the game just ended.
+	 * @see Documentation/protocol/gameend.html
+	 * @param content the object representing the ending game state and replay data.
+	 */
+	public void sendGameEndMessage(JSONObject content) {
+		sendMessage("gameend", 0, "The game ended", content);
+	}
+	
+	/**
+	 * Sends a "gamemute" message to the client indicating that the client was muted for
+	 * this game and hence, can no longer send "gameactions" message until it receives a
+	 * new "gamestate" message.
+	 * @see Documentation/protocol/gamemute.html
+	 * @param content the object giving the reason(s) and additional information(s) about
+	 *        the mute.
+	 */
+	public void sendGameMuteMessage(JSONObject content) {
+		sendMessage("gamemute", 0, "You are muted until the end of the game", content);
 	}
 	
 	/**
@@ -166,7 +208,6 @@ public class TCPClientCommunicator implements Runnable {
 		else if (type.equals("disconnect"))	execDisconnect(content);
 		else if (type.equals("setmode"))	execSetMode(content);
 		else if (type.equals("token"))		execToken(content);
-		else if (type.equals("chgtok"))		execChangeToken(content);
 		else if (type.equals("killbot"))	execKillBot(content);
 		else {
 			// Notify the client we cannot treat its command.
@@ -179,8 +220,8 @@ public class TCPClientCommunicator implements Runnable {
 	 * describing the operation(s) performed or the failure of the command and the reason
 	 * of the failure.
 	 * @see Documentation/protocol/gameactions.html
-	 * @param content the content of the "gameactions" command, should contains a list of
-	 *        moves solely.
+	 * @param content the content of the "gameactions" command, depends on the type of
+	 *        game implemented.
 	 * @throws JSONException if the content is not correctly formed.
 	 */
 	private void execGameActions(JSONObject content) throws JSONException {
@@ -193,7 +234,9 @@ public class TCPClientCommunicator implements Runnable {
 			if (bot.isInGame()) {
 				// Send bot actions to the game.
 				error = bot.getGame().receiveActions(bot, content);
-				if (error == 103) {
+				if (error == 104) {
+					outputMessage = "Too late";
+				} else if (error == 103) {
 					outputMessage = "Not your turn";
 				} else if (error == 102) {
 					outputMessage = "You were muted for this game";
@@ -332,9 +375,12 @@ public class TCPClientCommunicator implements Runnable {
 		JSONObject outputContent = null;
 		// Check if the bot is already connected, the token demand might be an error...
 		if (!isConnected()) {
-			String nick = content.getString("nick");
+			String nick = content.getString("nickname");
+			System.out.println(nick);
+			System.out.println(isValidNickname("coucou"));
 			// Check the validity of the desired nickname
 			if (isValidNickname(nick)) {
+				
 				String token = dbi.createBot(nick);
 				if (token != null) {
 					outputContent = new JSONObject();
@@ -356,35 +402,6 @@ public class TCPClientCommunicator implements Runnable {
 		}
 		// Finally, send the response to the client.
 		sendMessage("token", error, outputMessage, outputContent);
-	}
-	
-	/**
-	 * Executes a "chgtok" client command and then sends back to the client a report
-	 * describing the operation(s) performed or the failure of the command and the reason
-	 * of the failure.
-	 * @see Documentation/protocol/chgtok.html
-	 * @param content the content of the "chgtok" command, should contains the current
-	 *        token of the bot.
-	 * @throws JSONException if the content is not correctly formed.
-	 */
-	private void execChangeToken(JSONObject content) throws JSONException {
-		// Response message parameters:
-		int error = 0;
-		String outputMessage;
-		JSONObject outputContent = null;
-		// Get the token to change
-		String token = content.getString("token");
-		String newToken = dbi.changeToken(token);
-		if (newToken != null) {
-			outputContent = new JSONObject();
-			outputContent.put("token", newToken);
-			outputMessage = "Token changed";
-		} else {
-			error = 101;
-			outputMessage = "Token does not exist";
-		}
-		// Finally, send the response to the client.
-		sendMessage("chgtok", error, outputMessage, outputContent);
 	}
 	
 	/**
@@ -427,7 +444,7 @@ public class TCPClientCommunicator implements Runnable {
 	 * @param message a legible string describing the message.
 	 * @param content the content of the message, depends on the type of message.
 	 */
-	public void sendMessage(String type, int error, String message, JSONObject content) {
+	private void sendMessage(String type, int error, String message, JSONObject content) {
 		// The JSONObject containing the message.
 		JSONObject msgObj = new JSONObject();
 		try {

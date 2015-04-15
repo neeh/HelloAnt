@@ -1,6 +1,7 @@
 package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +25,7 @@ public abstract class Game
 	 * @note some weird games may be very tricky to design. We recommend you put this
 	 * boolean to false and then manually manage the 'curBot' identifier and the
 	 * 'curRound' counter in the 'update' method in this case.
+	 * @deprecated
 	 */
 	private Boolean oneBotPerRound;
 	
@@ -35,8 +37,14 @@ public abstract class Game
 	private ArrayList<Bot> bots;
 	
 	/**
+	 * The informations of every bots in this game.
+	 */
+	private Map<Bot, BotGameInfo> botInfos;
+	
+	/**
 	 * The list of game score for each bot.
 	 * Game scores are updated after a round.
+	 * @deprecated
 	 */
 	private ArrayList<Integer> gameScores;
 	
@@ -46,12 +54,20 @@ public abstract class Game
 	 * wait for the end of the game to be able to play anew.
 	 * If you need to stop the reception of actions of a specific bot, switch its
 	 * boolean off in this list.
+	 * @deprecated
 	 */
 	private ArrayList<Boolean> BotEnabled;
 	
 	/**
+	 * The delay of response a bot should respect to send its "gameactions" message after
+	 * a "gamestate" message from the server. (in milliseconds)
+	 */
+	private int responseDelayMs;
+	
+	/**
 	 * The identifier of the bot (in the 'bots' list) which is currently playing.
 	 * Only relevant when 'oneBotPerRound' is true.
+	 * @deprecated
 	 */
 	private int curBot;
 	
@@ -88,6 +104,7 @@ public abstract class Game
 	/**
 	 * Returns how the game should be played.
 	 * @return true if only one bot can play per round, false otherwise.
+	 * @deprecated
 	 */
 	public Boolean isOneBotPerRound()
 	{
@@ -101,7 +118,7 @@ public abstract class Game
 	
 	/**
 	 * Returns whether the current game state validates the game ending conditions.
-	 * @return true is the game is finished, false otherwise.
+	 * @return true if the game is finished, false otherwise.
 	 */
 	public abstract Boolean isFinished();
 	
@@ -114,43 +131,92 @@ public abstract class Game
 	/**
 	 * Updates the game state using bot actions.
 	 */
-	public abstract void update(/*ArrayList<Action> actions*/);
+	public abstract void update();
 	
 	/**
 	 * Receives actions of the bots for the current round.
-	 * Returns the error ID associated with the message: 103 when the bot is playing
-	 * whereas it's not its turn, 102 when the bot was muted for the game, 0 otherwise.
+	 * Returns the error ID associated with the message: 104 if the bot was too late to
+	 * give its actions, 103 when the bot is playing whereas it's not its turn, 102 when
+	 * the bot was muted for the game, 0 otherwise.
 	 * @see Documentation/protocol/gameactions.html
-	 * @param bot the bot who give the actions.
+	 * @param bot the bot who gave the actions.
 	 * @param content the content of the "gameactions" message.
 	 * @return the error ID of the "gameactions" message.
 	 * @throws JSONException if the content is not correctly formed.
 	 */
 	public int receiveActions(Bot bot, JSONObject content) throws JSONException {
-		return 0;
+		BotGameInfo info = botInfos.get(bot);
+		// Check if the bot is not muted.
+		if (info.isMuted() == false) {
+			// Check if the bot has not already played for this round.
+			if (info.hasPlayed() == false) {
+				// Check if the bot has not exceeded the response time limit.
+				if (System.currentTimeMillis() - info.getGamestateTimestampMs() <=
+					responseDelayMs) {
+					executeActions(bot, content);
+					// If all the bots played this round, run to the next round!
+					return 0;
+				}
+				info.setPlayed(true);
+				info.setMuted(true);
+				bot.getCommunicator().sendGameMuteMessage(genGameMuteMessageContent("Too "
+						+ "late"));
+				// Here, we don't have to test whether all the bots played for the round
+				// because the game is gonna be updated very soon.
+				return 104;
+			}
+			return 103;
+		}
+		return 102;
 	}
 	
 	/**
-	 * Generates the content of a 'gameround' message for a specific bot.
-	 * @param bot the bot that will receive the message.
-	 * @return the content of the 'gameround' message.
-	 * @see Documentation/protocol/gameround.html
+	 * Executes the actions of a bot. You should implement this method to update your game
+	 * state according to the actions a the bot.
+	 * @see Documentation/protocol/gameactions.html
+	 * @param bot the bot whive gave the actions.
+	 * @param actions the content of the "gameactions" message.
+	 * @throws JSONException if the actions object is not correctly formed.
 	 */
-	public abstract JSONObject genGameRoundMessageContent(Bot bot);
+	public abstract void executeActions(Bot bot, JSONObject actions) throws JSONException;
 	
 	/**
-	 * Generates the content of a 'gamestart' message for a specific bot.
+	 * Generates the content of a "gamestate" message for a specific bot.
 	 * @param bot the bot that will receive the message.
-	 * @return the content of the 'gamestart' message.
+	 * @return the content of the "gamestate" message.
+	 * @see Documentation/protocol/gamestate.html
+	 */
+	public abstract JSONObject genGameStateMessageContent(Bot bot);
+	
+	/**
+	 * Generates the content of a "gamestart" message for a specific bot.
+	 * @param bot the bot that will receive the message.
+	 * @return the content of the "gamestart" message.
 	 * @see Documentation/protocol/gamestart.html
 	 */
 	public abstract JSONObject genGameStartMessageContent(Bot bot);
 	
 	/**
-	 * Generates the content of a 'gameend' message for a specific bot.
+	 * Generates the content of a "gameend" message for a specific bot.
 	 * @param bot the bot that will receive the message.
-	 * @return the content of the 'gameend' message.
+	 * @return the content of the "gameend" message.
 	 * @see Documentation/protocol/gameend.html
 	 */
 	public abstract JSONObject genGameEndMessageContent(Bot bot);
+	
+	/**
+	 * Generates the content of a "gamemute" message.
+	 * @param reason the reason(s) of the mute.
+	 * @return the content of the "gamemute" message.
+	 * @see Documentation/protocol/gamemute.html
+	 */
+	private JSONObject genGameMuteMessageContent(String reason) {
+		JSONObject content = new JSONObject();
+		try {
+			content.put("reason", reason);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return content;
+	}
 }

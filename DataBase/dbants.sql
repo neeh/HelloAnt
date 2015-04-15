@@ -94,26 +94,6 @@ END$$
 
 -- todo: unit tests
 
-/* Generates a new token for a bot.
- * SELECT ChgTok('abc');
- * @param ptoken The current token of the bot
- * @return rtoken The new token generated for the bot (NULL if no bot associated with ptoken)
- */
-CREATE FUNCTION ChgTok(ptoken CHAR(32) CHARSET utf8)
-	RETURNS CHAR(32) CHARSET utf8
-	DETERMINISTIC
-	CONTAINS SQL
-BEGIN
-	DECLARE rtoken CHAR(32) CHARSET utf8 DEFAULT NULL;
-	DECLARE n TINYINT;
-	SELECT COUNT(*) INTO n FROM bots WHERE token = ptoken;
-	IF n = 1 THEN
-		SET rtoken := GenTokAvail();
-		UPDATE bots SET token = rtoken WHERE token = ptoken LIMIT 1;
-	END IF;
-	RETURN rtoken;
-END$$
-
 /* Logins a bot on the game server
  * CALL Login('abc', '146.23.189.75', @onick, @oscore, @oerror);
  * SELECT @onick, @oscore, @oerror;
