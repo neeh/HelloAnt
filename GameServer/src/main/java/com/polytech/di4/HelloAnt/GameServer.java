@@ -8,12 +8,13 @@ import java.util.ArrayList;
  * @class
  * @author Nicolas
  */
-public class GameServer implements TCPClientListenerCallback
+public class GameServer implements TCPClientCommunicatorCallback
 {
 	private TCPClientListener listener;
 	private Thread listenerThread;
 	// private GameManager gamemgr;
 	private ArrayList<TCPClientCommunicator> clients;
+	private ArrayList<Bot> bots;
 	
 	/**
 	 * The list of games currently played.
@@ -43,9 +44,21 @@ public class GameServer implements TCPClientListenerCallback
 	 * @param client the client to add
 	 */
 	@Override
-	public void handleClient(TCPClientCommunicator newClient)
+	public void newClient(TCPClientCommunicator newClient)
 	{
 		clients.add(newClient);
     	System.out.println(clients.size()); // Oops!
+	}
+
+	@Override
+	public void botConnected(Bot newBot)
+	{
+		System.out.println(newBot.getNick() + " connected (mode "+newBot.getMode().toString()+")");
+	}
+
+	@Override
+	public void botDisconnected(Bot oldBot)
+	{
+		System.out.println(oldBot.getNick() + " DISCONNECTED !");
 	}
 }

@@ -14,4 +14,12 @@ public enum BotMode
 	// Training mode means the bot wants to play immediately against a computer.
 	// This one is mainly used for debug purposes.
 	TRAINING;
+	
+	public static BotMode fromString(String value)
+	{
+		value = value.toLowerCase();
+		if("training".startsWith(value))
+			return TRAINING;
+		return REGULAR;
+	}
 }

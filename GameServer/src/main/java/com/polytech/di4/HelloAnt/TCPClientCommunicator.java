@@ -29,7 +29,6 @@ public class TCPClientCommunicator implements Runnable {
 	 * Should be set only once, when you call the constructor.
 	 * @see Socket
 	 */
-	@SuppressWarnings("unused")
 	private Socket socket;
 	
 	/**
@@ -37,7 +36,7 @@ public class TCPClientCommunicator implements Runnable {
 	 * Creating a new thread enables us to listen to multiple client at the same time.
 	 * @see Thread
 	 */
-	private TCPClientListenerCallback eventCallback;
+	private TCPClientCommunicatorCallback eventCallback;
 	private Thread clientThread;
 	private PrintWriter __writer__;
 	private BufferedReader __reader__;
@@ -57,7 +56,7 @@ public class TCPClientCommunicator implements Runnable {
 	 * @constructor
 	 * @param socket the socket of the TCP client.
 	 */
-	public TCPClientCommunicator(Socket socket, TCPClientListenerCallback eventCallback) {
+	public TCPClientCommunicator(Socket socket, TCPClientCommunicatorCallback eventCallback) {
 		this.socket = socket;
 		this.eventCallback = eventCallback;
 		// Create the client thread.
@@ -77,6 +76,7 @@ public class TCPClientCommunicator implements Runnable {
 		closed = false;
 		// Start the listening of the client.
 		clientThread.start();
+		eventCallback.newClient(this);
 	}
 	
 	/**
@@ -290,21 +290,20 @@ public class TCPClientCommunicator implements Runnable {
 		JSONObject outputContent = null;
 		// First, check if the client is not already connected with a bot.
 		if (isConnected() == false) {
-			// unimplemented
-			/*error = 800;
-			outputMessage = "Not implemented yet";*/
-			BotMode mode = BotMode.REGULAR;
-			//check mode string
-			//if(content.getBoolean("training"))
-			//{
-			//	mode = BotMode.TRAINING;
-			//}
+			String modeString = "regular";
+			try
+			{
+				modeString = content.getString("mode");
+			}
+			catch(JSONException e) {}
+			BotMode mode = BotMode.fromString(modeString);
 			String ip = socket.getInetAddress().getHostAddress();
 			try
 			{
 				Bot bot = dbi.login(content.getString("token"), this, mode, ip);
-				outputMessage = "Connected";
 				this.bot = bot;
+				eventCallback.botConnected(bot);
+				outputMessage = "Connected";
 			}
 			catch (BotLoginException e)
 			{
@@ -316,7 +315,7 @@ public class TCPClientCommunicator implements Runnable {
 					break;
 				case 2:
 					error = 102;
-					outputMessage = "Bot '" + bot.getNick() + "' is already connected";
+					outputMessage = "Bot with this token is already connected";
 					break;
 				default:
 					error = 801;
@@ -349,10 +348,12 @@ public class TCPClientCommunicator implements Runnable {
 		if (isConnected()) {
 			// TODO: if the bot was in game, take it out of the game.
 			// TODO: handle DB interactions with both ID?
-			dbi.disconnect("test");
-			outputMessage = "Disconnected " + "test";
+			dbi.disconnect(this.bot.getNick());
+			eventCallback.botDisconnected(this.bot);
+			outputMessage = "Disconnected " + this.bot.getNick();
 			// TODO: remove the bot from the clients array in the game server class.
 			// TODO: top client thread and destroy this instance.
+			this.bot = null;
 		} else {
 			error = 3;
 			outputMessage = "Not connected";

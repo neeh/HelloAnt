@@ -26,7 +26,7 @@ public class TCPClientListener implements Runnable {
 	 * The listener will call the 'handleClient' method from that class when a client is
 	 * connecting on the socket server.
 	 */
-	private TCPClientListenerCallback eventCallback;
+	private TCPClientCommunicatorCallback eventCallback;
 	
 	/**
 	 * The server socket used to accept incoming TCP communications.
@@ -44,7 +44,7 @@ public class TCPClientListener implements Runnable {
 	 * @constructor
 	 * @param gamesrv a reference to the class in charge of handling arriving clients.
 	 */
-	public TCPClientListener(TCPClientListenerCallback eventCallback) {
+	public TCPClientListener(TCPClientCommunicatorCallback eventCallback) {
 		this.eventCallback = eventCallback;
 	}
 	
@@ -82,7 +82,7 @@ public class TCPClientListener implements Runnable {
 		while (true) {
 			try {
 				Socket socket = srvsock.accept();
-				eventCallback.handleClient(new TCPClientCommunicator(socket, eventCallback));
+				new TCPClientCommunicator(socket, eventCallback);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

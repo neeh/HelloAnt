@@ -70,8 +70,10 @@ public class DBInterface {
 			disconnectStmt = conn.prepareStatement("UPDATE bots SET status = 0 WHERE nick"
 					+ " = ?;");
 			createBotStmt = conn.prepareStatement("SELECT NewBot(?);");
-			loginSelectStmt = conn.prepareStatement("SELECT status, nick, score FROM bots WHERE token = ? LIMIT 1;");
-			loginUpdateStmt = conn.prepareStatement("UPDATE bots SET lastLoginDate = NOW(), lastIP = ? WHERE token = ? LIMIT 1;");
+			loginSelectStmt = conn.prepareStatement("SELECT status, nick, score FROM bots"
+					+ " WHERE token = ? LIMIT 1;");
+			loginUpdateStmt = conn.prepareStatement("UPDATE bots SET status = 1, "
+					+ "lastLoginDate = NOW(), lastIP = ? WHERE token = ? LIMIT 1;");
 			changeTokenStmt = conn.prepareStatement("SELECT ChgTok(?);");
 			removeBotStmt = conn.prepareStatement("DELETE FROM bots WHERE token = ?;");
 		} catch (SQLException e) {
@@ -152,7 +154,8 @@ public class DBInterface {
 		return count > 0;
 	}
 	
-	public Bot login(String token, TCPClientCommunicator com, BotMode mode, String ip) throws BotLoginException
+	public Bot login(String token, TCPClientCommunicator com, BotMode mode, String ip)
+			throws BotLoginException
 	{
 		Bot bot = null;
 		ResultSet result;
@@ -168,7 +171,7 @@ public class DBInterface {
 					bot = new Bot(com, result.getString(2), mode, result.getDouble(3));
 					loginUpdateStmt.setString(1, ip);
 					loginUpdateStmt.setString(2, token);
-					loginUpdateStmt.executeQuery();
+					loginUpdateStmt.executeUpdate();
 				}
 				else
 				{
@@ -184,6 +187,7 @@ public class DBInterface {
 		catch (SQLException e)
 		{
 			logSQLException("Cannot execute the SQL statements for logging a bot", e);
+			return null;
 		}
 		return bot;
 	}
@@ -200,6 +204,7 @@ public class DBInterface {
 			// Here, we don't have to care about SQL injections because we're
 			// disconnecting the bot using a prepared statement.
 			disconnectStmt.setString(1, nick);
+			disconnectStmt.executeUpdate();
 		}
 		catch (SQLException e)
 		{
