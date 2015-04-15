@@ -38,7 +38,7 @@ private ArrayList<ArrayList<Bot>> findCompatibleLists(HashMap<Bot, Vector<Bot>> 
 			{
 				posToTest[i]=i;
 			}
-			boolean isFinished = (posToTest[0] == botVect.size()-NB_PLAYERS+1);
+			boolean isFinished = (posToTest[0] == botVect.size()-NB_PLAYERS);
 			
 			while(!isFinished)
 			{
@@ -55,7 +55,7 @@ private ArrayList<ArrayList<Bot>> findCompatibleLists(HashMap<Bot, Vector<Bot>> 
 					}
 					toMatch.add(toAdd);
 				}
-				incrementPosToTest(posToTest, botVect);
+				isFinished = incrementPosToTest(posToTest, botVect);
 			}
 		}
 		return toMatch;
@@ -64,11 +64,32 @@ private ArrayList<ArrayList<Bot>> findCompatibleLists(HashMap<Bot, Vector<Bot>> 
 	/**
 	 * Function that permit to update the values in posToTest, so it helps explore the tree
 	 * @param posToTest array to update
-	 * @param size the size of the tree
+	 * @param v a vector representing the tree
+	 * @return a boolean that indicates a success
 	 */
-	private void incrementPosToTest(int posToTest[], Vector<Bot> v)
+	public boolean incrementPosToTest(int posToTest[], Vector<Bot> v) throws IndexOutOfBoundsException
 	{
+		if (posToTest.length > v.size())
+			throw new IndexOutOfBoundsException(
+					"posToTest ("+posToTest.length+") must be smaller than v ("+v.size()+")");
 		
+		for (int i = posToTest.length-1; i>=0 ; i--)
+		{
+			if(posToTest[i] >= v.size())
+				throw new IndexOutOfBoundsException(
+						"posToTest["+i+"] ("+posToTest[i]+") must be smaller than v ("+v.size()+")");
+			
+			if (v.elementAt(posToTest[i]) != v.elementAt(v.size() - posToTest.length + i))
+			{
+				posToTest[i]++;
+				for (int j=i+1; j < posToTest.length; j++)
+				{
+					posToTest[j] = posToTest[j-1] + 1;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	
