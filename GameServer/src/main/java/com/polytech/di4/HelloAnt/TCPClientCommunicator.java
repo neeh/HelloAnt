@@ -29,7 +29,6 @@ public class TCPClientCommunicator implements Runnable {
 	 * Should be set only once, when you call the constructor.
 	 * @see Socket
 	 */
-	@SuppressWarnings("unused")
 	private Socket socket;
 	
 	/**
@@ -37,6 +36,7 @@ public class TCPClientCommunicator implements Runnable {
 	 * Creating a new thread enables us to listen to multiple client at the same time.
 	 * @see Thread
 	 */
+	private TCPClientCommunicatorCallback eventCallback;
 	private Thread clientThread;
 	private PrintWriter __writer__;
 	private BufferedReader __reader__;
@@ -56,8 +56,10 @@ public class TCPClientCommunicator implements Runnable {
 	 * @constructor
 	 * @param socket the socket of the TCP client.
 	 */
-	public TCPClientCommunicator(Socket socket) {
+	public TCPClientCommunicator(Socket socket,
+			TCPClientCommunicatorCallback eventCallback) {
 		this.socket = socket;
+		this.eventCallback = eventCallback;
 		// Create the client thread.
 		clientThread = new Thread(this);
 		try {
@@ -75,6 +77,7 @@ public class TCPClientCommunicator implements Runnable {
 		closed = false;
 		// Start the listening of the client.
 		clientThread.start();
+		eventCallback.newClient(this);
 	}
 	
 	/**
@@ -117,12 +120,9 @@ public class TCPClientCommunicator implements Runnable {
 		muted = false;
 	}
 	
-	/**
-	 * Closes the communicator with the client.
-	 * The server will no longer listen to this client. If the client was connected with
-	 * a bot, it will be disconnected.
-	 */
-	public void close() {
+	// TODO: doc
+	private void disconnect()
+	{
 		if (isConnected()) {
 			if (bot.isInGame()) {
 				// TODO: remove the bot from this game.
@@ -130,6 +130,15 @@ public class TCPClientCommunicator implements Runnable {
 			// Notify the database the bot is out.
 			dbi.disconnect(bot.getNick());
 		}
+	}
+	
+	/**
+	 * Closes the communicator with the client.
+	 * The server will no longer listen to this client. If the client was connected with
+	 * a bot, it will be disconnected.
+	 */
+	public void close() {
+		disconnect();
 		// TODO: remove the client from the clients array on the game server.
 		// Once the client is removed on the 'clients' array, there is no more reference
 		// to this instance in the server so it should be garbage collected soon.
@@ -140,6 +149,15 @@ public class TCPClientCommunicator implements Runnable {
 		// before effectivly closing the thread... Thread.interrupt() may also causes
 		// problems in case the caller is the thread!
 		// TODO: close the socket
+		clientThread.interrupt();
+	}
+	
+	// TODO: doc
+	@SuppressWarnings("unused")
+	private void _close()
+	{
+		disconnect();
+		closed = true;
 	}
 	
 	/**
@@ -273,12 +291,42 @@ public class TCPClientCommunicator implements Runnable {
 		String outputMessage;
 		JSONObject outputContent = null;
 		// First, check if the client is not already connected with a bot.
-		if (isConnected()) {
-			// unimplemented
-			error = 800;
-			outputMessage = "Not implemented yet";
+		if (isConnected() == false) {
+			String modeString = "regular";
+			try
+			{
+				modeString = content.getString("mode");
+			}
+			catch(JSONException e) {}
+			BotMode mode = BotMode.fromString(modeString);
+			String ip = socket.getInetAddress().getHostAddress();
+			try
+			{
+				Bot bot = dbi.login(content.getString("token"), this, mode, ip);
+				this.bot = bot;
+				eventCallback.botConnected(bot);
+				outputMessage = "Connected";
+			}
+			catch (BotLoginException e)
+			{
+				switch (e.getErrorNumber())
+				{
+				case 1:
+					error = 101;
+					outputMessage = "Token does not exist";
+					break;
+				case 2:
+					error = 102;
+					outputMessage = "Bot with this token is already connected";
+					break;
+				default:
+					error = 801;
+					outputMessage = "Unknown error";
+					break;
+				}
+			}
 		} else {
-			error = 102;
+			error = 103;
 			outputMessage = "Already connected with bot '" + bot.getNick() + "'";
 		}
 		// Finally, send the response to the client.
@@ -286,7 +334,7 @@ public class TCPClientCommunicator implements Runnable {
 	}
 	
 	/**
-	 * Executes a "disonnect" client command and then sends back to the client a report
+	 * Executes a "disconnect" client command and then sends back to the client a report
 	 * describing the operation(s) performed or the failure of the command and the reason
 	 * of the failure.
 	 * @see Documentation/protocol/disconnect.html
@@ -302,11 +350,12 @@ public class TCPClientCommunicator implements Runnable {
 		if (isConnected()) {
 			// TODO: if the bot was in game, take it out of the game.
 			// TODO: handle DB interactions with both ID?
-			// TODO: update the score of the bot in the database.
-			dbi.disconnect("test");
-			outputMessage = "Disconnected " + "test";
+			dbi.disconnect(this.bot.getNick());
+			eventCallback.botDisconnected(this.bot);
+			outputMessage = "Disconnected " + this.bot.getNick();
 			// TODO: remove the bot from the clients array in the game server class.
 			// TODO: top client thread and destroy this instance.
+			this.bot = null;
 		} else {
 			error = 3;
 			outputMessage = "Not connected";
@@ -381,7 +430,6 @@ public class TCPClientCommunicator implements Runnable {
 			System.out.println(isValidNickname("coucou"));
 			// Check the validity of the desired nickname
 			if (isValidNickname(nick)) {
-				
 				String token = dbi.createBot(nick);
 				if (token != null) {
 					outputContent = new JSONObject();

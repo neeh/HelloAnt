@@ -14,6 +14,8 @@ public class GameServer implements TCPClientCommunicatorCallback
 	private Thread listenerThread;
 	// private GameManager gamemgr;
 	private ArrayList<TCPClientCommunicator> clients;
+	
+	@SuppressWarnings("unused")
 	private ArrayList<Bot> bots;
 	
 	/**

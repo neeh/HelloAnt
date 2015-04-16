@@ -38,6 +38,8 @@ public class DBInterface {
 	private PreparedStatement isOnlineStmt;
 	private PreparedStatement disconnectStmt;
 	private PreparedStatement createBotStmt;
+	private PreparedStatement loginSelectStmt;
+	private PreparedStatement loginUpdateStmt;
 	private PreparedStatement removeBotStmt;
 	
 	/**
@@ -66,7 +68,10 @@ public class DBInterface {
 			disconnectStmt = conn.prepareStatement("UPDATE bots SET status = 0 WHERE nick"
 					+ " = ?;");
 			createBotStmt = conn.prepareStatement("SELECT NewBot(?);");
-			changeTokenStmt = conn.prepareStatement("SELECT ChgTok(?);");
+			loginSelectStmt = conn.prepareStatement("SELECT status, nick, score FROM bots"
+					+ " WHERE token = ? LIMIT 1;");
+			loginUpdateStmt = conn.prepareStatement("UPDATE bots SET status = 1, "
+					+ "lastLoginDate = NOW(), lastIP = ? WHERE token = ? LIMIT 1;");
 			removeBotStmt = conn.prepareStatement("DELETE FROM bots WHERE token = ?;");
 		} catch (SQLException e) {
 			logSQLException("Unable to prepare SQL statements", e);
@@ -146,9 +151,42 @@ public class DBInterface {
 		return count > 0;
 	}
 	
-	public String login(String token) {
-		// we have to return nickname + score -> structure?
-		return null;
+	public Bot login(String token, TCPClientCommunicator com, BotMode mode, String ip)
+			throws BotLoginException
+	{
+		Bot bot = null;
+		ResultSet result;
+		
+		try
+		{
+			loginSelectStmt.setString(1, token);
+			result = loginSelectStmt.executeQuery();
+			if(result.next())
+			{
+				if(result.getBoolean(1) == false)
+				{
+					bot = new Bot(com, result.getString(2), mode, result.getDouble(3));
+					loginUpdateStmt.setString(1, ip);
+					loginUpdateStmt.setString(2, token);
+					loginUpdateStmt.executeUpdate();
+				}
+				else
+				{
+					throw new BotLoginException(2);
+				}
+			}
+			else
+			{
+				throw new BotLoginException(1);
+			}
+			//loginSelectStmt.setString(1, token);
+		}
+		catch (SQLException e)
+		{
+			logSQLException("Cannot execute the SQL statements for logging a bot", e);
+			return null;
+		}
+		return bot;
 	}
 	
 	/**
@@ -156,13 +194,17 @@ public class DBInterface {
 	 * is identified by its nickname.
 	 * @param nick the nickname of the bot to disconnect.
 	 */
-	public void disconnect(String nick) {
-		try {
+	public void disconnect(String nick)
+	{
+		try
+		{
 			// Here, we don't have to care about SQL injections because we're
 			// disconnecting the bot using a prepared statement.
 			disconnectStmt.setString(1, nick);
-			// TODO: update the score of the bot in the database.
-		} catch (SQLException e) {
+			disconnectStmt.executeUpdate();
+		}
+		catch (SQLException e)
+		{
 			logSQLException("Cannot execute the SQL statement for disconnecting a bot",
 					e);
 		}
@@ -176,26 +218,39 @@ public class DBInterface {
 	 * @return the generated token for the created bot OR null if the nickname is already
 	 *         taken by another bot.
 	 */
-	public String createBot(String nick) {
+	public String createBot(String nick)
+	{
 		// The token that will be returned.
 		String token = null;
 		ResultSet result = null;
-		try {
+		try
+		{
 			// Here, we don't have to care about SQL injections because we're creating the
 			// bot using prepared statement + MySQL stored function.
 			createBotStmt.setString(1, nick);
 			result = createBotStmt.executeQuery();
-			if (result.next()) {
+			if (result.next())
+			{
 				token = result.getString(1);
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e)
+		{
 			logSQLException("Cannot execute the SQL statement for creating a bot", e);
-		} finally {
+		}
+		finally
+		{
 			// Release ResultSet.
-			if (result != null) {
-				try {
+			if (result != null)
+			{
+				try
+				{
 					result.close();
-				} catch (SQLException e) {}
+				}
+				catch (SQLException e)
+				{
+					
+				}
 				result = null;
 			}
 		}
