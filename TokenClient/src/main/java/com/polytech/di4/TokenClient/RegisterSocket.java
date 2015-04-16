@@ -43,7 +43,7 @@ public class RegisterSocket
 		message.put("type","token");
 		
 		JSONObject content = new JSONObject();
-		content.put("nickname",botName);
+		content.put("nick",botName);
 		
 		message.put("content", content);
 		
@@ -56,7 +56,7 @@ public class RegisterSocket
 		String reponse = in.readLine();
 		JSONObject reponseJson = new JSONObject(reponse);
 	
-		String test = reponseJson.getJSONObject("content").getString("nickname");
+		String test = reponseJson.getJSONObject("content").getString("Token");
 		if (test!=null)
 		{
 			this.setResult(test);

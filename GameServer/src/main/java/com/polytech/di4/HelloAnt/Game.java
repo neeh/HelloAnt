@@ -119,7 +119,7 @@ public abstract class Game
 	
 	/**
 	 * Returns whether the current game state validates the game ending conditions.
-	 * @return true is the game is finished, false otherwise.
+	 * @return true if the game is finished, false otherwise.
 	 */
 	public abstract Boolean isFinished();
 	
