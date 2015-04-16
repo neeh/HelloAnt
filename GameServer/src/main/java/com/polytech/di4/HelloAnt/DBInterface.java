@@ -38,7 +38,6 @@ public class DBInterface {
 	private PreparedStatement isOnlineStmt;
 	private PreparedStatement disconnectStmt;
 	private PreparedStatement createBotStmt;
-	private PreparedStatement changeTokenStmt;
 	private PreparedStatement removeBotStmt;
 	
 	/**
@@ -162,6 +161,7 @@ public class DBInterface {
 			// Here, we don't have to care about SQL injections because we're
 			// disconnecting the bot using a prepared statement.
 			disconnectStmt.setString(1, nick);
+			// TODO: update the score of the bot in the database.
 		} catch (SQLException e) {
 			logSQLException("Cannot execute the SQL statement for disconnecting a bot",
 					e);

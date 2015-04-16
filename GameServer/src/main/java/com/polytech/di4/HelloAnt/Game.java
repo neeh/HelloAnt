@@ -1,6 +1,7 @@
 package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -124,9 +125,27 @@ public abstract class Game
 	
 	/**
 	 * Updates the score of each bot based on its final game score.
+	 * You can overload this method if you want a more specific score calculation.
 	 * @see ELO rating system
 	 */
-	public abstract void computeBotScores();
+	public void computeBotScores() {
+		// the number of bots.
+		int n = bots.size();
+		int sumGameScores = 0;
+		// Get the sum of all bot game scores.
+		for (Iterator<Bot> i = bots.iterator(); i.hasNext(); ) {
+			Bot bot = i.next();
+			BotGameInfo info = botInfos.get(bot);
+			sumGameScores += info.getGameScore();
+		}
+		// Update the general score of a bot.
+		for (Iterator<Bot> i = bots.iterator(); i.hasNext(); ) {
+			Bot bot = i.next();
+			BotGameInfo info = botInfos.get(bot);
+			bot.setScore(bot.getScore() + 200 * (n * (info.getGameScore() / sumGameScores)
+					- 1));
+		}
+	}
 	
 	/**
 	 * Updates the game state using bot actions.
@@ -134,7 +153,18 @@ public abstract class Game
 	public abstract void update();
 	
 	/**
-	 * Receives actions of the bots for the current round.
+	 * Executes the actions of a bot. You should implement this method to update your game
+	 * state according to the actions a the bot.
+	 * @see Documentation/protocol/gameactions.html
+	 * @param bot the bot whive gave the actions.
+	 * @param actions the content of the "gameactions" message.
+	 * @throws JSONException if the actions object is not correctly formed.
+	 */
+	protected abstract void executeActions(Bot bot, JSONObject actions) throws
+		JSONException;
+	
+	/**
+	 * Receives the actions of a bot for the current round.
 	 * Returns the error ID associated with the message: 104 if the bot was too late to
 	 * give its actions, 103 when the bot is playing whereas it's not its turn, 102 when
 	 * the bot was muted for the game, 0 otherwise.
@@ -145,6 +175,8 @@ public abstract class Game
 	 * @throws JSONException if the content is not correctly formed.
 	 */
 	public int receiveActions(Bot bot, JSONObject content) throws JSONException {
+		int error;
+		// Get the current state of the bot.
 		BotGameInfo info = botInfos.get(bot);
 		// Check if the bot is not muted.
 		if (info.isMuted() == false) {
@@ -155,30 +187,45 @@ public abstract class Game
 					responseDelayMs) {
 					executeActions(bot, content);
 					// If all the bots played this round, run to the next round!
-					return 0;
+					// TODO: shutdown the timeout of the GameThread
+					error = 0;
+				} else {
+					info.setPlayed(true);
+					info.setMuted(true);
+					// Here, we don't have to test whether all the bots played for this
+					// round because the game is gonna be updated very soon.
+					bot.getCommunicator().sendGameMuteMessage(genGameMuteMessageContent(
+							"Too slow"));
+					// Too late
+					error = 104;
 				}
-				info.setPlayed(true);
-				info.setMuted(true);
-				bot.getCommunicator().sendGameMuteMessage(genGameMuteMessageContent("Too "
-						+ "late"));
-				// Here, we don't have to test whether all the bots played for the round
-				// because the game is gonna be updated very soon.
-				return 104;
+			} else {
+				// Already played
+				error = 103;
 			}
-			return 103;
+		} else {
+			// Muted
+			error = 102;
 		}
-		return 102;
+		return error;
 	}
 	
 	/**
-	 * Executes the actions of a bot. You should implement this method to update your game
-	 * state according to the actions a the bot.
-	 * @see Documentation/protocol/gameactions.html
-	 * @param bot the bot whive gave the actions.
-	 * @param actions the content of the "gameactions" message.
-	 * @throws JSONException if the actions object is not correctly formed.
+	 * Sends the current game state to a bot. A bot which receives a "gamestate" message
+	 * is supposed to return its game action within the imposed response delay.
+	 * @see Documentation/protocol/gamestate.html
+	 * @param bot the bot that will receive the "gamestate" message.
 	 */
-	public abstract void executeActions(Bot bot, JSONObject actions) throws JSONException;
+	public void sendState(Bot bot) {
+		// Get the current state of the bot.
+		BotGameInfo info = botInfos.get(bot);
+		// Send the cooked message.
+		bot.getCommunicator().sendGameStateMessage(genGameStateMessageContent(bot));
+		// Memorize the timestamp of the sending.
+		info.setGamestateTimestampMs(System.currentTimeMillis());
+		// Wait for the bot to play during this round.
+		info.setPlayed(false); // should be set to false BEFORE!
+	}
 	
 	/**
 	 * Generates the content of a "gamestate" message for a specific bot.
@@ -186,7 +233,7 @@ public abstract class Game
 	 * @return the content of the "gamestate" message.
 	 * @see Documentation/protocol/gamestate.html
 	 */
-	public abstract JSONObject genGameStateMessageContent(Bot bot);
+	protected abstract JSONObject genGameStateMessageContent(Bot bot);
 	
 	/**
 	 * Generates the content of a "gamestart" message for a specific bot.
@@ -194,7 +241,7 @@ public abstract class Game
 	 * @return the content of the "gamestart" message.
 	 * @see Documentation/protocol/gamestart.html
 	 */
-	public abstract JSONObject genGameStartMessageContent(Bot bot);
+	protected abstract JSONObject genGameStartMessageContent(Bot bot);
 	
 	/**
 	 * Generates the content of a "gameend" message for a specific bot.
@@ -202,7 +249,7 @@ public abstract class Game
 	 * @return the content of the "gameend" message.
 	 * @see Documentation/protocol/gameend.html
 	 */
-	public abstract JSONObject genGameEndMessageContent(Bot bot);
+	protected abstract JSONObject genGameEndMessageContent(Bot bot);
 	
 	/**
 	 * Generates the content of a "gamemute" message.
@@ -210,7 +257,7 @@ public abstract class Game
 	 * @return the content of the "gamemute" message.
 	 * @see Documentation/protocol/gamemute.html
 	 */
-	private JSONObject genGameMuteMessageContent(String reason) {
+	protected JSONObject genGameMuteMessageContent(String reason) {
 		JSONObject content = new JSONObject();
 		try {
 			content.put("reason", reason);

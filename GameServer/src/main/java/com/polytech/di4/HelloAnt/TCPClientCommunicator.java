@@ -143,16 +143,6 @@ public class TCPClientCommunicator implements Runnable {
 	}
 	
 	/**
-	 * Tests whether a nickname is valid according to the nickname specifications.
-	 * @see Documentation/protocol/nickspecs.html
-	 * @param nick the desired nickname for a bot.
-	 * @return true if the nickname is valid, false otherwise.
-	 */
-	private Boolean isValidNickname(String nick) {
-		return nick.matches("^[a-zA-Z][a-zA-Z0-9]{3,16}$");
-	}
-	
-	/**
 	 * Sends a "gamestate" message to the client. The client is supposed to return its
 	 * actions within a given time interval.
 	 * @see Documentation/protocol/gamestate.html
@@ -192,6 +182,16 @@ public class TCPClientCommunicator implements Runnable {
 	 */
 	public void sendGameMuteMessage(JSONObject content) {
 		sendMessage("gamemute", 0, "You are muted until the end of the game", content);
+	}
+	
+	/**
+	 * Tests whether a nickname is valid according to the nickname specifications.
+	 * @see Documentation/protocol/nickspecs.html
+	 * @param nick the desired nickname for a bot.
+	 * @return true if the nickname is valid, false otherwise.
+	 */
+	private Boolean isValidNickname(String nick) {
+		return nick.matches("^[a-zA-Z][a-zA-Z0-9]{3,16}$");
 	}
 	
 	/**
@@ -302,6 +302,7 @@ public class TCPClientCommunicator implements Runnable {
 		if (isConnected()) {
 			// TODO: if the bot was in game, take it out of the game.
 			// TODO: handle DB interactions with both ID?
+			// TODO: update the score of the bot in the database.
 			dbi.disconnect("test");
 			outputMessage = "Disconnected " + "test";
 			// TODO: remove the bot from the clients array in the game server class.

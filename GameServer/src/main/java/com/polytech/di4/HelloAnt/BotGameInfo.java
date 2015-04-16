@@ -25,7 +25,7 @@ public class BotGameInfo
 	 * If the delay is exceeded, then the server sends a "gamemute" message to the bot so
 	 * the bot cannot play until the end of the game.
 	 */
-	private int gamestateTimestampMs;
+	private long gamestateTimestampMs;
 	
 	/**
 	 * Whether the bot was muted in its game.
@@ -61,7 +61,7 @@ public class BotGameInfo
 	 * Gets the timestamp of the last sending of the game state to this bot.
 	 * @return the last timestamp of the "gamestate" message sent by the server.
 	 */
-	public int getGamestateTimestampMs() {
+	public long getGamestateTimestampMs() {
 		return gamestateTimestampMs;
 	}
 	
@@ -94,7 +94,7 @@ public class BotGameInfo
 	 * @param gamestateTimestampMS the last timestamp of the "gamestate" message sent by
 	 *        the server.
 	 */
-	public void setGamestateTimestampMs(int gamestateTimestampMs) {
+	public void setGamestateTimestampMs(long gamestateTimestampMs) {
 		this.gamestateTimestampMs = gamestateTimestampMs;
 	}
 	
