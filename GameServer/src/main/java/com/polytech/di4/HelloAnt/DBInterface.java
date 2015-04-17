@@ -161,9 +161,9 @@ public class DBInterface {
 		{
 			loginSelectStmt.setString(1, token);
 			result = loginSelectStmt.executeQuery();
-			if(result.next())
+			if (result.next())
 			{
-				if(result.getBoolean(1) == false)
+				if (result.getBoolean(1) == false)
 				{
 					bot = new Bot(com, result.getString(2), mode, result.getDouble(3));
 					loginUpdateStmt.setString(1, ip);
@@ -172,12 +172,12 @@ public class DBInterface {
 				}
 				else
 				{
-					throw new BotLoginException(2);
+					throw new BotLoginException(102);
 				}
 			}
 			else
 			{
-				throw new BotLoginException(1);
+				throw new BotLoginException(101);
 			}
 			//loginSelectStmt.setString(1, token);
 		}

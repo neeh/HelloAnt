@@ -9,30 +9,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The client listener is responsible for accepting incoming TCP communications and
- * creating communicator that will enable the server to exchange with them. Hence, it's a
- * singleton.
- * Once a client is created, it should be added to the client list in the game server
- * singleton. So there's a reference to the game server used to call the callback method
- * for adding a client.
+ * The client listener is responsible for accepting incoming TCP connections and
+ * creating, for each of those, a communicator that will enable the server to exchange
+ * with them.
+ * This class can be instantiated multiple times to listen on several network ports.
  * @class
  * @author Nicolas
  */
-public class TCPClientListener implements Runnable {
+public class TCPClientListener implements Runnable
+{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TCPClientListener.class);
-	
-	/**
-	 * TODO: update doc
-	 * The listener will call the 'handleClient' method from that class when a client is
-	 * connecting on the socket server.
-	 */
-	private TCPClientCommunicatorCallback eventCallback;
 	
 	/**
 	 * The server socket used to accept incoming TCP communications.
 	 * @see ServerSocket
 	 */
-	private ServerSocket srvsock;
+	private ServerSocket serverSocket;
 	
 	/**
 	 * The network port on which to listen connections.
@@ -40,52 +32,74 @@ public class TCPClientListener implements Runnable {
 	private int port;
 	
 	/**
-	 * Creates a new client listener.
-	 * @constructor
-	 * @param gamesrv a reference to the class in charge of handling arriving clients.
+	 * The thread in charge of running the client listener mechanics.
+	 * The client listener is autonomous because it runs its own thread.
 	 */
-	public TCPClientListener(TCPClientCommunicatorCallback eventCallback) {
-		this.eventCallback = eventCallback;
+	private Thread listenerThread;
+	
+	/**
+	 * The client handler that is passed to created communicators and which enables a
+	 * client to call the server back when specific events occur.
+	 */
+	private TCPClientHandler handler;
+	
+	/**
+	 * Creates a new TCP client listener which listens the network for incoming TCP
+	 * connections.
+	 * @constructor
+	 * @param port the network port on which to listen.
+	 * @param handler the client handler for communicators that will be created.
+	 * @warning the port is supposed to be a 16-bit unsigned integer.
+	 */
+	public TCPClientListener(int port, TCPClientHandler handler)
+	{
+		this.port = port;
+		this.handler = handler;
+		try
+		{
+			serverSocket = new ServerSocket();
+			serverSocket.setReuseAddress(true);
+			serverSocket.bind(new InetSocketAddress(port));
+			// Create the thread
+			listenerThread = new Thread(this);
+			listenerThread.start();
+		}
+		catch (IOException e)
+		{
+			// TODO: Remove this print.
+			e.printStackTrace();
+			LOGGER.error("GRAVE: The client listener cannot start!\n" + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Runs the client listening mechanics which is to listen for incoming TCP
+	 * connections, create communicators and send those back to the game server.
+	 */
+	public void run()
+	{
+		while (true)
+		{
+			try
+			{
+				// Accept incoming TCP connection. (blocking)
+				Socket socket = serverSocket.accept();
+				// A connection is accepted, create a communicator for it.
+				new TCPClientCommunicator(socket, handler);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
 	 * Gets the port on which the listener is accepting clients.
 	 * @return the port of the server.
 	 */
-	public int getPort() {
+	public int getPort()
+	{
 		return port;
-	}
-	
-	/**
-	 * Sets the port of the client listener.
-	 * @param port
-	 */
-	public void setPort(int port) {
-		if (port > 0 && port < 65536) {
-			try {
-				if (srvsock != null && srvsock.isBound()) {
-					srvsock.close();
-				}
-				srvsock = new ServerSocket();
-				srvsock.setReuseAddress(true);
-				srvsock.bind(new InetSocketAddress(port));
-				this.port = port;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			LOGGER.error("Listening on invalid address port: " + port);
-		}
-	}
-	
-	public void run() {
-		while (true) {
-			try {
-				Socket socket = srvsock.accept();
-				new TCPClientCommunicator(socket, eventCallback);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 }

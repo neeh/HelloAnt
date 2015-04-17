@@ -1,23 +1,39 @@
 package com.polytech.di4.HelloAnt;
 
+/**
+ * Represents an error that occurred during the login of a bot on the database side.
+ * Provides an error code which determines why the exception was raised.
+ * @class
+ * @author JMN
+ */
 public class BotLoginException extends Exception
 {
 	private static final long serialVersionUID = 1L;
-	private int errorNumber;
 	
-	public int getErrorNumber()
+	/**
+	 * The error code associated with this exception.
+	 */
+	private int errorCode;
+	
+	/**
+	 * Creates a new bot login exception.
+	 * @constructor
+	 * @param errorCode the error code associated with this exception.
+	 */
+	public BotLoginException(int errorCode)
 	{
-		return errorNumber;
+		this.errorCode = errorCode;
 	}
-
-	public void setErrorNumber(int errorNumber)
+	
+	/**
+	 * Gets the error code associated with this exception.
+	 * 101: token does not exist.
+	 * 102: the bot with this token is already logged in.
+	 * @see Documentation/protocol/login.html
+	 * @return the error code of the bot login exception.
+	 */
+	public int getErrorCode()
 	{
-		this.errorNumber = errorNumber;
-	}
-
-	public BotLoginException(int errorNumber)
-	{
-		super();
-		this.errorNumber = errorNumber;
+		return errorCode;
 	}
 }

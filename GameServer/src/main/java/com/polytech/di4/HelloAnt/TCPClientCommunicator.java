@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
  * @class
  * @author Nicolas
  */
-public class TCPClientCommunicator implements Runnable {
+public class TCPClientCommunicator implements Runnable
+{
 	private static final Logger LOGGER = LoggerFactory.getLogger(
 			TCPClientCommunicator.class);
 	
@@ -32,14 +33,30 @@ public class TCPClientCommunicator implements Runnable {
 	private Socket socket;
 	
 	/**
+	 * 
+	 */
+	private TCPClientHandler handler;
+	
+	/**
 	 * The client thread is the thread in charge of listening client messages.
 	 * Creating a new thread enables us to listen to multiple client at the same time.
 	 * @see Thread
 	 */
-	private TCPClientCommunicatorCallback eventCallback;
 	private Thread clientThread;
+	
+	/**
+	 * The writer used to print formatted text messages on the client's socket output
+	 * stream. It is created and cached during initialization to avoid creating a new
+	 * PrintWriter every time we have to send a message to the client.
+	 * @see PrintWriter
+	 */
 	private PrintWriter __writer__;
 	private BufferedReader __reader__;
+	
+	/**
+	 * The bot the client is logged in as.
+	 * Is null when the client is not logged in with a bot yet.
+	 */
 	private Bot bot;
 	private DBInterface dbi;
 	private Boolean muted;
@@ -56,19 +73,22 @@ public class TCPClientCommunicator implements Runnable {
 	 * @constructor
 	 * @param socket the socket of the TCP client.
 	 */
-	public TCPClientCommunicator(Socket socket,
-			TCPClientCommunicatorCallback eventCallback) {
+	public TCPClientCommunicator(Socket socket, TCPClientHandler handler)
+	{
 		this.socket = socket;
-		this.eventCallback = eventCallback;
+		this.handler = handler;
 		// Create the client thread.
 		clientThread = new Thread(this);
-		try {
+		try
+		{
 			// At this point, we cache a PrintWriter object and a BufferedReader object
 			// to avoid excessive object creation during the communication.
 			__writer__ = new PrintWriter(socket.getOutputStream());
 			__reader__ = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
-		} catch(IOException e) {
+		}
+		catch(IOException e)
+		{
 			e.printStackTrace();
 		}
 		bot = null;
@@ -77,7 +97,7 @@ public class TCPClientCommunicator implements Runnable {
 		closed = false;
 		// Start the listening of the client.
 		clientThread.start();
-		eventCallback.newClient(this);
+		handler.newClient(this);
 	}
 	
 	/**
@@ -304,22 +324,22 @@ public class TCPClientCommunicator implements Runnable {
 			{
 				Bot bot = dbi.login(content.getString("token"), this, mode, ip);
 				this.bot = bot;
-				eventCallback.botConnected(bot);
+				handler.botConnected(bot);
 				outputMessage = "Connected";
 			}
 			catch (BotLoginException e)
 			{
-				switch (e.getErrorNumber())
+				error = e.getErrorCode();
+				switch (error)
 				{
-				case 1:
-					error = 101;
+				case 101:
 					outputMessage = "Token does not exist";
 					break;
-				case 2:
-					error = 102;
+				case 102:
 					outputMessage = "Bot with this token is already connected";
 					break;
 				default:
+					// Force error ID to 801
 					error = 801;
 					outputMessage = "Unknown error";
 					break;
@@ -351,7 +371,7 @@ public class TCPClientCommunicator implements Runnable {
 			// TODO: if the bot was in game, take it out of the game.
 			// TODO: handle DB interactions with both ID?
 			dbi.disconnect(this.bot.getNick());
-			eventCallback.botDisconnected(this.bot);
+			handler.botDisconnected(this.bot);
 			outputMessage = "Disconnected " + this.bot.getNick();
 			// TODO: remove the bot from the clients array in the game server class.
 			// TODO: top client thread and destroy this instance.

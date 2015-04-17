@@ -8,10 +8,10 @@ import java.util.ArrayList;
  * @class
  * @author Nicolas
  */
-public class GameServer implements TCPClientCommunicatorCallback
+public class GameServer implements TCPClientHandler
 {
 	private TCPClientListener listener;
-	private Thread listenerThread;
+	//private Thread listenerThread;
 	// private GameManager gamemgr;
 	private ArrayList<TCPClientCommunicator> clients;
 	
@@ -34,10 +34,10 @@ public class GameServer implements TCPClientCommunicatorCallback
 		DBInterface.init("dbants", "root", "");
         clients = new ArrayList<TCPClientCommunicator>();
         // Launch the listener that will receive client.
-        listener = new TCPClientListener(this);
-        listener.setPort(port);
+        listener = new TCPClientListener(port, this);
+        /*listener.setPort(port);
         listenerThread = new Thread(listener);
-        listenerThread.start();
+        listenerThread.start();*/
 	}
     
 	/**

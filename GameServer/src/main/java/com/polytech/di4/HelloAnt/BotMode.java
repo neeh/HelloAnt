@@ -4,7 +4,7 @@ package com.polytech.di4.HelloAnt;
  * The gaming mode of a bot.
  * It describes how the bot wants to play his game (how fast? against other bots?)
  * @enum
- * @author Nicolas
+ * @author Nico, JMN
  */
 public enum BotMode
 {
