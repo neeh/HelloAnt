@@ -1,16 +1,16 @@
 <DOCTYPE html>
 <html lang="en">
 <head>
-<title>connect</title>
+<title>login</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-<h1>connect</h1>
-Connect a bot on the game server.
+<h1>login</h1>
+Login with a bot on the game server.
 <h2>Client request</h2>
 <pre>
 {
-	"type": "connect",
+	"type": "login",
 	"content": {
 		"token": "21014616ea7d673e04046a132b6593ad",
 		"mode": "training"
@@ -20,9 +20,9 @@ Connect a bot on the game server.
 <h2>Server response</h2>
 <pre>
 {
-	"type": "connect",
+	"type": "login",
 	"error": 0,
-	"message": "Connected in training mode",
+	"message": "Logged in (training mode)",
 	"content": {
 		"nick": "mybot",
 		"score": 1200
@@ -45,11 +45,11 @@ Connect a bot on the game server.
 </tr>
 <tr>
 <td>102</td>
-<td>Bot with this token is already connected</td>
+<td>The bot with this token is already logged in</td>
 </tr>
 <tr>
 <td>103</td>
-<td>Already connected with bot <i>%NICK%</i></td>
+<td>Already logged in with bot <i>%NICK%</i></td>
 </tr>
 </tbody>
 </table>
