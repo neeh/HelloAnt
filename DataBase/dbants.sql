@@ -21,7 +21,7 @@ CREATE TABLE bots (
 	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	nick VARCHAR(16) CHARSET utf8 NOT NULL,
 	token CHAR(32) CHARSET utf8 NOT NULL,
-	score SMALLINT(5) UNSIGNED NOT NULL DEFAULT '1200',
+	score DOUBLE NOT NULL DEFAULT '1200',
 	status TINYINT(3) NOT NULL DEFAULT 0,
 	subscriptionDate DATETIME NOT NULL,
 	lastLoginDate DATETIME DEFAULT NULL,
@@ -93,28 +93,6 @@ BEGIN
 END$$
 
 -- todo: unit tests
-
-/* Logins a bot on the game server
- * CALL Login('abc', '146.23.189.75', @onick, @oscore, @oerror);
- * SELECT @onick, @oscore, @oerror;
- * @param[in] itoken The token generated for the bot
- * @param[in] iaddr The IP address of the bot
- * @param[out] onick The nickname of the bot (NULL if login failed)
- * @param[out] oscore The game score of the bot (NULL if login failed)
- * @param[out] oerror The error code of the procedure (0: success, 1: no bot for this token)
- */
-CREATE PROCEDURE Login(IN itoken CHAR(32) CHARSET utf8, IN iaddr CHAR(15) CHARSET utf8,
-	OUT onick VARCHAR(16) CHARSET utf8, OUT oscore SMALLINT UNSIGNED, OUT oerror TINYINT)
-	CONTAINS SQL
-BEGIN
-	SET oerror := 1;
-	SELECT nick, score INTO onick, oscore FROM bots WHERE token = itoken LIMIT 1;
-	IF onick IS NOT NULL THEN
-		SET oerror := 0;
-		-- update bot infos
-		UPDATE bots SET status = 1, lastLoginDate = NOW(), lastIP = iaddr WHERE token = itoken LIMIT 1;
-	END IF;
-END$$
 
 /* Updates the base score value and scales all bot scores.
  * CALL UpdateBaseScore(2000, TRUE);

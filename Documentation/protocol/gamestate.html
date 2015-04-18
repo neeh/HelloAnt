@@ -14,13 +14,19 @@ Once you received a "gamestate" message, you have a certain amount of time to se
 {
 	"type": "gamestate",
 	"error": 0,
-	"message": "Current state of the game, please give your actions"
+	"message": "Current state of the game, please return your actions"
 	"content": {
 		"gameobjects": [
 			{
 				"type": "wall",
 				"col": 45,
 				"row:" 24
+			},
+			{
+				"type": "ant",
+				"col": 112,
+				"row": 104,
+				"id": 0 // your ant
 			}
 		]
 	}

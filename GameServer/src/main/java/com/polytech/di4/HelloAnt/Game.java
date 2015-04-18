@@ -15,7 +15,6 @@ import org.json.JSONObject;
  * @class
  * @author Nicolas
  */
-@SuppressWarnings("unused")
 public abstract class Game
 {
 	/**
@@ -194,7 +193,7 @@ public abstract class Game
 					info.setMuted(true);
 					// Here, we don't have to test whether all the bots played for this
 					// round because the game is gonna be updated very soon.
-					bot.getCommunicator().sendGameMuteMessage(genGameMuteMessageContent(
+					bot.getCommunicator().sendGameMute(genGameMuteMessageContent(
 							"Too slow"));
 					// Too late
 					error = 104;
@@ -220,7 +219,7 @@ public abstract class Game
 		// Get the current state of the bot.
 		BotGameInfo info = botInfos.get(bot);
 		// Send the cooked message.
-		bot.getCommunicator().sendGameStateMessage(genGameStateMessageContent(bot));
+		bot.getCommunicator().sendGameState(genGameStateMessageContent(bot));
 		// Memorize the timestamp of the sending.
 		info.setGamestateTimestampMs(System.currentTimeMillis());
 		// Wait for the bot to play during this round.

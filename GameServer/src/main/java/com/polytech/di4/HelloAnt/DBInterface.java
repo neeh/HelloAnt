@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
  * @class
  * @author Nicolas
  */
-public class DBInterface {
+public class DBInterface implements BotDBCallback
+{
 	private static final Logger LOGGER = LoggerFactory.getLogger(DBInterface.class);
 	
 	/**
@@ -41,6 +42,8 @@ public class DBInterface {
 	private PreparedStatement loginSelectStmt;
 	private PreparedStatement loginUpdateStmt;
 	private PreparedStatement removeBotStmt;
+	private PreparedStatement updateBotScoreStmt;
+	private PreparedStatement resetBotStatusStmt;
 	
 	/**
 	 * Creates a new database interface and connect to the database using the provided
@@ -51,31 +54,43 @@ public class DBInterface {
 	 * @param username the username used to connected to the database.
 	 * @param password the password associated with this username.
 	 */
-	private DBInterface(String dbname, String username, String password) {
-		// First, connect to the database.
-		try {
+	private DBInterface(String dbname, String username, String password)
+	{
+		try
+		{   // First, connect to the database.
 			conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/" + dbname +
 					"?user=" + username + "&password=" + password);
-		} catch (SQLException e) {
+		}
+		catch (SQLException e)
+		{
 			// Warning, the database connection is not supposed to fail here.
 			// If this happens, relaunch the whole archive and pray.
 			logSQLException("Cannot connect to MySQL database", e);
+			return;
 		}
-		// Then, prepare used statements.
-		try {
-			isOnlineStmt = conn.prepareStatement("SELECT COUNT(*) FROM bots WHERE token ="
-					+ " ? AND status = 1;");
-			disconnectStmt = conn.prepareStatement("UPDATE bots SET status = 0 WHERE nick"
-					+ " = ?;");
+		try
+		{   // Then, prepare SQL statements.
+			isOnlineStmt = conn.prepareStatement(
+					"SELECT COUNT(*) FROM bots WHERE token = ? AND status = 1;");
+			disconnectStmt = conn.prepareStatement(
+					"UPDATE bots SET status = 0 WHERE nick = ?;");
 			createBotStmt = conn.prepareStatement("SELECT NewBot(?);");
-			loginSelectStmt = conn.prepareStatement("SELECT status, nick, score FROM bots"
-					+ " WHERE token = ? LIMIT 1;");
+			loginSelectStmt = conn.prepareStatement(
+					"SELECT status, nick, score FROM bots WHERE token = ? LIMIT 1;");
 			loginUpdateStmt = conn.prepareStatement("UPDATE bots SET status = 1, "
 					+ "lastLoginDate = NOW(), lastIP = ? WHERE token = ? LIMIT 1;");
 			removeBotStmt = conn.prepareStatement("DELETE FROM bots WHERE token = ?;");
-		} catch (SQLException e) {
-			logSQLException("Unable to prepare SQL statements", e);
+			updateBotScoreStmt = conn.prepareStatement(
+					"UPDATE bots SET score = ? WHERE nick = ?;");
+			resetBotStatusStmt = conn.prepareStatement("UPDATE bots SET status = 0;");
 		}
+		catch (SQLException e)
+		{
+			logSQLException("Unable to prepare SQL statements", e);
+			return;
+		}
+		// Clean bot status
+		resetBotStatus();
 	}
 	
 	/**
@@ -165,7 +180,8 @@ public class DBInterface {
 			{
 				if (result.getBoolean(1) == false)
 				{
-					bot = new Bot(com, result.getString(2), mode, result.getDouble(3));
+					bot = new Bot(com, result.getString(2), mode, result.getDouble(3),
+							this);
 					loginUpdateStmt.setString(1, ip);
 					loginUpdateStmt.setString(2, token);
 					loginUpdateStmt.executeUpdate();
@@ -274,5 +290,45 @@ public class DBInterface {
 			logSQLException("Cannot execute the SQL statement for removing a bot", e);
 		}
 		return result > 0;
+	}
+	
+	/**
+	 * Updates the score of a bot in the database.
+	 * @param bot the bot whose score needs an update.
+	 */
+	@Override
+	public void updateBotScore(Bot bot)
+	{
+		try
+		{
+			updateBotScoreStmt.setDouble(1, bot.getScore());
+			updateBotScoreStmt.setString(2, bot.getNick());
+			updateBotScoreStmt.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			logSQLException("Cannot execute the SQL statement for updating the score of a"
+					+ " bot", e);
+		}
+	}
+	
+	/**
+	 * Resets the status of every bot status to "logged out". If the server previously
+	 * crashed, it is strongly possible that some bots are still referred as "logged in"
+	 * in the database.
+	 * Should be called once at the start-up of the database connection to clean bot
+	 * status.
+	 */
+	private void resetBotStatus()
+	{
+		try
+		{
+			resetBotStatusStmt.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			logSQLException( "Cannot execute the SQL statement for resetting bot status",
+					e);
+		}
 	}
 }

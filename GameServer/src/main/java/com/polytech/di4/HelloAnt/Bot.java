@@ -45,26 +45,36 @@ public class Bot {
 	private double score;
 	
 	/**
+	 * The database handler used to manipulate bot data on the database.
+	 */
+	private BotDBCallback dbHandler;
+	
+	/**
 	 * Creates a new bot.
 	 * @constructor
 	 * @param com the communicator used to communicate with the bot.
 	 * @param nick the nickname of the bot.
 	 * @param mode the gaming mode chosen by the bot.
 	 * @param score the current game score of the bot.
+	 * @param dbHandler the interface used to call back the database.
 	 */
-	public Bot(TCPClientCommunicator com, String nick, BotMode mode, double score) {
+	public Bot(TCPClientCommunicator com, String nick, BotMode mode, double score,
+			BotDBCallback dbHandler)
+	{
 		this.com = com;
 		this.nick = nick;
 		this.mode = mode;
 		this.game = null;
 		this.score = score;
+		this.dbHandler = dbHandler;
 	}
 	
 	/**
 	 * Gets the communicator used to communicate with the bot.
 	 * @return the client communicator.
 	 */
-	public TCPClientCommunicator getCommunicator() {
+	public TCPClientCommunicator getCommunicator()
+	{
 		return com;
 	}
 	
@@ -72,7 +82,8 @@ public class Bot {
 	 * Gets the nickname of a bot.
 	 * @return the nickname of the bot.
 	 */
-	public String getNick() {
+	public String getNick()
+	{
 		return nick;
 	}
 	
@@ -81,7 +92,8 @@ public class Bot {
 	 * @return the gaming mode of the bot.
 	 * @see BotMode
 	 */
-	public BotMode getMode() {
+	public BotMode getMode()
+	{
 		return mode;
 	}
 	
@@ -90,7 +102,8 @@ public class Bot {
 	 * @param mode the new gaming mode of the bot.
 	 * @see BotMode
 	 */
-	public void setMode(BotMode mode) {
+	public void setMode(BotMode mode)
+	{
 		this.mode = mode;
 	}
 	
@@ -99,15 +112,17 @@ public class Bot {
 	 * A bot which is not in game is waiting for a game.
 	 * @return true if the bot is in a game
 	 */
-	public Boolean isInGame() {
-		return game != null;
+	public Boolean isInGame()
+	{
+		return (game != null);
 	}
 	
 	/**
 	 * Gets the game in which the bot is currently playing.
 	 * @return the game in which the bot is playing OR null if the bot isn't in a game.
 	 */
-	public Game getGame() {
+	public Game getGame()
+	{
 		return game;
 	}
 	
@@ -115,10 +130,14 @@ public class Bot {
 	 * Sets the game of a bot.
 	 * @param game the game the bot is in.
 	 */
-	public void setGame(Game game) {
-		if (this.game == null) {
+	public void setGame(Game game)
+	{
+		if (this.game == null)
+		{
 			this.game = game;
-		} else {
+		}
+		else
+		{
 			LOGGER.warn("Attempt to change the game of a bot which is already in a game");
 		}
 	}
@@ -127,15 +146,19 @@ public class Bot {
 	 * Gets the general score of a bot.
 	 * @return the score of the bot.
 	 */
-	public double getScore() {
+	public double getScore()
+	{
 		return score;
 	}
 	
 	/**
 	 * Sets the general score of a bot.
+	 * The score is also updated on the database.
 	 * @param score the new score of the bot.
 	 */
-	public void setScore(double score) {
+	public void setScore(double score)
+	{
 		this.score = score;
+		dbHandler.updateBotScore(this);
 	}
 }

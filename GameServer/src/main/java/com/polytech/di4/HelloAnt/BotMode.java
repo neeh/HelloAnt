@@ -15,11 +15,22 @@ public enum BotMode
 	// This one is mainly used for debug purposes.
 	TRAINING;
 	
+	/**
+	 * Gets a bot mode from a string.
+	 * @param value the character string of the bot mode.
+	 * @return the bot mode associated with this value string.
+	 */
 	public static BotMode fromString(String value)
 	{
 		value = value.toLowerCase();
+		/*
 		if("training".startsWith(value))
 			return TRAINING;
+		return REGULAR;
+		! tricky because "mode":""        -> training
+		                 "mode":"zzefiaz" -> regular ...
+		*/
+		if (value == "training") return TRAINING;
 		return REGULAR;
 	}
 }

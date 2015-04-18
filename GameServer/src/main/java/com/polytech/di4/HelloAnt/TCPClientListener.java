@@ -34,6 +34,7 @@ public class TCPClientListener implements Runnable
 	/**
 	 * The thread in charge of running the client listener mechanics.
 	 * The client listener is autonomous because it runs its own thread.
+	 * @see Thread
 	 */
 	private Thread listenerThread;
 	
@@ -81,15 +82,15 @@ public class TCPClientListener implements Runnable
 		while (true)
 		{
 			try
-			{
-				// Accept incoming TCP connection. (blocking)
+			{	// Accept incoming TCP connection. (blocking)
 				Socket socket = serverSocket.accept();
 				// A connection is accepted, create a communicator for it.
 				new TCPClientCommunicator(socket, handler);
 			}
 			catch (IOException e)
 			{
-				e.printStackTrace();
+				LOGGER.error("Cannot accept a connection on the game server\n"
+						+ e.getMessage());
 			}
 		}
 	}
