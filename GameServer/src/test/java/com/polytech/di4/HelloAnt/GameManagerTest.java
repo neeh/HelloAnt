@@ -31,9 +31,9 @@ public class GameManagerTest extends TestCase
 	{
 		GameManager gm = new GameManager();
 		Vector<Bot> vectBot = new Vector<>();
-		vectBot.add(new Bot(null, null, null, 0));
-		vectBot.add(new Bot(null, null, null, 0));
-		vectBot.add(new Bot(null, null, null, 0));
+		vectBot.add(new Bot(null, null, null, 0, null));
+		vectBot.add(new Bot(null, null, null, 0, null));
+		vectBot.add(new Bot(null, null, null, 0, null));
 		int posToTest[] = new int[3];
 		posToTest[0] = 0;
 		posToTest[1] = 1;
@@ -51,7 +51,7 @@ public class GameManagerTest extends TestCase
 			}
 		}
 
-		vectBot.add(new Bot(null, null, null, 0));
+		vectBot.add(new Bot(null, null, null, 0, null));
 		try{
 			gm.incrementPosToTest(posToTest, vectBot);
 			assertEquals(myClone.length, posToTest.length);
@@ -71,19 +71,12 @@ public class GameManagerTest extends TestCase
 	public void testFindCompatibleLists()
 	{
 		GameManager gm = new GameManager();
-		Bot a = new Bot(null, "A", null, 0);
-		Bot b = new Bot(null, "B", null, 0);
-		Bot c = new Bot(null, "C", null, 0);
-		Bot d = new Bot(null, "D", null, 0);
-		Bot e = new Bot(null, "E", null, 0);
-		Bot f = new Bot(null, "F", null, 0);
-
-		//		 System.out.println("A : " + a.getNick());
-		//		 System.out.println("B : " + b.getNick());
-		//		 System.out.println("C : " + c.getNick());
-		//		 System.out.println("D : " + d.getNick());
-		//		 System.out.println("E : " + e.getNick());
-		//		 System.out.println("F : " + f.getNick());
+		Bot a = new Bot(null, "A", null, 0, null);
+		Bot b = new Bot(null, "B", null, 0, null);
+		Bot c = new Bot(null, "C", null, 0, null);
+		Bot d = new Bot(null, "D", null, 0, null);
+		Bot e = new Bot(null, "E", null, 0, null);
+		Bot f = new Bot(null, "F", null, 0, null);
 
 		HashMap<Bot, Vector<Bot>> hm = new HashMap<>();
 		Vector<Bot> vA = new Vector<>();
@@ -92,7 +85,6 @@ public class GameManagerTest extends TestCase
 		Vector<Bot> vD = new Vector<>();
 		Vector<Bot> vE = new Vector<>();
 		Vector<Bot> vF = new Vector<>();
-		vA.add(a);	
 		vA.add(b);
 		vA.add(c);
 		vA.add(d);	
@@ -100,13 +92,11 @@ public class GameManagerTest extends TestCase
 		vA.add(f);
 
 		vB.add(a);	
-		vB.add(b);	
 		vB.add(c);	
 		vB.add(d);
 		
 		vC.add(a);	
 		vC.add(b);	
-		vC.add(c);	
 		vC.add(d);
 		vC.add(e);
 		vC.add(f);
@@ -114,13 +104,10 @@ public class GameManagerTest extends TestCase
 		vD.add(a);	
 		vD.add(b);	
 		vD.add(c);	
-		vD.add(d);
 		
-		vE.add(e);
 		
 		vF.add(a);
 		vF.add(e);
-		vF.add(f);
 
 		hm.put(a, vA);
 		hm.put(b, vB);
@@ -130,17 +117,20 @@ public class GameManagerTest extends TestCase
 		hm.put(f, vF);
 
 		ArrayList<ArrayList<Bot>> list = gm.findCompatibleLists(hm);
-		System.out.println("\n\n MATCHUPS POSSIBLES \n");
-		for(int i=0; i<list.size(); i++)
-		{
-			StringBuffer sb = new StringBuffer();
-			for(int j=0; j<list.get(i).size(); j++)
-			{
-				sb.append(list.get(i).get(j).getNick()+',');
-			}
-			System.out.println(sb);
-		}
-		System.out.println(list);
-		System.out.println((list.isEmpty()) ? "vide" : "pas vide");
+//		System.out.println("\n\nMATCHUPS POSSIBLES :\n");
+		assertEquals(1, list.size());
+		assert(list.get(0).contains(a));
+		assert(list.get(0).contains(b));
+		assert(list.get(0).contains(c));
+		assert(list.get(0).contains(d));
+//		for(int i=0; i<list.size(); i++)
+//		{
+//			StringBuffer sb = new StringBuffer();
+//			for(int j=0; j<list.get(i).size(); j++)
+//			{
+//				sb.append(list.get(i).get(j).getNick()+',');
+//			}
+//			System.out.println(sb);
+//		}
 	}
 }
