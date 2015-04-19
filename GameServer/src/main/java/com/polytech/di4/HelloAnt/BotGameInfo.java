@@ -42,7 +42,8 @@ public class BotGameInfo
 	 * @constructor
 	 * @param gameScore the initial game score of the bot.
 	 */
-	public BotGameInfo(int gameScore) {
+	public BotGameInfo(int gameScore)
+	{
 		played = true;
 		gamestateTimestampMs = 0;
 		muted = false;
@@ -53,7 +54,8 @@ public class BotGameInfo
 	 * Gets whether the bot has played for the current round.
 	 * @return true if the bot has already played for this round, false otherwise.
 	 */
-	public Boolean hasPlayed() {
+	public Boolean hasPlayed()
+	{
 		return played;
 	}
 	
@@ -61,7 +63,8 @@ public class BotGameInfo
 	 * Gets the timestamp of the last sending of the game state to this bot.
 	 * @return the last timestamp of the "gamestate" message sent by the server.
 	 */
-	public long getGamestateTimestampMs() {
+	public long getGamestateTimestampMs()
+	{
 		return gamestateTimestampMs;
 	}
 	
@@ -69,7 +72,8 @@ public class BotGameInfo
 	 * Gets whether the bot is muted for the game.
 	 * @return true if the bot is muted, false otherwise.
 	 */
-	public Boolean isMuted() {
+	public Boolean isMuted()
+	{
 		return muted;
 	}
 	
@@ -77,7 +81,8 @@ public class BotGameInfo
 	 * Gets the current game score of the bot.
 	 * @return the current game score of the bot.
 	 */
-	public int getGameScore() {
+	public int getGameScore()
+	{
 		return gameScore;
 	}
 	
@@ -85,7 +90,8 @@ public class BotGameInfo
 	 * Sets whether the bot has played for the current round.
 	 * @param played true if the bot has played for this round, false otherwise.
 	 */
-	public void setPlayed(Boolean played) {
+	public void setPlayed(Boolean played)
+	{
 		this.played = played;
 	}
 	
@@ -94,7 +100,8 @@ public class BotGameInfo
 	 * @param gamestateTimestampMS the last timestamp of the "gamestate" message sent by
 	 *        the server.
 	 */
-	public void setGamestateTimestampMs(long gamestateTimestampMs) {
+	public void setGamestateTimestampMs(long gamestateTimestampMs)
+	{
 		this.gamestateTimestampMs = gamestateTimestampMs;
 	}
 	
@@ -102,7 +109,8 @@ public class BotGameInfo
 	 * Mutes or unmutes the bot for the game.
 	 * @param muted true to mute the bot, false otherwise.
 	 */
-	public void setMuted(Boolean muted) {
+	public void setMuted(Boolean muted)
+	{
 		this.muted = muted;
 	}
 	
@@ -110,7 +118,8 @@ public class BotGameInfo
 	 * Sets the game score of the bot.
 	 * @param gameScore the new game score of the bot.
 	 */
-	public void setGameScore(int gameScore) {
+	public void setGameScore(int gameScore)
+	{
 		this.gameScore = gameScore;
 	}
 }

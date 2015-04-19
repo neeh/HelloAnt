@@ -1,1 +1,0 @@
-A L'INITIALISATION METTRE TOUS LES STATUS A 0 DANS LA BASE DE DONNES (au cas où le serveur a craché précedemment)

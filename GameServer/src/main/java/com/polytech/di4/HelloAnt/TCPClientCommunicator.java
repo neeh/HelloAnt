@@ -230,6 +230,7 @@ public class TCPClientCommunicator implements Runnable
 					break;
 				case 0:
 					outputMessage = "OK";
+					break;
 				default:
 					// Force error ID to 801
 					error = 801;
