@@ -186,8 +186,41 @@ public class GameManager implements Runnable
 		return false;
 	}
 	
+	/**
+	 * Function used to add a Bot as a key the HashMap
+	 * Sets an empty Vector to this bot.
+	 * @param bot the bot to add
+	 */
+	public void addBot(Bot bot)
+	{
+		if (!botMap.containsKey(bot))
+		{
+			botMap.put(bot, new Vector<Bot>());
+		}
+	}
 	
-	
+	/**
+	 * Function to remove a bot from the botMap
+	 * and each occurence in the vector of others bots
+	 * @param bot the bot to remove
+	 * @return whether true of false depending if the bot was in the map or not
+	 */
+	public boolean removeBot(Bot bot)
+	{
+		if (botMap.containsKey(bot))
+		{
+			bot.resetPriority();
+			botMap.remove(bot);
+			for (Bot key : botMap.keySet())
+			{
+				if (botMap.get(key).contains(bot)){
+					botMap.get(key).remove(bot);
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 	
 
 }
