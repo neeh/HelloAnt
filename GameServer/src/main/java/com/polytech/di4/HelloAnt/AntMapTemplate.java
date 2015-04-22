@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -296,16 +298,21 @@ public class AntMapTemplate
 	}
 	
 	/**
-	 * Exports the map as a JSON array containing the rows of the map as strings.
-	 * @return the JSONArray representing the map.
+	 * Exports the map as a JSON object containing the map data.
+	 * This method is used to generate the content of the "map" attribute of the replay
+	 * format of an ant game.
+	 * @see Documentation/protocol/replayformat.html
+	 * @return the JSONObject representing the map.
 	 */
-	public JSONArray toJSON()
+	public JSONObject toJSON()
 	{
-		// The array to return, it's an array of string.
+		// The object to return.
+		JSONObject object = new JSONObject();
+		// The map data, it's an array of string.
 		JSONArray array = new JSONArray();
 		// Call the _toStringArray that does all the map parsing.
 		ArrayList<StringBuilder> stringBuilders = _toStringArray();
-		// Insert strings into the array.
+		// Insert the string representations of the map rows into the array.
 		Iterator<StringBuilder> stringBuilderIt = stringBuilders.iterator();
 		StringBuilder stringBuilder;
 		while (stringBuilderIt.hasNext())
@@ -313,7 +320,19 @@ public class AntMapTemplate
 			stringBuilder = stringBuilderIt.next();
 			array.put(stringBuilder.toString());
 		}
-		return array;
+		try
+		{	// Add the parameters of the "map".
+			object.put("cols", cols);
+			object.put("rows", rows);
+			object.put("data", array);
+		}
+		catch (JSONException e)
+		{
+			LOGGER.error("Cannot create the json representation of a map template\n"
+					+ "a void JSONObject was returned instead"
+					+ e.getMessage());
+		}
+		return object;
 	}
 	
 	/**
