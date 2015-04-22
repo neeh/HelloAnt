@@ -148,6 +148,7 @@ public class Interface
 	}
 	/**
 	 * Checks if the bot name is correct. It must uses alphanumeric characters. 3 minimum, 16 max.
+	 * If the botName is not correct, a dialog window pops-up to tell the user how to make a proper botName.
 	 * @param botName
 	 * @return true if the bot name is correct.
 	 * @see nickname specifications
