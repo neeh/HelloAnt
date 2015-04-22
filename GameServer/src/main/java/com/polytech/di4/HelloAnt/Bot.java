@@ -44,6 +44,13 @@ public class Bot {
 	 */
 	private double score;
 	
+	
+	/**
+	 * The priority of the bot
+	 * Helps setting the matchmaking
+	 */
+	private int priority;
+	
 	/**
 	 * The database handler used to manipulate bot data on the database.
 	 */
@@ -67,6 +74,40 @@ public class Bot {
 		this.game = null;
 		this.score = score;
 		this.dbHandler = dbHandler;
+	}
+
+	/**
+	 * Increment the priority of a bot.
+	 */
+	public void incPriority()
+	{
+		++priority;
+	}
+	
+	/**
+	 * Decrement the priority of a bot.
+	 */
+	public void decPriority()
+	{
+		if (priority > 0)
+			--priority;
+	}
+	
+	/** 
+	 * Reset to 0 the priority of a bot.
+	 */
+	public void resetPriority()
+	{
+		priority=0;
+	}
+	
+	/**
+	 * Gets the priority of a bot.
+	 * @return the priority of the bot.
+	 */
+	public int getPriority()
+	{
+		return priority;
 	}
 	
 	/**
