@@ -1,21 +1,13 @@
 package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
+import java.util.TimerTask;
 import java.util.Vector;
 
-import javax.management.loading.MLet;
 
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimap;
-
-
-public class GameManager implements Runnable
+public class GameManager extends TimerTask
 {
 	public static int NB_PLAYERS = 4;
 	private HashMap<Bot, Vector<Bot>> botMap;
@@ -23,12 +15,23 @@ public class GameManager implements Runnable
 	public GameManager(){
 		botMap = new HashMap<>();
 	}
+	
+	/**
+	 * Pour lancer la fonction à intervalle fixe :
+	 * import java.util.timer;
+     * Timer timer = new Timer();
+     * long whenToStart = 0;
+     * long interval = 3000;
+     * timer.scheduleAtFixedRate(new GameManager, whenToStart, interval);
+	 */
 
 	@Override
 	public void run()
 	{
-		// TODO Auto-generated method stub
-
+		fillChallengers();
+		ArrayList<ArrayList<Bot>> potentialMatchs = findCompatibleLists(NB_PLAYERS);
+		ArrayList<ArrayList<Bot>> fights = chooseFights(potentialMatchs);
+		setBotsInFight(fights);
 	}
 
 	/**
@@ -123,7 +126,7 @@ public class GameManager implements Runnable
 		{
 			for (Bot bot : list)
 			{
-				//				bot.setGame(game);
+				//	bot.setGame(game);
 				removeBot(bot);
 			}
 		}
@@ -222,7 +225,6 @@ public class GameManager implements Runnable
 			{
 				if(!botListToSearchIn.equals(botList))
 				{
-					System.out.println("HI");
 					for (Bot bot : botList)
 					{
 						if(botListToSearchIn.contains(bot))

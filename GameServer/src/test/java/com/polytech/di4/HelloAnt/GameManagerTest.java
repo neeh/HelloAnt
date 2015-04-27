@@ -71,66 +71,54 @@ public class GameManagerTest extends TestCase
 	public void testFindCompatibleLists()
 	{
 		GameManager gm = new GameManager();
-		Bot a = new Bot(null, "A", null, 0, null);
+		Bot a = new Bot(null, "A", null, 30, null);
 		Bot b = new Bot(null, "B", null, 0, null);
-		Bot c = new Bot(null, "C", null, 0, null);
-		Bot d = new Bot(null, "D", null, 0, null);
-		Bot e = new Bot(null, "E", null, 0, null);
+		Bot c = new Bot(null, "C", null, 15, null);
+		Bot d = new Bot(null, "D", null, 10, null);
+		Bot e = new Bot(null, "E", null, 1, null);
 		Bot f = new Bot(null, "F", null, 0, null);
-
-		HashMap<Bot, Vector<Bot>> hm = new HashMap<>();
-		Vector<Bot> vA = new Vector<>();
-		Vector<Bot> vB = new Vector<>();
-		Vector<Bot> vC = new Vector<>();
-		Vector<Bot> vD = new Vector<>();
-		Vector<Bot> vE = new Vector<>();
-		Vector<Bot> vF = new Vector<>();
-		vA.add(b);
-		vA.add(c);
-		vA.add(d);	
-		vA.add(e);
-		vA.add(f);
-
-		vB.add(a);	
-		vB.add(c);	
-		vB.add(d);
 		
-		vC.add(a);	
-		vC.add(b);	
-		vC.add(d);
-		vC.add(e);
-		vC.add(f);
+		gm.addBot(a);
+		gm.addBot(b);
+		gm.addBot(c);
+		gm.addBot(d);
+		gm.addBot(e);
+		gm.addBot(f);
 		
-		vD.add(a);	
-		vD.add(b);	
-		vD.add(c);	
+		gm.fillChallengers();
 		
+		System.out.print("Carte au début :\n" + gm);
 		
-		vF.add(a);
-		vF.add(e);
+		ArrayList<ArrayList<Bot>> list = gm.findCompatibleLists(2);
+		
+		System.out.println("\nMATCHUPS POSSIBLES :");
 
-		hm.put(a, vA);
-		hm.put(b, vB);
-		hm.put(c, vC);
-		hm.put(d, vD);
-		hm.put(e, vE);
-		hm.put(f, vF);
+		for(int i=0; i<list.size(); i++)
+		{
+			StringBuffer sb = new StringBuffer();
+			for(int j=0; j<list.get(i).size(); j++)
+			{
+				sb.append(list.get(i).get(j).getNick()+',');
+			}
+			System.out.println(sb);
+		}
+		
+		ArrayList<ArrayList<Bot>> fights = gm.chooseFights(list);
+		
+		System.out.println("\nMATCHUPS CHOISIS :");
 
-		ArrayList<ArrayList<Bot>> list = gm.findCompatibleLists(hm);
-//		System.out.println("\n\nMATCHUPS POSSIBLES :\n");
-		assertEquals(1, list.size());
-		assert(list.get(0).contains(a));
-		assert(list.get(0).contains(b));
-		assert(list.get(0).contains(c));
-		assert(list.get(0).contains(d));
-//		for(int i=0; i<list.size(); i++)
-//		{
-//			StringBuffer sb = new StringBuffer();
-//			for(int j=0; j<list.get(i).size(); j++)
-//			{
-//				sb.append(list.get(i).get(j).getNick()+',');
-//			}
-//			System.out.println(sb);
-//		}
+		for(int i=0; i<fights.size(); i++)
+		{
+			StringBuffer sb = new StringBuffer();
+			for(int j=0; j<fights.get(i).size(); j++)
+			{
+				sb.append(fights.get(i).get(j).getNick()+',');
+			}
+			System.out.println(sb);
+		}
+		
+		gm.setBotsInFight(fights);
+		
+		System.out.print("\nCarte à la fin \n" + gm);
 	}
 }
