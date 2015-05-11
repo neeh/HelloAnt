@@ -1,5 +1,6 @@
 package com.polytech.di4.HelloAnt;
 
+import java.util.ArrayList;
 import java.util.List;
 /**
  * This class describes the maps of the AntGame. It contains all the objects needed to
@@ -22,6 +23,16 @@ public class AntGameMap
 	{
 		this.cols = columns;
 		this.rows = rows;
+		this.cells = new ArrayList<List<List<AntGameObject>>>();
+		for (int i = 0; i < columns;++i)
+		{
+			cells.add(new ArrayList<List<AntGameObject>>());
+			for (int  j = 0; j < columns;++j)
+			{
+				cells.get(i).add(new ArrayList<AntGameObject>());
+			}
+		}
+		
 	}
 	/**
 	 * This function creates a playable map of the AntGame with walls, AntHills and 
@@ -42,14 +53,37 @@ public class AntGameMap
 		return cells.get(row).get(col);
 	}
 	/**
-	 * Add a new game object on the selected cell
+	 * Add a new game object on the cell defined by the object's attributes (col and row)
 	 * @param obj
 	 * @param col
 	 * @param row
 	 */
-	public void addGameObject (AntGameObject obj, int col, int row)
+	public void addGameObject (AntGameObject obj)
 	{
-		cells.get(row).get(col).add(obj);
+		if (obj.getRow() < rows && obj.getColumn() < cols)
+			cells.get(obj.getRow()).get(obj.getColumn()).add(obj);
+	}
+	/**
+	 * This function finds all the objects that are presents in the mask.
+	 * The center  of the mask is given with the row and the column.
+	 * @param row
+	 * @param col
+	 * @param theMask 
+	 * @return The list of all the objects in the mask.
+	 */
+	public List<AntGameObject> applyMask(int row, int col,AntGameMapMask theMask)
+	{
+		List<AntGameObject> list = new ArrayList<AntGameObject>();
+		int vRow, vCol;
+		System.out.println("pif");
+		for (int i = 0; i < theMask.getCells().size();++i)
+		{
+			vRow = ((theMask.getCells().get(i).getRow() + row) % rows + rows) % rows;
+			vCol = ((theMask.getCells().get(i).getCol() + col) % cols + cols) % cols;
+			list.addAll(cells.get(vRow).get(vCol));
+		}
+		System.out.println("paf");
+		return list;
 	}
 	/**
 	 * @return the number of rows of the map

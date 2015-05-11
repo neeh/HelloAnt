@@ -1,5 +1,6 @@
 package com.polytech.di4.HelloAnt;
 
+import java.util.ArrayList;
 import java.util.List;
 /**
  * An AntGameMask represents a list of cells that defines some actions such as 
@@ -9,19 +10,33 @@ import java.util.List;
  */
 public class AntGameMapMask
 {
-	private List<cell> cells;
 	/**
-	 * Creates a new mask with a list of cells
-	 * @param someCells
+	 * The list of accessible cells within the mask.
 	 */
-	public AntGameMapMask(List<cell> someCells)
+	private List<Cell> cells;
+	/**
+	 * Creates a new mask with the cells in range 
+	 * @param radius
+	 */
+	public AntGameMapMask(float radius)
 	{
-		cells = someCells;
+		int rad = (int)Math.floor(radius);
+		cells=new ArrayList<Cell>();
+		for (int i=-rad;i<=rad;++i)
+		{
+			for (int j=-rad;j<=rad;++j)
+			{
+				if(Math.sqrt(i*i+j*j)<=rad)
+				{
+					cells.add(new Cell(i,j));
+				}
+			}
+		}
 	}
 	/**
 	 * @return The cell list used by a mask
 	 */
-	public cells getCells()
+	public List<Cell> getCells()
 	{
 		return cells;
 	}
