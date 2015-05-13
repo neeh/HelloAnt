@@ -2,6 +2,7 @@ package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -9,11 +10,27 @@ import java.util.Vector;
 
 public class GameManager extends TimerTask
 {
-	public static int NB_PLAYERS = 4;
+	public static int NB_PLAYERS_MIN;
+	public static int NB_PLAYERS_MAX;
 	private HashMap<Bot, Vector<Bot>> botMap;
+	
+	public GameManager(int nbPlayersMin, int nbPlayersMax)
+	{
+		botMap = new HashMap<>();
+		
+		if (nbPlayersMin > nbPlayersMax)
+			throw new IllegalArgumentException("nbPlayersMax shall be at least equal to nbPlayersMin");
+
+		NB_PLAYERS_MIN = nbPlayersMin;
+		NB_PLAYERS_MAX = nbPlayersMax;
+	}
+	
+	public GameManager(int nbPlayers){
+		this(nbPlayers, nbPlayers);
+	}
 
 	public GameManager(){
-		botMap = new HashMap<>();
+		this(4);
 	}
 	
 	/**
@@ -28,8 +45,12 @@ public class GameManager extends TimerTask
 	@Override
 	public void run()
 	{
+		int nbPlayers;
+		Random r = new Random();
+		nbPlayers = r.nextInt(1+ NB_PLAYERS_MAX - NB_PLAYERS_MIN) + NB_PLAYERS_MIN;
+		
 		fillChallengers();
-		ArrayList<ArrayList<Bot>> potentialMatchs = findCompatibleLists(NB_PLAYERS);
+		ArrayList<ArrayList<Bot>> potentialMatchs = findCompatibleLists(nbPlayers);
 		ArrayList<ArrayList<Bot>> fights = chooseFights(potentialMatchs);
 		setBotsInFight(fights);
 	}
