@@ -13,6 +13,15 @@ public class AntGameManager extends GameManager
 		this.maps = maps;
 	}
 	
+	/**
+	 * Pour lancer la fonction à intervalle fixe :
+	 * import java.util.timer;
+     * Timer timer = new Timer();
+     * long whenToStart = 0;
+     * long interval = 3000;
+     * timer.scheduleAtFixedRate(new GameManager, whenToStart, interval);
+	 */
+	@Override
 	public void run()
 	{
 		int nbPlayers;
@@ -38,7 +47,6 @@ public class AntGameManager extends GameManager
 	 * @param toFightList the list of bots who will fight
 	 * @param map the Map on which the bots will fight
 	 */
-	@Override
 	public void setBotsInFight(ArrayList<ArrayList<Bot>> toFightList, AntMapTemplate map)
 	{
 		for (ArrayList<Bot> list : toFightList)
