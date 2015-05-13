@@ -69,7 +69,7 @@ public class GameManager extends TimerTask
 	public ArrayList<ArrayList<Bot>> chooseFights(ArrayList<ArrayList<Bot>> matchsList)
 	{
 		ArrayList<ArrayList<Bot>> toRet = new ArrayList<>();
-		while(!areEachListUnique(matchsList)){
+		while(!isEachListUnique(matchsList)){
 			int[] weight = new int[matchsList.size()];
 			/*
 			 * Setting a weight for each possible match
@@ -217,7 +217,12 @@ public class GameManager extends TimerTask
 		return false;
 	}
 
-	private boolean areEachListUnique(ArrayList<ArrayList<Bot>> botMatrix)
+	/**
+	 * Function to verify if each list are unique in an arrayList
+	 * @param botMatrix the list of list to check
+	 * @return a boolean whether each list is unique or not
+	 */
+	private boolean isEachListUnique(ArrayList<ArrayList<Bot>> botMatrix)
 	{
 		for (ArrayList<Bot> botList : botMatrix)
 		{
