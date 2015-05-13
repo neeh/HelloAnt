@@ -17,11 +17,13 @@ public class  Ant extends AntGameObject
 	 * @param row
 	 * @param bot
 	 */
-	public Ant(int col, int row, Bot bot)
+	public Ant(int col, int row, Bot theBot)
 	{
 		super(col, row);
-		this.bot = bot;
-		this.food = false;
+		bot = theBot;
+		food = false;
+		movable = true;
+		colideable = false;
 	}
 	/**
 	 * Creates a new ant  on the selected cell associated without bot.

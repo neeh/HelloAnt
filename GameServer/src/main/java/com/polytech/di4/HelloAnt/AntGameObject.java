@@ -12,6 +12,7 @@ public class AntGameObject
 	protected int col;
 	protected static boolean movable;
 	protected static boolean colideable;
+	private AntGameMapCallback moveHandler;
 	/**
 	 * Constructor which instantiate  the GameObject with it's situation on the map
 	 * @param column
@@ -75,22 +76,7 @@ public class AntGameObject
 	{
 		if (movable)
 		{
-			if (direction==Move.NORTH)
-			{
-				row++;
-			}
-			if(direction==Move.EAST)
-			{
-				col++;
-			}
-			if(direction==Move.WEST)
-			{
-				col--;
-			}
-			if(direction==Move.SOUTH)
-			{
-				row--;
-			}
+			moveHandler.moveGameObject(this, direction);
 		}
 		
 	}

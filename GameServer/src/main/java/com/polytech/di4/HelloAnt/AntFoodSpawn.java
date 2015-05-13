@@ -19,6 +19,9 @@ public class AntFoodSpawn extends AntGameObject
 		super(column, row);
 		food = false;
 		lastHarvestRound = 0;
+		movable = false;
+		colideable = true;
+		
 	}
 	/**
 	 * @return True if food is ready to be taken by an ant, false if not.

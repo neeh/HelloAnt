@@ -21,6 +21,8 @@ public class AntHill extends AntGameObject
 		super(col,row);
 		this.bot = bot;
 		active = true;
+		movable = false;
+		colideable = true;
 		
 		
 	}
@@ -39,13 +41,7 @@ public class AntHill extends AntGameObject
 	{
 		return this.active;
 	}
-	/**
-	 * This function creates a new ant on the AntHill
-	 */
-	public void popAnt()
-	{
-		Ant child = new Ant(this.col,this.row,this.bot);
-	}
+
 	/**
 	 * 
 	 * @return Returns the last spawned object

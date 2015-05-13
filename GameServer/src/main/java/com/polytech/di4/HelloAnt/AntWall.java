@@ -6,7 +6,8 @@ public class AntWall extends AntGameObject
 	public AntWall(int column, int row)
 	{
 		super(column, row);
-		
+		movable = false;
+		colideable = false;
 	}
 
 }

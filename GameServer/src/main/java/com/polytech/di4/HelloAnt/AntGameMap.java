@@ -9,7 +9,7 @@ import java.util.List;
  * @author Benjamin
  *
  */
-public class AntGameMap  
+public class AntGameMap  implements AntGameMapCallback
 {
 	private int cols;
 	private int rows;
@@ -48,9 +48,10 @@ public class AntGameMap
 	 * @param col
 	 * @return all the game objects that are on the selected cell
 	 */
-	public List<AntGameObject> getGameObjectAt(int row, int col)
+	public List<AntGameObject> getGameObjectsAt(int row, int col)
 	{
-		return cells.get(row).get(col);
+		
+		return cells.get((row % rows + rows) % rows ).get((col % cols + cols) % cols);
 	}
 	/**
 	 * Add a new game object on the cell defined by the object's attributes (col and row)
@@ -75,14 +76,12 @@ public class AntGameMap
 	{
 		List<AntGameObject> list = new ArrayList<AntGameObject>();
 		int vRow, vCol;
-		System.out.println("pif");
 		for (int i = 0; i < theMask.getCells().size();++i)
 		{
 			vRow = ((theMask.getCells().get(i).getRow() + row) % rows + rows) % rows;
 			vCol = ((theMask.getCells().get(i).getCol() + col) % cols + cols) % cols;
 			list.addAll(cells.get(vRow).get(vCol));
 		}
-		System.out.println("paf");
 		return list;
 	}
 	/**
@@ -98,6 +97,26 @@ public class AntGameMap
 	public int getCols()
 	{
 		return cols;
+	}
+	@Override
+	public void moveGameObject(AntGameObject object, Move dir)
+	{
+		if (dir ==  Move.NORTH)
+		{
+			object.setRow(((object.getRow() - 1) % rows + rows) % rows);
+		}
+		if (dir ==  Move.SOUTH)
+		{
+			object.setRow((object.getRow() + 1) % rows);
+		}
+		if (dir ==  Move.EAST)
+		{
+			object.setColumn((object.getColumn() + 1) % cols);
+		}
+		if (dir ==  Move.WEST)
+		{
+			object.setColumn(((object.getColumn() - 1) % cols + cols) % cols);
+		}
 	}
 
 }
