@@ -13,6 +13,7 @@ public class GameManager extends TimerTask
 	public static int NB_PLAYERS_MIN;
 	public static int NB_PLAYERS_MAX;
 	private HashMap<Bot, Vector<Bot>> botMap;
+	private Random rand = new Random();
 	
 	public GameManager(int nbPlayersMin, int nbPlayersMax)
 	{
@@ -46,8 +47,7 @@ public class GameManager extends TimerTask
 	public void run()
 	{
 		int nbPlayers;
-		Random r = new Random();
-		nbPlayers = r.nextInt(1+ NB_PLAYERS_MAX - NB_PLAYERS_MIN) + NB_PLAYERS_MIN;
+		nbPlayers = rand.nextInt(1+ NB_PLAYERS_MAX - NB_PLAYERS_MIN) + NB_PLAYERS_MIN;
 		
 		fillChallengers();
 		ArrayList<ArrayList<Bot>> potentialMatchs = findCompatibleLists(nbPlayers);
@@ -147,7 +147,7 @@ public class GameManager extends TimerTask
 		{
 			for (Bot bot : list)
 			{
-				//	bot.setGame(game);
+				// TODO	bot.setGame(game);
 				removeBot(bot);
 			}
 		}
