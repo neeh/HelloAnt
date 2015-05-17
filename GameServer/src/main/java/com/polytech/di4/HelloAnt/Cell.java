@@ -3,6 +3,7 @@ package com.polytech.di4.HelloAnt;
 /**
  * This class represents a cell of a map.
  * A map is a table composed of (rows * cols) cells.
+ * @class
  * @author Nicolas
  */
 public class Cell

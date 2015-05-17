@@ -1,13 +1,7 @@
 package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Vector;
-import java.lang.Object;
-
-import com.mysql.jdbc.AssertionFailedException;
-
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;

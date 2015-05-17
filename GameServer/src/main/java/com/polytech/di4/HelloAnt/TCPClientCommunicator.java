@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 // TODO: handle spam mute
 /**
  * Creates a new TCP client. This class is responsible for the communication between
- * the server and the client. When the client needs the server to execute a specific
+ * the server and a client. When the client needs the server to execute a specific
  * command, it should create a JSON message which respects the protocol specification
  * and give the required elements for the execution of the command.
  * @see Documentation/protocol/
@@ -652,7 +652,6 @@ public class TCPClientCommunicator implements Runnable
 		clientThread.interrupt();
 	}
 	
-	
 	/**
 	 * Tests whether a nickname is valid according to the nickname specifications.
 	 * @see Documentation/protocol/nickspecs.html
@@ -671,7 +670,7 @@ public class TCPClientCommunicator implements Runnable
 	public Boolean isBotLoggedIn()
 	{
 		// When a client logs in, his bot object is assigned to the 'bot' property of this
-		// class, so we can simply test this property.
+		// class, so we can simply test the nullity of this property.
 		return (bot != null);
 	}
 	

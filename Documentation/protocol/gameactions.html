@@ -6,7 +6,6 @@
 </head>
 <body>
 <h1>gameactions</h1>
-<strong style="color:red;">Warning: work in progress!</strong><br />
 Send bot actions for a game round.
 <h2>Client request</h2>
 <pre>
@@ -14,16 +13,10 @@ Send bot actions for a game round.
 	"type": "gameactions",
 	"content": {
 		"moves": [
-			{
-				"col": 18,
-				"row": 25,
-				"dir": "N"
-			},
-			{
-				"col": 66,
-				"row": 117,
-				"dir": "E"
-			}
+			[ 18, 25, "N" ],
+			[ 66, 117, "S" ],
+			[ 33, 70, "E ],
+			[ 79, 12, "W" ]
 		]
 	}
 }

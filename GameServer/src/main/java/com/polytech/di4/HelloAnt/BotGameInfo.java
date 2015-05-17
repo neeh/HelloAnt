@@ -4,6 +4,8 @@ package com.polytech.di4.HelloAnt;
  * This class holds informations about the game a bot is currently playing.
  * It's mainly used to manage the mechanics of the reception of game actions but it also
  * contains the game score of a bot, if used.
+ * Overloading this class is strongly recommended if you want to add bot infos that are
+ * specific to the game you implement.
  * @class
  * @author Nicolas
  */
@@ -38,16 +40,14 @@ public class BotGameInfo
 	private int gameScore;
 	
 	/**
-	 * Creates a new game state holder for a bot.
-	 * @constructor
-	 * @param gameScore the initial game score of the bot.
+	 * Initializes a bot game info structure.
 	 */
-	public BotGameInfo(int gameScore)
+	public void init()
 	{
 		played = true;
 		gamestateTimestampMs = 0;
 		muted = false;
-		this.gameScore = gameScore;
+		gameScore = 0;
 	}
 	
 	/**
@@ -121,5 +121,14 @@ public class BotGameInfo
 	public void setGameScore(int gameScore)
 	{
 		this.gameScore = gameScore;
+	}
+	
+	/**
+	 * Adds some points to the game score of the bot.
+	 * @param points the amount of score to give to the bot.
+	 */
+	public void addGameScore(int points)
+	{
+		gameScore += points;
 	}
 }

@@ -13,15 +13,16 @@ public class AntGameMapTest extends TestCase
 		{
 			for (int j=0;j<7;++j)
 			{
-			assertEquals(true,map.getGameObjectAt(i, j).isEmpty());
+			assertEquals(true,map.getGameObjectsAt(i, j).isEmpty());
 			}
 		}
 		
-		Ant tAnt = new Ant(0,0);
-		Ant tAnt2 = new Ant(1,1);
+		Bot bot = new Bot(null, "Luc", BotMode.TRAINING, 1200, null);
+		Ant tAnt = new Ant(0, 0, bot, 0, 0);
+		Ant tAnt2 = new Ant(1, 1, bot, 0, 0);
 		map.addGameObject(tAnt);
 		map.addGameObject(tAnt2);
-		map.addGameObject(new Ant(5,5));
+		map.addGameObject(new Ant(5, 5, bot, 0, 0));
 		AntGameMapMask masque = new AntGameMapMask(2);
 		List<AntGameObject> test = map.applyMask(0, 0, masque);
 		/*assertEquals(test.get(0).getColumn(),0);

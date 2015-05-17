@@ -1,83 +1,142 @@
 package com.polytech.di4.HelloAnt;
+
+import org.json.JSONArray;
+
 /**
- * This abstract class allows to instantiate any object needed by the game rules.
- * Every AntGameObject has a position (row,column) and a boolean which permits to move the object or not.
+ * Represents a game object specific to the game of ants. A game object is an entity used
+ * to implement the way the game works. A game object is positioned on a game map.
+ * Some game objects can be moved.
  * @class
  * @author Benjamin
- *
  */
 public class AntGameObject
 {
-	protected int row;
+	/**
+	 * The column identifier of the game object.
+	 */
 	protected int col;
-	protected static boolean movable;
-	protected static boolean colideable;
+	
+	/**
+	 * The row identifier of the game object.
+	 */
+	protected int row;
+	
+	/**
+	 * Whether the game object can be moved on the map.
+	 */
+	protected Boolean movable;
+	
+	/**
+	 * Whether the game object can share a cell with another game object.
+	 */
+	protected Boolean collideable;
+	
+	/**
+	 * The handler used to effectively move the game object on the map.
+	 */
 	private AntGameMapCallback moveHandler;
+	
 	/**
-	 * Constructor which instantiate  the GameObject with it's situation on the map
-	 * @param column
-	 * @param row
+	 * Creates a new game object from a column and a row identifier.
+	 * @constructor
+	 * @param col the column identifier of the game object.
+	 * @param row the row identifier of the game object.
+	 * @param movable true if the game object can be moved on the map.
+	 * @param collideable false if the game object can share a cell with another one.
 	 */
-	public AntGameObject(int column, int row)
+	public AntGameObject(int col, int row, Boolean movable, Boolean collideable)
 	{
+		this.col = col;
 		this.row = row;
-		this.col = column;
+		this.movable = movable;
+		this.collideable = collideable;
 	}
+	
 	/**
-	 * 
-	 * @return true is the Game Object can be on the same cell with another colideable object
+	 * Creates a new game object from a cell descriptor.
+	 * @constructor
+	 * @param cell the cell descriptor that positions the game object on the map.
+	 * @param movable true if the game object can be moved on the map.
+	 * @param collideable false if the game object can share a cell with another one.
 	 */
-	public boolean isColideable()
+	public AntGameObject(Cell cell, Boolean movable, Boolean collideable)
 	{
-		return colideable;
+		col = cell.getCol();
+		row = cell.getRow();
+		this.movable = movable;
+		this.collideable = collideable;
 	}
+	
 	/**
-	 * @return true if it is possible to move the object
+	 * Moves the game object on the map to the given direction.
+	 * @param direction where to move the game object.
 	 */
-	public boolean isMovable()
+	public void move(Move direction)
 	{
-		return movable;
+		if (movable) moveHandler.moveGameObject(this, direction);
 	}
+	
 	/**
-	 * @return the row of the current position of the object on the map
+	 * Gets the column identifier of the game object.
+	 * @return the column identifier of the game object.
+	 */
+	public int getCol()
+	{
+		return col;
+	}
+	
+	/**
+	 * Gets the row identifier of the game object.
+	 * @return the row identifier of the game object.
 	 */
 	public int getRow()
 	{
 		return row;
 	}
+	
 	/**
-	 * Change the row of the object
-	 * @param row
+	 * Returns whether a game object can be moved on the map.
+	 * @return true if it is possible to move the game object, false otherwise.
+	 */
+	public Boolean isMovable()
+	{
+		return movable;
+	}
+	
+	/**
+	 * Returns whether the game object is collideable.
+	 * @return true if the game object can't share its cell with another game object.
+	 */
+	public Boolean isCollideable()
+	{
+		return collideable;
+	}
+	
+	/**
+	 * Gets a JSON representation of the game object.
+	 * @see Documentation/protocol/gamestate.html
+	 * @return the game object as a JSON array.
+	 */
+	public JSONArray toJSONArray()
+	{
+		return null;
+	}
+	
+	/**
+	 * Sets the column identifier of the game object.
+	 * @param col the column identifier of the game object.
+	 */
+	public void setCol(int col)
+	{
+		this.col = col;
+	}
+	
+	/**
+	 * Sets the row identifier of the game object.
+	 * @param row the row identifier of the game object.
 	 */
 	public void setRow(int row)
 	{
 		this.row = row;
 	}
-	/**
-	 * @return the column of the current position of the object on the map
-	 */
-	public int getColumn()
-	{
-		return col;
-	}
-	/**
-	 * Change the column of an object
-	 * @param column
-	 */
-	public void setColumn(int column)
-	{
-		this.col = column;
-	}
-	/**
-	 * Move the object to the given direction
-	 * @param direction
-	 */
-	public void move(Move direction)
-	{
-		if (movable)
-		{
-			moveHandler.moveGameObject(this, direction);
-		}
-		
-	}
-	}
+}

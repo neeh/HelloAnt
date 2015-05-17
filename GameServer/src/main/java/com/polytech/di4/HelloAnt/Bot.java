@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
  * @class
  * @author Nicolas
  */
-public class Bot {
+public class Bot
+{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);
 	
 	/**

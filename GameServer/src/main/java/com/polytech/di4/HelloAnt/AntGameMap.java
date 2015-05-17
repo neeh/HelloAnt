@@ -1,122 +1,201 @@
 package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+
 /**
- * This class describes the maps of the AntGame. It contains all the objects needed to
- * play a match. For each cell of the map, there is a list of all the objects on the
- * cell.
+ * This class represents the dynamic game map of an ant game. It holds all the game
+ * objects and their status at the current round of a game.
+ * @class
  * @author Benjamin
- *
  */
-public class AntGameMap  implements AntGameMapCallback
+public class AntGameMap implements AntGameMapCallback
 {
-	private int cols;
-	private int rows;
-	private List<List<List<AntGameObject>>> cells;
 	/**
-	 * Creates the AntGameMap 
-	 * @param columns
-	 * @param rows
+	 * The number of rows of the game map.
 	 */
-	public AntGameMap(int columns, int rows)
+	private int cols;
+	
+	/**
+	 * The number of columns of the game map.
+	 */
+	private int rows;
+	
+	/**
+	 * The array of cells of the map. This is a 3-dimensional array.
+	 * The first dimension references map rows, the second one map columns and the last
+	 * one is used to store several game objects in the same cell.
+	 */
+	private ArrayList<ArrayList<ArrayList<AntGameObject>>> cells;
+	
+	/**
+	 * Creates a new game map from a column count and a row count.
+	 * @param cols the number of columns of the game map.
+	 * @param rows the number of rows of the game map.
+	 */
+	public AntGameMap(int cols, int rows)
 	{
-		this.cols = columns;
+		this.cols = cols;
 		this.rows = rows;
-		this.cells = new ArrayList<List<List<AntGameObject>>>();
-		for (int i = 0; i < columns;++i)
-		{
-			cells.add(new ArrayList<List<AntGameObject>>());
-			for (int  j = 0; j < columns;++j)
-			{
-				cells.get(i).add(new ArrayList<AntGameObject>());
+		cells = new ArrayList<ArrayList<ArrayList<AntGameObject>>>(rows);
+		for (int i = 0; i < rows; i++)
+		{	// Create map row.
+			ArrayList<ArrayList<AntGameObject>> row =
+					new ArrayList<ArrayList<AntGameObject>>(cols);
+			cells.add(row);
+			for (int j = 0; j < cols; j++)
+			{	// Create map column.
+				row.add(new ArrayList<AntGameObject>(1));
 			}
 		}
 		
 	}
+	
 	/**
-	 * This function creates a playable map of the AntGame with walls, AntHills and 
-	 * and foodspawns.
+	 * Clears the whole game map by dropping the content of the cells.
 	 */
-	public void init()
+	public void clear()
 	{
-		
+		Iterator<ArrayList<ArrayList<AntGameObject>>> rowIt = cells.iterator();
+		while (rowIt.hasNext())
+		{
+			ArrayList<ArrayList<AntGameObject>> row = rowIt.next();
+			Iterator<ArrayList<AntGameObject>> colIt = row.iterator();
+			while (colIt.hasNext())
+			{
+				colIt.next().clear();
+			}
+		}
 	}
+	
 	/**
-	 * 
-	 * @param row
-	 * @param col
-	 * @return all the game objects that are on the selected cell
+	 * Adds a game object on the game map.
+	 * @param gob the game object to add.
 	 */
-	public List<AntGameObject> getGameObjectsAt(int row, int col)
+	public void addGameObject(AntGameObject gob)
 	{
-		
-		return cells.get((row % rows + rows) % rows ).get((col % cols + cols) % cols);
+		cells.get(gob.getRow()).get(gob.getCol()).add(gob);
 	}
+	
 	/**
-	 * Add a new game object on the cell defined by the object's attributes (col and row)
-	 * @param obj
-	 * @param col
-	 * @param row
+	 * Removes a game object from the game map.
+	 * @param gob the game object to remove.
 	 */
-	public void addGameObject (AntGameObject obj)
+	public void removeGameObject(AntGameObject gob)
 	{
-		if (obj.getRow() < rows && obj.getColumn() < cols)
-			cells.get(obj.getRow()).get(obj.getColumn()).add(obj);
+		cells.get(gob.getRow()).get(gob.getCol()).remove(gob);
 	}
+	
+	/**
+	 * Moves a game object on the map in a given direction.
+	 * @param gob the game object to move.
+	 * @param direction where to move the game object.
+	 */
+	@Override
+	public void moveGameObject(AntGameObject gob, Move direction)
+	{
+		// Remove the game object from its cell.
+		removeGameObject(gob);
+		// Update the cell identifier.
+		switch (direction)
+		{
+		case NORTH:
+			gob.setRow(((gob.getRow() - 1) % rows + rows) % rows);
+			break;
+		case SOUTH:
+			gob.setRow((gob.getRow() + 1) % rows);
+			break;
+		case EAST:
+			gob.setCol((gob.getCol() + 1) % cols);
+			break;
+		case WEST:
+			gob.setCol(((gob.getCol() - 1) % cols + cols) % cols);
+			break;
+		}
+		// Add the game object in its new cell.
+		addGameObject(gob);
+	}
+	
 	/**
 	 * This function finds all the objects that are presents in the mask.
-	 * The center  of the mask is given with the row and the column.
-	 * @param row
-	 * @param col
-	 * @param theMask 
-	 * @return The list of all the objects in the mask.
+	 * The center of the mask is given by the column and row identifiers.
+	 * @param col the column identifier.
+	 * @param row the row identifier
+	 * @param mask the mask to apply at this position.
+	 * @return the list of game objects in the mask.
 	 */
-	public List<AntGameObject> applyMask(int row, int col,AntGameMapMask theMask)
+	public ArrayList<AntGameObject> applyMask(int col, int row, AntGameMapMask mask)
 	{
-		List<AntGameObject> list = new ArrayList<AntGameObject>();
+		ArrayList<AntGameObject> gobs = new ArrayList<AntGameObject>();
+		ArrayList<Cell> maskCells = mask.getCells();
 		int vRow, vCol;
-		for (int i = 0; i < theMask.getCells().size();++i)
+		for (int i = 0; i < maskCells.size(); i++)
 		{
-			vRow = ((theMask.getCells().get(i).getRow() + row) % rows + rows) % rows;
-			vCol = ((theMask.getCells().get(i).getCol() + col) % cols + cols) % cols;
-			list.addAll(cells.get(vRow).get(vCol));
+			vRow = ((maskCells.get(i).getRow() + row) % rows + rows) % rows;
+			vCol = ((maskCells.get(i).getCol() + col) % cols + cols) % cols;
+			gobs.addAll(cells.get(vRow).get(vCol));
 		}
-		return list;
+		return gobs;
 	}
+	
 	/**
-	 * @return the number of rows of the map
-	 */
-	public int getRows()
-	{
-		return rows;
-	}
-	/**
-	 * @return the number of columns of the map
+	 * Gets the number of columns of the game map.
+	 * @return the number of columns of the map.
 	 */
 	public int getCols()
 	{
 		return cols;
 	}
-	@Override
-	public void moveGameObject(AntGameObject object, Move dir)
+	
+	/**
+	 * Gets the number of rows of the game map.
+	 * @return the number of rows of the map.
+	 */
+	public int getRows()
 	{
-		if (dir ==  Move.NORTH)
-		{
-			object.setRow(((object.getRow() - 1) % rows + rows) % rows);
-		}
-		if (dir ==  Move.SOUTH)
-		{
-			object.setRow((object.getRow() + 1) % rows);
-		}
-		if (dir ==  Move.EAST)
-		{
-			object.setColumn((object.getColumn() + 1) % cols);
-		}
-		if (dir ==  Move.WEST)
-		{
-			object.setColumn(((object.getColumn() - 1) % cols + cols) % cols);
-		}
+		return rows;
 	}
-
+	
+	/**
+	 * Gets the list of game objects present in a specific cell of the game map.
+	 * The function takes the toroidal shape of the map in account.
+	 * @param col the column identifier of the cell.
+	 * @param row the row identifier of the cell.
+	 * @return the content of the cell.
+	 */
+	public ArrayList<AntGameObject> getGameObjectsAt(int col, int row)
+	{
+		return cells.get((row % rows + rows) % rows).get((col % cols + cols) % cols);
+	}
+	
+	/**
+	 * Gets the list of game objects that are in the same cell than a given game object.
+	 * The function takes the toroidal shape of the map in account.
+	 * @param gob the input game object.
+	 * @return the content of the cell.
+	 */
+	public ArrayList<AntGameObject> getGameObjectAt(AntGameObject gob)
+	{
+		return getGameObjectsAt(gob.getCol(), gob.getRow());
+	}
+	
+	/**
+	 * Gets the alive ant in a given cell of the game map.
+	 * @param col the column identifier of the cell.
+	 * @param row the row identifier of the cell.
+	 * @return The alive ant found in this cell, null if not found.
+	 */
+	public Ant getAntAt(int col, int row)
+	{
+		AntGameObject gob = null;
+		// Get all the game objects in the cell.
+		ArrayList<AntGameObject> gobs = getGameObjectsAt(col, row);
+		Iterator<AntGameObject> gobIt = gobs.iterator();
+		while (gobIt.hasNext())
+		{	// Search an alive ant in the list.
+			gob = gobIt.next();
+			if (gob instanceof Ant && ((Ant) gob).isDead() == false) return (Ant) gob;
+		}
+		return null;
+	}
 }

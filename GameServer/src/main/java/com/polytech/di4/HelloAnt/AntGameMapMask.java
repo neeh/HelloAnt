@@ -1,43 +1,61 @@
 package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
-import java.util.List;
+
 /**
- * An AntGameMask represents a list of cells that defines some actions such as 
- * visibility.
+ * This class represents a mask or a pattern that can be applied an a board map to select
+ * specific cells of the game map. It's a list of cells that shapes the pattern.
+ * @class
  * @author Benjamin
- *
  */
 public class AntGameMapMask
 {
 	/**
-	 * The list of accessible cells within the mask.
+	 * The list of cells included in the mask.
 	 */
-	private List<Cell> cells;
+	private ArrayList<Cell> cells;
+	
 	/**
-	 * Creates a new mask with the cells in range 
-	 * @param radius
+	 * The squared radius of the circular map mask.
 	 */
-	public AntGameMapMask(float radius)
+	private float radius2;
+	
+	/**
+	 * Creates a circular mask from a radius value.
+	 * @param radius2 the squared radius of the circle.
+	 */
+	public AntGameMapMask(float radius2)
 	{
-		int rad = (int)Math.floor(radius);
-		cells=new ArrayList<Cell>();
-		for (int i=-rad;i<=rad;++i)
+		this.radius2 = radius2;
+		cells = new ArrayList<Cell>();
+		int bound = (int) Math.floor(Math.sqrt(radius2));
+		for (int i = -bound; i <= bound; i++)
 		{
-			for (int j=-rad;j<=rad;++j)
+			for (int j = -bound; j <= bound; j++)
 			{
-				if(Math.sqrt(i*i+j*j)<=rad)
+				if (i * i + j * j <= radius2)
 				{
-					cells.add(new Cell(i,j));
+					cells.add(new Cell(i, j));
 				}
 			}
 		}
 	}
+	
 	/**
-	 * @return The cell list used by a mask
+	 * Gets the cells of the mask.
+	 * @return the list of cells used by the mask.
 	 */
-	public List<Cell> getCells()
+	public ArrayList<Cell> getCells()
 	{
 		return cells;
+	}
+	
+	/**
+	 * Gets the squared radius of a circular map mask.
+	 * @return the squared radius of the mask.
+	 */
+	public float getRadius2()
+	{
+		return radius2;
 	}
 }

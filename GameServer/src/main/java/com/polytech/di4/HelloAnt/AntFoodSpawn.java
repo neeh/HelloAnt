@@ -1,61 +1,138 @@
 package com.polytech.di4.HelloAnt;
-/**
- * This class instantiate the AntGameObjects used to generate food.
- * @author Benjamin
- *
- */
-public class AntFoodSpawn extends AntGameObject 
-{
 
-	private boolean food;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+/**
+ * This class represents a game object that generates food on the map that can be
+ * harvested by ants. A food unit can be held by an ant and brought back to the ant's hill
+ * to give birth to a new ant.
+ * @class
+ * @author Benjamin
+ */
+public class AntFoodSpawn extends AntGameObject
+{
+	/**
+	 * Whether food is available on the spawn.
+	 */
+	private Boolean food;
+	
+	/**
+	 * The last time food was taken from the food spawn.
+	 */
 	private int lastHarvestRound;
+	
 	/**
-	 * This function creates a new AntFoodSpawn on the selected cell
-	 * @param column
-	 * @param row
+	 * The replay data of the food currently present in the spawn.
+	 * [ col, row, pop_round, gth_round, bot_id ]
 	 */
-	public AntFoodSpawn(int column, int row)
+	private JSONArray replayData;
+	
+	/**
+	 * Creates a new food spawn from a column and row identifier.
+	 * @constructor
+	 * @param col the column identifier of the food spawn.
+	 * @param row the row identifier of the food spawn.
+	 */
+	public AntFoodSpawn(int col, int row)
 	{
-		super(column, row);
-		food = false;
+		super(col, row, false, false);
+		food = true;
 		lastHarvestRound = 0;
-		movable = false;
-		colideable = true;
-		
 	}
+	
 	/**
-	 * @return True if food is ready to be taken by an ant, false if not.
+	 * Creates a new food spawn from a cell descriptor.
+	 * @constructor
+	 * @param cell the cell descriptor that positions the food spawn on the map.
 	 */
-	public boolean hasFood()
+	public AntFoodSpawn(Cell cell)
+	{
+		super(cell, false, false);
+		food = true;
+		lastHarvestRound = 0;
+	}
+	
+	/**
+	 * Creates food on the food spawn.
+	 * @param round the round at which the food is spawned.
+	 */
+	public void createFood(int round)
+	{
+		replayData = new JSONArray();
+		try
+		{
+			replayData.put(0, col);
+			replayData.put(1, row);
+			replayData.put(2, round);
+		}
+		catch (JSONException e) {}
+		food = true;
+	}
+	
+	/**
+	 * Harvests food on the food spawn.
+	 * @param botId the identifier of the bot that harvested the food unit.
+	 * @param round the round at which the food is harvested.
+	 */
+	public void harvestFood(int botId, int round)
+	{
+		try
+		{
+			replayData.put(3, round);
+			replayData.put(4, botId);
+		}
+		catch (JSONException e) {}
+		replayData = null;
+		food = false;
+		lastHarvestRound = round;
+	}
+	
+	/**
+	 * Returns whether a food unit is present on the food spawn.
+	 * @return true if food there is food on the spawn, false otherwise.
+	 */
+	public Boolean hasFood()
 	{
 		return food;
 	}
+	
 	/**
-	 * Set the food to true. 
-	 * @param food
-	 */
-	public void setFood(boolean food)
-	{
-		this.food = food;
-	}
-	/**
-	 * @return the number of the round when the last food has been taken.
+	 * Gets the last time a food unit was harvested on this spawn.
+	 * @return the last time food was harvested.
 	 */
 	public int getLastHarvestRound()
 	{
 		return lastHarvestRound;
 	}
+	
 	/**
-	 * Set food to false
+	 * Gets a JSON representation of a food unit.
+	 * @see Documentation/protocol/gamestate.html
+	 * @note the function returns null when the spawn is empty because bots should not
+	 *       know a food spawn is there, unless food is currently present on it.
+	 * @return [ "F", col, row ] when food is present.
 	 */
-	public void harvest()
+	public JSONArray toJSONArray()
 	{
-		if (food==false)
+		if (food == false) return null;
+		JSONArray array = new JSONArray();
+		try
 		{
-			//Do we raise an exception for this ?
+			array.put(0, "F");
+			array.put(1, col);
+			array.put(2, row);
 		}
-		food = false;
-		//get the actual round to actualise the  lastHarvestRound
+		catch (JSONException e) {}
+		return array;
 	}
-
+	
+	/**
+	 * Gets the replay data for the food unit currently present in the spawn.
+	 * @return the replay data of the food unit.
+	 */
+	public JSONArray getReplayData()
+	{
+		return replayData;
+	}
 }
