@@ -27,10 +27,9 @@ public enum BotMode
 		if("training".startsWith(value))
 			return TRAINING;
 		return REGULAR;
-		! tricky because "mode":""        -> training
-		                 "mode":"zzefiaz" -> regular ...
+		Can give strange results ...
 		*/
-		if (value == "training") return TRAINING;
+		if ("training".equalsIgnoreCase(value)) return TRAINING;
 		return REGULAR;
 	}
 }

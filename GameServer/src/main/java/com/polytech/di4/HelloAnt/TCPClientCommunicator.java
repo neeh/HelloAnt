@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 // TODO: handle spam mute
 /**
  * Creates a new TCP client. This class is responsible for the communication between
- * the server and a client. When the client needs the server to execute a specific
+ * the server and the client. When the client needs the server to execute a specific
  * command, it should create a JSON message which respects the protocol specification
  * and give the required elements for the execution of the command.
  * @see Documentation/protocol/
@@ -86,6 +86,16 @@ public class TCPClientCommunicator implements Runnable
 	 * @warning there is no way to restart the client thread.
 	 */
 	private Boolean closed;
+
+	/**
+	 * Creates a new TCP client communicator without handler.
+	 * @constructor
+	 * @param socket the socket of the TCP client.
+	 */
+	public TCPClientCommunicator(Socket socket)
+	{
+		this(socket, null);
+	}
 	
 	/**
 	 * Creates a new TCP client communicator.
@@ -99,9 +109,12 @@ public class TCPClientCommunicator implements Runnable
 		try
 		{	// At this point, we cache a BufferedReader object and a BufferedWriter object
 			// to avoid excessive object creation during the communication.
-			__reader__ = new BufferedReader(new InputStreamReader(
-					socket.getInputStream()));
-			__writer__ = new PrintWriter(socket.getOutputStream());
+			if(socket != null)
+			{
+				__reader__ = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+				__writer__ = new PrintWriter(socket.getOutputStream());
+			}
 		}
 		catch(IOException e)
 		{
@@ -118,7 +131,10 @@ public class TCPClientCommunicator implements Runnable
 		// Start the listening of the client.
 		clientThread.start();
 		// Notifies the server a new client was created.
-		handler.handleClientConnected(this);
+		if (handler != null)
+		{
+			handler.handleClientConnected(this);
+		}
 	}
 	
 	/**
@@ -288,7 +304,10 @@ public class TCPClientCommunicator implements Runnable
 				// No exception caught -> the login was successful.
 				this.bot = bot;
 				// Notify the server a bot just logged in.
-				handler.handleBotLogin(bot);
+				if (handler != null)
+				{
+					handler.handleBotLogin(bot);
+				}
 				outputMessage = "Logged in (" + mode.toString().toLowerCase() + " mode)";
 				// If an exception is caught during the creation of the output message,
 				// it's not the fault of the client.
@@ -609,7 +628,10 @@ public class TCPClientCommunicator implements Runnable
 			// Notify the database the bot is logged out.
 			dbi.disconnect(bot.getNick());
 			// Notify the game server the bot is logged out.
-			handler.handleBotLogout(bot);
+			if (handler != null)
+			{
+				handler.handleBotLogout(bot);
+			}
 			// Set 'bot' to null so the client is effectively logged out.
 			bot = null;
 		}
@@ -626,7 +648,10 @@ public class TCPClientCommunicator implements Runnable
 		// If the client is logged in, logout it.
 		logout();
 		// Notify the server its client is disconnected
-		handler.handleClientDisconnected(this);
+		if (handler != null)
+		{
+			handler.handleClientDisconnected(this);
+		}
 		// Once the client is removed on the 'clients' array, there is no more reference
 		// to this instance in the server so it should be garbage collected soon.
 		try
@@ -652,6 +677,7 @@ public class TCPClientCommunicator implements Runnable
 		clientThread.interrupt();
 	}
 	
+	
 	/**
 	 * Tests whether a nickname is valid according to the nickname specifications.
 	 * @see Documentation/protocol/nickspecs.html
@@ -670,7 +696,7 @@ public class TCPClientCommunicator implements Runnable
 	public Boolean isBotLoggedIn()
 	{
 		// When a client logs in, his bot object is assigned to the 'bot' property of this
-		// class, so we can simply test the nullity of this property.
+		// class, so we can simply test this property.
 		return (bot != null);
 	}
 	

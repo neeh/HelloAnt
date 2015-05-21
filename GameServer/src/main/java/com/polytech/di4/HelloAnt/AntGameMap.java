@@ -9,7 +9,7 @@ import java.util.Iterator;
  * @class
  * @author Benjamin
  */
-public class AntGameMap implements AntGameMapCallback
+public class AntGameMap implements AntGameMapCallback, AntGameMapView
 {
 	/**
 	 * The number of rows of the game map.
