@@ -4,6 +4,6 @@ public class App
 {
     public static void main(String[] args)
     {
-    	new GameServer(12345);
+    	new AntGameServer(12345);
     }
 }

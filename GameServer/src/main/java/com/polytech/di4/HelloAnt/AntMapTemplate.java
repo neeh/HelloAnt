@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
  * It's responsible for holding map data like interactive game objects and cell type in
  * memory. The content of this class is not supposed to be modified during runtime.
  * The class may be accessed in the following cases :
- * - creation of a new game based on the number of required bots.
- * - initiation of a game (setup game objects, spawns, etc...)
+ * - creation of a new game based on the number of required bots;
+ * - initiation of a game (setup game objects, spawns, etc...).
  * The class also interfaces with map files (loading/saving).
  * @see Documentation/specifications/mapformat.html
  * @class
@@ -56,7 +56,7 @@ public class AntMapTemplate
 	/**
 	 * The number of bots the map is designed for.
 	 * The game manager is supposed to supply this exact amount of bots to use this map.
-	 * @note the bot count should be in [MIN_BOTCOUNT; MAX_BOXCOUNT]
+	 * @note the bot count should be in [MIN_BOTCOUNT; MAX_BOXCOUNT].
 	 */
 	private int botCount;
 	
@@ -247,8 +247,8 @@ public class AntMapTemplate
 		{
 			// The number of missing rows.
 			int miss = _rows - i;
-			throw new InvalidMapFormatException(miss + " rows "
-			+ (miss > 1 ? "are" : "is") + " missing from the map file");
+			throw new InvalidMapFormatException(miss + " row"
+					+ (miss > 1 ? "s are" : " is") + " missing from the map file");
 		}
 		// Ok, set the new map parameters.
 		botCount = _botCount;
@@ -281,7 +281,7 @@ public class AntMapTemplate
 			writer.write("cols " + cols + "\r\n");
 			// Call the _toStringArray that does all the map parsing.
 			ArrayList<StringBuilder> stringBuilders = _toStringArray();
-			// Write the rows one by ont.
+			// Write the rows one by one.
 			Iterator<StringBuilder> stringBuilderIt = stringBuilders.iterator();
 			StringBuilder stringBuilder;
 			while (stringBuilderIt.hasNext())

@@ -23,7 +23,7 @@ public class GameManagerTest extends TestCase
 
 	public void testIncrementPosToTest()
 	{
-		GameManager gm = new GameManager();
+		GameManager gm = new GameManager(null);
 		Vector<Bot> vectBot = new Vector<>();
 		vectBot.add(new Bot(null, null, null, 0, null));
 		vectBot.add(new Bot(null, null, null, 0, null));
@@ -64,7 +64,7 @@ public class GameManagerTest extends TestCase
 
 	public void testFindCompatibleLists()
 	{
-		GameManager gm = new GameManager();
+		GameManager gm = new GameManager(null);
 		Bot a = new Bot(null, "A", null, 30, null);
 		Bot b = new Bot(null, "B", null, 0, null);
 		Bot c = new Bot(null, "C", null, 15, null);

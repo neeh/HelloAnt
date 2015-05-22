@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: handle spam mute
+// TODO: handle spam mute?
 /**
  * Creates a new TCP client. This class is responsible for the communication between
  * the server and the client. When the client needs the server to execute a specific
@@ -116,7 +116,7 @@ public class TCPClientCommunicator implements Runnable
 				__writer__ = new PrintWriter(socket.getOutputStream());
 			}
 		}
-		catch(IOException e)
+		catch (IOException e)
 		{
 			LOGGER.error("Cannot create reader or writer to communicate with a client\n"
 					+ e.getMessage());
@@ -135,6 +135,8 @@ public class TCPClientCommunicator implements Runnable
 		{
 			handler.handleClientConnected(this);
 		}
+		// Send the welcome message.
+		sendWelcome();
 	}
 	
 	/**
@@ -609,6 +611,16 @@ public class TCPClientCommunicator implements Runnable
 	public void sendGameMute(JSONObject content)
 	{
 		send("gamemute", 0, "You are muted until the end of the game", content);
+	}
+	
+	/**
+	 * Sends a welcome message to the client. The client is not supposed to respond.
+	 * @see Documentation/protocol/welcome.html
+	 */
+	public void sendWelcome()
+	{
+		send("welcome", 0, "Welcome on HelloAnt game server. Have fun challenging other "
+				+ "bots!", null);
 	}
 	
 	/**

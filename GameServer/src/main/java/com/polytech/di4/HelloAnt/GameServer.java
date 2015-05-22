@@ -1,6 +1,8 @@
 package com.polytech.di4.HelloAnt;
 
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The game server is the main class of the project. It manages all the interactions
@@ -8,8 +10,10 @@ import java.util.ArrayList;
  * @class
  * @author Nicolas
  */
-public class GameServer implements TCPClientHandler
+public class GameServer implements TCPClientHandler, GameHandler
 {
+	protected static final Logger LOGGER = LoggerFactory.getLogger(GameServer.class);
+	
 	/**
 	 * The client listener used to listen for incoming TCP connections and creating
 	 * communicators to exchange with these clients.
@@ -20,8 +24,7 @@ public class GameServer implements TCPClientHandler
 	/**
 	 * The game manager used to create games when bots are available for a match.
 	 */
-	@SuppressWarnings("unused")
-	private GameManager gameManager;
+	protected GameManager gameManager;
 	
 	/**
 	 * The list of clients who are communicating with the game server.
@@ -29,8 +32,12 @@ public class GameServer implements TCPClientHandler
 	private ArrayList<TCPClientCommunicator> clients;
 	
 	/**
-	 * Creates a new game server. There should be only one game server in the application,
-	 * That's why its constructor is declared as private.
+	 * The list of games being played.
+	 */
+	//private ArrayList<GameThread> gameThreads;
+	
+	/**
+	 * Creates a new game server.
 	 * @param port the port to listen for client interactions.
 	 */
 	public GameServer(int port)
@@ -73,6 +80,14 @@ public class GameServer implements TCPClientHandler
 	@Override
 	public void handleBotLogin(Bot newBot)
 	{
+		if (newBot.getMode() == BotMode.TRAINING)
+		{	// Create a game for the bot.
+			// TODO
+		}
+		else
+		{	// Add the bot into the lobby.
+			gameManager.addBot(newBot);
+		}
 		System.out.println(System.currentTimeMillis() + ": Bot " + newBot.getNick()
 				+ " logged in (" + newBot.getMode().toString().toLowerCase() + " mode)");
 	}
@@ -84,7 +99,31 @@ public class GameServer implements TCPClientHandler
 	@Override
 	public void handleBotLogout(Bot oldBot)
 	{
+		// Attempt to remove the bot from the lobby.
+		gameManager.removeBot(oldBot);
 		System.out.println(System.currentTimeMillis() + ": Bot " + oldBot.getNick()
 				+ " logged out");
+	}
+	
+	/**
+	 * Handles a game that was just created.
+	 * @param game the created game.
+	 */
+	@Override
+	public void handleGameCreated(Game game)
+	{
+		//Thread gameThread = new GameThread(game);
+		//gameThreads.add(gameThread);
+		//gameThread.start();
+		System.out.println(System.currentTimeMillis() + ": Game created");
+	}
+	
+	/**
+	 * Handles a game that was just terminated.
+	 * @param game the terminated game.
+	 */
+	public void handleGameTerminated(Game game)
+	{
+		// TODO
 	}
 }
