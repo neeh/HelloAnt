@@ -109,8 +109,8 @@ public class TCPClientCommunicator implements Runnable
 		try
 		{	// At this point, we cache a BufferedReader object and a BufferedWriter object
 			// to avoid excessive object creation during the communication.
-			if(socket != null)
-			{
+			if (socket != null)
+			{	// (socket is null for fake communicators)
 				__reader__ = new BufferedReader(new InputStreamReader(
 						socket.getInputStream()));
 				__writer__ = new PrintWriter(socket.getOutputStream());
@@ -132,7 +132,7 @@ public class TCPClientCommunicator implements Runnable
 		clientThread.start();
 		// Notifies the server a new client was created.
 		if (handler != null)
-		{
+		{	// (handler is null for fake communicators)
 			handler.handleClientConnected(this);
 		}
 		// Send the welcome message.

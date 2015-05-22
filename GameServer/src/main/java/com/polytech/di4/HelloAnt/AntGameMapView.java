@@ -4,7 +4,6 @@ import java.util.List;
 
 public interface AntGameMapView
 {
-
 	/**
 	 * Get the list of objects at a specific position on the map
 	 * @param row Y-coordinate of the objects to get

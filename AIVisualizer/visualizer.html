@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>AIVisualizer</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<style rel="stylesheet" type="text/css">
+			html, body{height:100%;-moz-user-select:-moz-none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none;user-select: none;user-select:none;}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<pre id="out">Please enable JavaScript.</pre>
+			<div id="visualizerDiv"></div>
+		</div>
+		<script type="text/javascript" src="visualizer-min.js"></script>
+		<script type="text/javascript">
+			var	visualizer,
+				body = document.body,
+				container = document.getElementById("container");
+				out = document.getElementById("out");
+			
+			function handleDrag(e) {
+				e.stopPropagation();
+				e.preventDefault();
+			}
+			
+			function handleFileRead(e) {
+				var text = e.target.result;
+				try {
+					replayData = JSON.parse(text);
+				} catch (e) {
+					out.textContent = "Cannot parse input file.";
+					return;
+				}
+				loadVisualizer(text);
+			}
+			
+			function handleDrop(e) {
+				handleDrag(e);
+				var	files = e.target.files || e.dataTransfer.files,
+					file = files[0],
+					reader = new FileReader();
+				reader.onload = handleFileRead;
+				console.log(file);
+				reader.readAsText(file);
+			}
+			
+			if (window.File && window.FileList && window.FileReader) {
+				var xhr = new XMLHttpRequest();
+				if (xhr.upload) {
+					out.textContent = "";
+					var input = document.createElement("input");
+					input.setAttribute("type", "file");
+					input.setAttribute("id", "fs");
+					container.insertBefore(input, out);
+					input.onchange = handleDrop;
+					body.ondragover = body.ondragleave = handleDrag;
+					body.ondrop = handleDrop;
+				} else {
+					out.textContent = "xhr2 is not supported by your browser vendor."
+				}
+			} else {
+				out.textContent = "File API is not supported by your browser vendor.";
+			}
+			
+			function loadVisualizer(replayData) {
+				var options = new Options();
+				options.data_dir = "";
+				options.interactive = true;
+				options.embedded = false;
+				var config = {};
+				if (!options.interactive) {
+					// typically we want no zoom in non-interactive visualizers
+					config.zoom = 1;
+				}
+				visualizer = new Visualizer(document.getElementById("visualizerDiv"), options, 710, 700, config);
+				visualizer.loadReplayData(replayData);
+			}
+		</script>
+	</body>
+</html>
