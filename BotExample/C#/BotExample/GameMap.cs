@@ -10,7 +10,7 @@ namespace BotExample
     {
         public int Cols { get; set; }
         public int Rows { get; set; }
-        public List<Coordinates> Hills { get; set; }
+        public HashSet<Coordinates> Hills { get; set; }
         public HashSet<Coordinates> Walls { get; set; }
         // We could use a Dictionary<Coordinates, int> if we wanted to keep track of owners
         public HashSet<Coordinates> Enemies { get; set; }
@@ -21,7 +21,7 @@ namespace BotExample
         {
             this.Cols = cols;
             this.Rows = rows;
-            this.Hills = new List<Coordinates>();
+            this.Hills = new HashSet<Coordinates>();
             this.Walls = new HashSet<Coordinates>();
             this.Enemies = new HashSet<Coordinates>();
             this.Food = new HashSet<Coordinates>();
@@ -77,6 +77,16 @@ namespace BotExample
             }
         }
 
+        // Returns the direction of a food or AntDirection.U if there is no accessible food
+        private AntDirection GetNearbyFood(Coordinates pos)
+        {
+            if (Food.Contains(pos.ApplyDirection(AntDirection.N).Normalize(this))) return AntDirection.N;
+            else if (Food.Contains(pos.ApplyDirection(AntDirection.S).Normalize(this))) return AntDirection.S;
+            else if (Food.Contains(pos.ApplyDirection(AntDirection.E).Normalize(this))) return AntDirection.E;
+            else if (Food.Contains(pos.ApplyDirection(AntDirection.W).Normalize(this))) return AntDirection.W;
+            return AntDirection.U;
+        }
+
         public void ComputeMoves()
         {
             Random rand = new Random();
@@ -86,10 +96,10 @@ namespace BotExample
                 Coordinates pos = pair.Key;
                 if (ant.HasFood)
                 {
-                    if (ant.History.Count > 0)
+                    if (ant.History.Count > 0 && !Hills.Contains(pos))
                     {
                         // Walk back
-                        ant.CurrentMove = ant.History.Pop();
+                        ant.CurrentMove = ant.History.Pop().Reverse();
                         continue;
                     }
                     else
@@ -97,38 +107,41 @@ namespace BotExample
                         ant.HasFood = false;
                     }
                 }
-                List<AntDirection> remaining = new List<AntDirection>() { AntDirection.N, AntDirection.S, AntDirection.E, AntDirection.W };
-                int index;
-                AntDirection move;
-                // Continue the same way or not ?
-                if (ant.History.Count > 0 && rand.NextDouble() < 0.5)
+                AntDirection move = GetNearbyFood(pos);
+                // If there is accessible food, go there
+                if (move == AntDirection.U)
                 {
-                    move = ant.History.Peek();
-                    remaining.Remove(move);
+                    List<AntDirection> remaining = new List<AntDirection>() { AntDirection.N, AntDirection.S, AntDirection.E, AntDirection.W };
+                    int index;
+                    // Try to continue the same way or not ? 50% chance
+                    if (ant.History.Count > 0 && rand.NextDouble() < 0.5)
+                    {
+                        move = ant.History.Peek();
+                        remaining.Remove(move);
+                    }
+                    else
+                    {
+                        index = rand.Next(4);
+                        move = remaining[index];
+                        remaining.RemoveAt(index);
+                    }
+                    int size = 3;
+                    do
+                    {
+                        Coordinates result = pos.ApplyDirection(move).Normalize(this);
+                        if (!Walls.Contains(result) && !Enemies.Contains(result))
+                        {
+                            break;
+                        }
+                        index = rand.Next(size--);
+                        move = remaining[index];
+                        remaining.RemoveAt(index);
+                    } while (size > 1);
                 }
                 else
                 {
-                    index = rand.Next(4);
-                    move = remaining[index];
-                    remaining.RemoveAt(index);
+                    ant.HasFood = true;
                 }
-                int size = 3;
-                do
-                {
-                    Coordinates result = pos.ApplyDirection(move);
-                    if (Food.Contains(result))
-                    {
-                        ant.HasFood = true;
-                        break;
-                    }
-                    if (!Walls.Contains(result) && !Enemies.Contains(result))
-                    {
-                        break;
-                    }
-                    index = rand.Next(size--);
-                    move = remaining[index];
-                    remaining.RemoveAt(index);
-                } while (size > 1);
                 ant.CurrentMove = move;
                 ant.History.Push(move);
             }
@@ -141,6 +154,42 @@ namespace BotExample
             {
                 msg.AddMove(pair.Key.Col, pair.Key.Row, pair.Value.CurrentMove.ToString());
             }
+        }
+
+        // Change the map according to current ants moves
+        public void ApplyMoves()
+        {
+            Dictionary<Coordinates, Ant> updated = new Dictionary<Coordinates,Ant>();
+            foreach (KeyValuePair<Coordinates, Ant> pair in MyAnts)
+            {
+                Ant ant = pair.Value;
+                Coordinates pos = pair.Key.ApplyDirection(ant.CurrentMove).Normalize(this);
+                ant.CurrentMove = AntDirection.U;
+                updated.Add(pos, ant);
+            }
+            MyAnts = updated;
+        }
+
+        // Display the current map
+        public override string ToString()
+        {
+            string s = "";
+            for (int y = 0; y < Rows; y++)
+            {
+                for (int x = 0; x < Cols; x++)
+                {
+                    Coordinates pos = new Coordinates(x, y);
+                    char c = '_';
+                    if (MyAnts.ContainsKey(pos)) c = 'a';
+                    else if (Walls.Contains(pos)) c = '#';
+                    else if (Enemies.Contains(pos)) c = 'e';
+                    else if (Food.Contains(pos)) c = '.';
+                    else if (Hills.Contains(pos)) c = '*';
+                    s += c;
+                }
+                s += "\n";
+            }
+            return s;
         }
     }
 }

@@ -41,13 +41,6 @@ public enum BotMode
 	 */
 	public static BotMode fromString(String value)
 	{
-		value = value.toLowerCase();
-		/*
-		if("training".startsWith(value))
-			return TRAINING;
-		return REGULAR;
-		Can give strange results ...
-		*/
 		if ("training".equalsIgnoreCase(value)) return TRAINING;
 		return REGULAR;
 	}

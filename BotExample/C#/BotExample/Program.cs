@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Web.Script.Serialization;
 using Microsoft.CSharp.RuntimeBinder;
+using System.IO;
 
 namespace BotExample
 {
@@ -16,8 +17,11 @@ namespace BotExample
         /* CHANGE SETTINGS HERE */
         private const string TOKEN = "abc";
         private const bool TRAINING = true;
+        // Directory.GetCurrentDirectory() while running in debug-mode = [PROJECT-PATH]/bin/debug
+        private readonly string SAVE_DIRECTORY = Directory.GetCurrentDirectory();
 
         private Socket sock;
+        // Object used to convert JSON to a C# object
         private JavaScriptSerializer serializer;
 
         private bool inGame;
@@ -34,7 +38,16 @@ namespace BotExample
 
             sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint serverAddress = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 12345);
-            sock.Connect(serverAddress);
+            try
+            {
+                sock.Connect(serverAddress);
+            }
+            catch (SocketException E)
+            {
+                Console.WriteLine("Error during connection :\n" + E.Message + "\nPress enter to exit.");
+                Console.ReadLine();
+                return;
+            }
             new Thread(new ThreadStart(ReceiveData)).Start();
 
             SendMessage(new LoginMessage(TOKEN, TRAINING));
@@ -42,11 +55,14 @@ namespace BotExample
             // Console.ReadLine();
         }
 
+        // Sends a message to the server
         public void SendMessage(ClientMessage msg)
         {
+            // Don't forget the \n !
             sock.Send(System.Text.Encoding.UTF8.GetBytes(msg.Serialize() + "\n"), SocketFlags.None);
         }
 
+        // A server message has just been received
         private void Received(dynamic message)
         {
             try
@@ -96,6 +112,7 @@ namespace BotExample
                 }
                 muted = false;
                 inGame = true;
+                Console.WriteLine("A game just started");
             }
             catch (RuntimeBinderException)
             {
@@ -111,10 +128,10 @@ namespace BotExample
                 map.ClearTempObjects();
                 foreach (var obj in content.gameobjects)
                 {
-                    string type = obj[0];
+                    string type = obj[0].ToLower();
                     int row = obj[1];
                     int col = obj[2];
-                    if (type.Equals("a"))
+                    if (type.Equals("a") || type.Equals("b"))
                     {
                         // Living ant
                         int owner = obj[3];
@@ -147,9 +164,13 @@ namespace BotExample
                         map.AddFood(col, row);
                     }
                 }
+                // Uncomment to display the map in the console every turn
+                //Console.WriteLine("New turn. Current known map :");
+                //Console.Write(map);
                 map.ComputeMoves();
                 GameActionsMessage msg = new GameActionsMessage();
                 map.GetMoves(msg);
+                map.ApplyMoves();
                 SendMessage(msg);
             }
             catch (RuntimeBinderException)
@@ -162,7 +183,9 @@ namespace BotExample
             try
             {
                 inGame = false;
-                Console.WriteLine("Game ended ... score=" + content.gamescore + ", new bot score : " + content.score);
+                string filename = SAVE_DIRECTORY + "\\replay-" + DateTime.Now.Ticks + ".json";
+                File.WriteAllText(filename, content.replay.ToString());
+                Console.WriteLine("Game ended ... Saving replay to " + filename);
             }
             catch (RuntimeBinderException)
             {
@@ -183,7 +206,7 @@ namespace BotExample
         }
 
         /**
-         * Function ran in a thread
+         * Function to be run in a thread
          * Constently looking for server messages
          * Deserializing them and passing them to `Received`
          */
@@ -215,7 +238,7 @@ namespace BotExample
                             }
                             catch (SocketException E)
                             {
-                                Console.WriteLine("Error while receiving a message.");
+                                Console.WriteLine("Error while receiving a message. " + E.Message);
                             }
                         }
                     }

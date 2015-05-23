@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Web.Script.Serialization;
 
+// Class used to convert JSON to a C# object (without dependancy)
 // See http://stackoverflow.com/questions/3142495/deserialize-json-into-c-sharp-dynamic-object
-
 public sealed class DynamicJsonConverter : JavaScriptConverter
 {
     public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
@@ -61,7 +61,7 @@ public sealed class DynamicJsonConverter : JavaScriptConverter
                 var name = pair.Key;
                 if (value is string)
                 {
-                    sb.AppendFormat("{0}:\"{1}\"", name, value);
+                    sb.AppendFormat("\"{0}\":\"{1}\"", name, value);
                 }
                 else if (value is IDictionary<string, object>)
                 {
@@ -88,7 +88,7 @@ public sealed class DynamicJsonConverter : JavaScriptConverter
                 }
                 else
                 {
-                    sb.AppendFormat("{0}:{1}", name, value);
+                    sb.AppendFormat("\"{0}\":{1}", name, value);
                 }
             }
             sb.Append("}");

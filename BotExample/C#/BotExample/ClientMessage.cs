@@ -7,6 +7,7 @@ using System.Web.Script.Serialization;
 
 namespace BotExample
 {
+    // Standard message to be sent to the server
     class ClientMessage
     {
         public string type;
