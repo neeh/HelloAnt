@@ -49,25 +49,36 @@ public class GameThread extends Thread
 	{
 		game.init();
 		// Send the "gamestart" message.
-		//game.sendGameStartInfo();
+		game.sendGameStart();
 		// Wait for load time.
-		//Thread.sleep(game.getLoadTimeMs());
+		try
+		{
+			Thread.sleep(game.getLoadTimeMs());
+		}
+		catch (InterruptedException e1) {}
 		while (game.isFinished() == false)
-		{	// Mute bot(s) that has not played.
-			//game.muteNonPlayerBots();
+		{
+			// Mute bot(s) that has not played.
+			game.muteNonPlayerBots();
 			// Send the current game state to bots.
-			//game.sendGameState();
-			/*while (game.areBotReady() == false || timer < game.getResponseDelayMs())
+			game.sendGameState();
+			long ms = System.currentTimeMillis();
+			while (game.isReady() == false ||
+					System.currentTimeMillis() - ms < game.getResponseTimeMs())
 			{	// Wait for all bots to give actions OR response delay overcame
-				Thread.sleep(1);
-			}*/
+				try
+				{
+					Thread.sleep(1);
+				}
+				catch (InterruptedException e){}
+			}
 			// Update the game.
 			game.update();
 		}
 		// Compute new scores.
 		game.computeBotScores();
 		// Send the "gameend" message.
-		//game.sendGameEndInfos();
+		game.sendGameEnd();
 		//game.finalize();
 	}
 }

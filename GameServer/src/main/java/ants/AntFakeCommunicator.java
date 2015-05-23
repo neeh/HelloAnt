@@ -17,7 +17,7 @@
  * along with HelloAnt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package basis;
+package ants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,29 +29,33 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ants.AntGameMapView;
-import ants.AntGameObject;
+import basis.Bot;
+import basis.TCPClientCommunicator;
 
 /**
- * Create a fake communicator to use in training mode
+ * This class represents a fake communicator that aims to play with a bot in training
+ * mode. Messages are not sent over the network. The communicator immediately handles game
+ * state messages.
  * @class
+ * @author JMN
  */
-public class FakeCommunicator extends TCPClientCommunicator
+public class AntFakeCommunicator extends TCPClientCommunicator
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(
-			FakeCommunicator.class);
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(AntFakeCommunicator.class);
 	
-	private Bot bot;
+	/**
+	 * The interface giving an reading access to the game map.
+	 */
 	private AntGameMapView mapView;
 	
 	/**
-	 * Create a fake communicator and a training bot using it
-	 * @param mapView a view of the map of the currentGame
+	 * Creates a fake communicator that will send game actions to a training game.
+	 * @param mapView the interface giving an reading access to the game map.
 	 */
-	public FakeCommunicator(AntGameMapView mapView)
+	public AntFakeCommunicator(AntGameMapView mapView)
 	{
 		super(null, null);
-		this.bot = new Bot(this, "Training Bot", BotMode.TRAINING, 0, null);
 		this.mapView = mapView;
 	}
 	
@@ -61,24 +65,12 @@ public class FakeCommunicator extends TCPClientCommunicator
 		// Do nothing
 	}
 	
-	@Override
-	public boolean isBotLoggedIn()
-	{
-		return true;
-	}
-	
-	@Override
-	public void sendGameStart(JSONObject content)
-	{
-		
-	}
-	
 	/**
-	 * Get objects one cell away in a direction from a specified cell
-	 * @param row row of the origin cell
-	 * @param col column of the origin cell
-	 * @param direction direction from the origin
-	 * @return a list of AntGameObjects
+	 * Gets objects one cell away in a direction from a specified cell.
+	 * @param row the row index of the origin cell.
+	 * @param col the column index of the origin cell.
+	 * @param direction the direction token from the origin.
+	 * @return a list of game objects.
 	 */
 	private List<AntGameObject> getObjectsAround(int row, int col, char direction)
 	{
@@ -101,8 +93,9 @@ public class FakeCommunicator extends TCPClientCommunicator
 	}
 	
 	/**
-	 * Override the communicator sendGameState function
-	 * Does not send any message but instead tells immediately the game that a game action is received
+	 * This method overrides the communicator sendGameState method.
+	 * No message is sent over the network. The fake communicator reads the input and
+	 * returns its game actions immediately.
 	 */
 	@Override
 	public void sendGameState(JSONObject content)
@@ -117,40 +110,38 @@ public class FakeCommunicator extends TCPClientCommunicator
 			for (int i = 0; i < objects.length(); i++)
 			{
 				JSONArray object = objects.getJSONArray(i);
-				if(object.getString(0).equals("a") && object.getInt(3) == 0)
+				if (object.getString(0).equals("a") && object.getInt(3) == 0)
 				{
 					myAnts.add(object);
 					StringBuilder untriedMoves = new StringBuilder("NEWS");
 					char move = 'N';
-					while(untriedMoves.length() > 0)
+					while (untriedMoves.length() > 0)
 					{
 						// Take a random move not already tried
 						int index = rand.nextInt(untriedMoves.length());
 						move = untriedMoves.charAt(index);
 						untriedMoves.deleteCharAt(index);
 						// Get objects in this direction
-						List<AntGameObject> objectsAt = getObjectsAround(object.getInt(1), object.getInt(2), move);
+						List<AntGameObject> objectsAt = getObjectsAround(
+								object.getInt(1), object.getInt(2), move);
 						boolean moveAvailable = true;
-						for (AntGameObject antGameObject : objectsAt)
+						for (AntGameObject gob : objectsAt)
 						{
 							// Solid object : we can't go there
-							if (!antGameObject.isCollideable())
+							if (gob.isCollideable())
 							{
 								moveAvailable = false;
 								break;
 							}
 						}
 						// If this zone empty, it's ok
-						if (moveAvailable)
-						{
-							break;
-						}
+						if (moveAvailable) break;
 					}
 					myMoves.add(move);
 				}
 			}
 			
-			// Fill the result with the computed moves 
+			// Fill the result with the computed moves.
 			JSONArray moves = new JSONArray();
 			
 			for (int i = 0; i < myAnts.size(); i++)
@@ -165,7 +156,7 @@ public class FakeCommunicator extends TCPClientCommunicator
 			JSONObject actions = new JSONObject();
 			actions.put("moves", moves);
 			
-			// "Send" the result to the game
+			// "Send" the result to the game.
 			bot.getGame().receiveActions(bot, actions);
 		}
 		catch (JSONException e)
@@ -175,20 +166,35 @@ public class FakeCommunicator extends TCPClientCommunicator
 	}
 	
 	@Override
+	public void sendGameStart(JSONObject content)
+	{
+		// Do nothing
+	}
+	
+	@Override
 	public void sendGameEnd(JSONObject content)
 	{
-		
+		// Do nothing
 	}
 	
 	@Override
 	public void sendGameMute(JSONObject content)
 	{
-		
+		// Do nothing
 	}
 	
-	@Override
-	public Bot getBot()
+	/**
+	 * Sets the bot of the fake communicator.
+	 * The bot constructor requires a communicator so this method is provided to set the
+	 * bot of the fake communicator after it has been created.
+	 * { @code
+	 *   AntFakeCommunicator fakeCom = new AntFakeCommunicator(...);
+	 *   Bot fakeBot = new Bot(fakeCom, ...);
+	 *   fakeCom.setBot(fakeBot); }
+	 * @param bot the bot controlled by the communicator.
+	 */
+	public void setBot(Bot bot)
 	{
-		return bot;
+		this.bot = bot;
 	}
 }

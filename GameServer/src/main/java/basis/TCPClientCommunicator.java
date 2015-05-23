@@ -71,7 +71,7 @@ public class TCPClientCommunicator implements Runnable
 	 * The bot the client is logged in as.
 	 * Is null when the client is not logged in as a bot yet.
 	 */
-	private Bot bot;
+	protected Bot bot;
 	
 	/**
 	 * The database manager that enables the communicator to retrieve and update data in

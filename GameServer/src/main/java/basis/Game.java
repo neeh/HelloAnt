@@ -37,18 +37,6 @@ import org.json.JSONObject;
 public abstract class Game
 {
 	/**
-	 * Describes how the game should be played.
-	 * When true, only one bot is allowed to play during a game round.
-	 * That's the way chess game is played, for example.
-	 * When false, all the bot have to send their actions during a game round.
-	 * @note some weird games may be very tricky to design. We recommend you put this
-	 * boolean to false and then manually manage the 'curBot' identifier and the
-	 * 'curRound' counter in the 'update' method in this case.
-	 * @deprecated
-	 */
-	//protected boolean oneBotPerRound;
-	
-	/**
 	 * The list of bots in the game.
 	 * If a bot was kicked during the match, it remains in this list but no longer
 	 * receives server messages for this game until the match ends.
@@ -61,21 +49,11 @@ public abstract class Game
 	protected Map<Bot, BotGameInfo> botInfos;
 	
 	/**
-	 * The list of game score for each bot.
-	 * Game scores are updated after a round.
-	 * @deprecated
+	 * Whether all bots that should play during the current round have sent their game
+	 * actions. This boolean can be tested to stop waiting for game actions when the game
+	 * won't receive those anymore.
 	 */
-	//protected ArrayList<Integer> gameScores;
-	
-	/**
-	 * The list of bot enabled.
-	 * When a bot is disabled, it no longer receives game state informations and should
-	 * wait for the end of the game to be able to play anew.
-	 * If you need to stop the reception of actions of a specific bot, switch its
-	 * boolean off in this list.
-	 * @deprecated
-	 */
-	//protected ArrayList<Boolean> BotEnabled;
+	private boolean ready;
 	
 	/**
 	 * The time the server has to wait after "gamestart" message. (in milliseconds)
@@ -87,13 +65,6 @@ public abstract class Game
 	 * "gamestate" message from the server. (in milliseconds)
 	 */
 	protected int responseTimeMs;
-	
-	/**
-	 * The identifier of the bot (in the 'bots' list) which is currently playing.
-	 * Only relevant when 'oneBotPerRound' is true.
-	 * @deprecated
-	 */
-	//protected int curBot;
 	
 	/**
 	 * The current round identifier of the game.
@@ -108,7 +79,7 @@ public abstract class Game
 	protected int maxRound;
 	
 	/**
-	 * Initialize the game state.
+	 * Initializes the game state.
 	 */
 	public abstract void init();
 	
@@ -146,38 +117,38 @@ public abstract class Game
 	}
 	
 	/**
-	 * Updates the game state using bot actions.
+	 * Updates the game state.
 	 */
 	public abstract void update();
 	
 	/**
-	 * Returns whether all bots have played for the current round.
-	 * This method can be used to stop waiting for game actions when every bot is ready.
-	 * @return true if all bots have played, false otherwise.
+	 * Mutes a bot in this game and sends it a "gamemute" message.
+	 * @see Documentation/protocol/gamemute.html
+	 * @param bot the bot to mute.
+	 * @param reason a message explaining why the bot was muted.
 	 */
-	public boolean areBotReady()
+	private void muteBot(Bot bot, String reason)
 	{
-		for (Map.Entry<Bot, BotGameInfo> info : botInfos.entrySet())
-		{	// For each bot, test whether it played.
-			if (info.getValue().hasPlayed() == false)
-			{	// A bot has not played yet.
-				return false;
-			}
-		}
-		return true;
+		BotGameInfo botInfo = botInfos.get(bot);
+		botInfo.setGamestateTimestampMs(0);
+		botInfo.setPlayed(true);
+		botInfo.setMuted(true);
+		bot.getCommunicator().sendGameMute(genGameMuteMessageContent(reason));
 	}
 	
 	/**
 	 * Mutes the bots that did not send their actions during the current round.
+	 * @see Documentation/protocol/gamemute.html
 	 */
 	public void muteNonPlayerBots()
 	{
 		for (Map.Entry<Bot, BotGameInfo> info : botInfos.entrySet())
 		{	// For each bot, test whether it played.
+			Bot bot = info.getKey();
 			BotGameInfo botInfo = info.getValue();
 			if (botInfo.hasPlayed() == false)
 			{	// The bot has not played for this round, mute it.
-				
+				muteBot(bot, "You did not send your game actions");
 			}
 		}
 	}
@@ -208,28 +179,35 @@ public abstract class Game
 	{
 		int error;
 		// Get the current state of the bot.
-		BotGameInfo info = botInfos.get(bot);
+		BotGameInfo botInfo = botInfos.get(bot);
 		// Check if the bot is not muted.
-		if (info.isMuted() == false)
+		if (botInfo.isMuted() == false)
 		{
 			// Check if the bot has not already played for this round.
-			if (info.hasPlayed() == false)
+			if (botInfo.hasPlayed() == false)
 			{
 				// Check if the bot has not exceeded the response time limit.
-				if (System.currentTimeMillis() - info.getGamestateTimestampMs() <=
+				if (System.currentTimeMillis() - botInfo.getGamestateTimestampMs() <=
 					responseTimeMs)
 				{
 					executeActions(bot, content);
-					// If all the bots played this round, run to the next round!
-					// TODO: shutdown the timeout of the GameThread
+					// If all the bots have played for this round, change the ready state
+					// of the game.
+					boolean ok = true;
+					for (Map.Entry<Bot, BotGameInfo> info : botInfos.entrySet())
+					{	// For each bot, test whether it played.
+						if (info.getValue().hasPlayed() == false)
+						{	// A bot has not played yet.
+							ok = false;
+						}
+					}
+					// I added a boolean 'ok' to avoid modifying 'ready' directly.
+					if (ok == true) ready = true;
 					error = 0;
 				}
 				else
 				{
-					info.setPlayed(true);
-					info.setMuted(true);
-					bot.getCommunicator().sendGameMute(
-							genGameMuteMessageContent("Too slow"));
+					muteBot(bot, "Too late");
 					// Too late
 					error = 104;
 				}
@@ -244,21 +222,6 @@ public abstract class Game
 			error = 102;
 		}
 		return error;
-	}
-	
-	/**
-	 * Sends the current game state to the bot(s).
-	 * By default, the method is implemented to send the game state and wait for game
-	 * actions to every bot playing in game.
-	 */
-	public void sendGameState()
-	{
-		Iterator<Bot> botIt = bots.iterator();
-		while (botIt.hasNext())
-		{	// For each bot, send the game state and wait for actions.
-			Bot bot = botIt.next();
-			sendGameState(bot, true);
-		}
 	}
 	
 	/**
@@ -285,34 +248,80 @@ public abstract class Game
 	}
 	
 	/**
+	 * Sends the current game state to the bot(s).
+	 * By default, the method is implemented to send the game state and wait for game
+	 * actions to every bot playing in game.
+	 */
+	public void sendGameState()
+	{
+		Iterator<Bot> botIt = bots.iterator();
+		while (botIt.hasNext())
+		{	// For each bot, send the game state and wait for actions.
+			Bot bot = botIt.next();
+			sendGameState(bot, true);
+		}
+	}
+	
+	/**
+	 * Sends a "gamestart" message to all the bots in the game.
+	 */
+	public void sendGameStart()
+	{
+		Iterator<Bot> botIt = bots.iterator();
+		while (botIt.hasNext())
+		{	// For each bot, send the game start message.
+			Bot bot = botIt.next();
+			bot.getCommunicator().sendGameStart(genGameStartMessageContent(bot));
+		}
+	}
+	
+	/**
+	 * Sends a "gameend" message to all the bots in the game.
+	 */
+	public void sendGameEnd()
+	{
+		Iterator<Bot> botIt = bots.iterator();
+		while (botIt.hasNext())
+		{	// For each bot, send the game start message.
+			Bot bot = botIt.next();
+			bot.getCommunicator().sendGameEnd(genGameEndMessageContent(bot));
+		}
+	}
+	
+	/**
+	 * Finalizes the game.
+	 */
+	//public abstract void finalize();
+	
+	/**
 	 * Generates the content of a "gamestate" message for a specific bot.
+	 * @see Documentation/protocol/gamestate.html
 	 * @param bot the bot that will receive the message.
 	 * @return the content of the "gamestate" message.
-	 * @see Documentation/protocol/gamestate.html
 	 */
 	protected abstract JSONObject genGameStateMessageContent(Bot bot);
 	
 	/**
 	 * Generates the content of a "gamestart" message for a specific bot.
+	 * @see Documentation/protocol/gamestart.html
 	 * @param bot the bot that will receive the message.
 	 * @return the content of the "gamestart" message.
-	 * @see Documentation/protocol/gamestart.html
 	 */
 	protected abstract JSONObject genGameStartMessageContent(Bot bot);
 	
 	/**
 	 * Generates the content of a "gameend" message for a specific bot.
+	 * @see Documentation/protocol/gameend.html
 	 * @param bot the bot that will receive the message.
 	 * @return the content of the "gameend" message.
-	 * @see Documentation/protocol/gameend.html
 	 */
 	protected abstract JSONObject genGameEndMessageContent(Bot bot);
 	
 	/**
 	 * Generates the content of a "gamemute" message.
-	 * @param reason the reason(s) of the mute.
-	 * @return the content of the "gamemute" message.
 	 * @see Documentation/protocol/gamemute.html
+	 * @param reason the reason of the mute.
+	 * @return the content of the "gamemute" message.
 	 */
 	protected JSONObject genGameMuteMessageContent(String reason)
 	{
@@ -329,14 +338,31 @@ public abstract class Game
 	}
 	
 	/**
-	 * Returns how the game should be played.
-	 * @return true if only one bot can play per round, false otherwise.
-	 * @deprecated
+	 * Returns whether the game is ready to update itself for the current round.
+	 * @return true if all bots have played, false otherwise.
 	 */
-	/*public boolean isOneBotPerRound()
+	public boolean isReady()
 	{
-		return oneBotPerRound;
-	}*/
+		return ready;
+	}
+	
+	/**
+	 * Gets the time the server has to wait after "gamestart" message.
+	 * @return the time to wait after a "gamestart" message.
+	 */
+	public int getLoadTimeMs()
+	{
+		return loadTimeMs;
+	}
+	
+	/**
+	 * Gets he time the server has to wait for receiving "gameactions" message.
+	 * @return the time to wait for bot actions.
+	 */
+	public int getResponseTimeMs()
+	{
+		return responseTimeMs;
+	}
 	
 	/**
 	 * Gets the current round identifier of the game.

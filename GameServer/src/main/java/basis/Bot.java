@@ -97,20 +97,19 @@ public class Bot
 	}
 
 	/**
-	 * Increment the priority of a bot.
+	 * Increment the priority of a bot in the game lobby.
 	 */
 	public void incPriority()
 	{
-		++priority;
+		priority++;
 	}
 	
 	/**
-	 * Decrement the priority of a bot.
+	 * Decrement the priority of a bot in the game lobby.
 	 */
 	public void decPriority()
 	{
-		if (priority > 0)
-			--priority;
+		if (priority > 0) priority--;
 	}
 	
 	/** 
