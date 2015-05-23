@@ -17,12 +17,12 @@
  * along with HelloAnt.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ants;
+package com;
 
-import util.Move;
-
-public interface AntGameMapCallback
+public class App 
 {
-	public void moveGameObject(AntGameObject object, Move dir);
-	
+    public static void main( String[] args )
+    {
+        new Interface();
+    }
 }
