@@ -29,6 +29,7 @@ import basis.GameServer;
 /**
  * This class implements a game server specific to the game of ants.
  * It's responsible for managing high-level interactions between clients and games.
+ * @class
  * @author Nicolas
  */
 public class AntGameServer extends GameServer
@@ -66,28 +67,28 @@ public class AntGameServer extends GameServer
 		// Get all the files in GameServer/res/maps/
 		File f = new File("./res/maps/");
 		File[] files = f.listFiles();
-        for (File file : files)
-        {
-        	if (file.isDirectory() == false)
-        	{
-        		String filename = file.getName();
-        		LOGGER.info("map loaded: " + filename);
-        		try
-        		{	// Attempt to parse the file.
-        			AntMapTemplate map = new AntMapTemplate();
-        			map.loadFromFile(filename);
-        			mapTemplates.add(map);
-        		}
-        		catch (InvalidMapFormatException e)
-        		{	// May not be a map file...
-        			LOGGER.error("Cannot parse file '" + filename + "': " + e.getMessage());
-        		}
-        		catch (IOException e)
-        		{
-        			LOGGER.error("Cannot read file '" + filename + "'");
-        		}
-        	}
-        }
-        return mapTemplates;
+		for (File file : files)
+		{
+			if (file.isDirectory() == false)
+			{
+				String filename = file.getName();
+				LOGGER.info("map loaded: " + filename);
+				try
+				{	// Attempt to parse the file.
+					AntMapTemplate map = new AntMapTemplate();
+					map.loadFromFile(filename);
+					mapTemplates.add(map);
+				}
+				catch (InvalidMapFormatException e)
+				{	// May not be a map file...
+					LOGGER.error("Cannot parse file '" + filename + "': " + e.getMessage());
+				}
+				catch (IOException e)
+				{
+					LOGGER.error("Cannot read file '" + filename + "'");
+				}
+			}
+		}
+		return mapTemplates;
 	}
 }

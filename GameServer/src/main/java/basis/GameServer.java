@@ -62,7 +62,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 	public GameServer(int port)
 	{
 		// Setup the database.
-		DBInterface.init("dbants", "root", "");
+		DBManager.init("dbants", "root", "");
 		clients = new ArrayList<TCPClientCommunicator>();
 		// Create the listener that will receive client.
 		listener = new TCPClientListener(port, this);

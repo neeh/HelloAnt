@@ -29,7 +29,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: handle spam mute?
+// TODO: for future projects, handle spam mute?
 /**
  * Creates a new TCP client. This class is responsible for the communication between
  * the server and the client. When the client needs the server to execute a specific
@@ -74,10 +74,10 @@ public class TCPClientCommunicator implements Runnable
 	private Bot bot;
 	
 	/**
-	 * The database interface that enables the communicator to retrieve and update data
-	 * in the database.
+	 * The database manager that enables the communicator to retrieve and update data in
+	 * the database.
 	 */
-	private DBInterface dbi;
+	private DBManager dbm;
 	
 	/**
 	 * The client handler used to call back the server when specific events occur.
@@ -141,7 +141,7 @@ public class TCPClientCommunicator implements Runnable
 					+ e.getMessage());
 		}
 		bot = null;
-		dbi = DBInterface.getInstance();
+		dbm = DBManager.getInstance();
 		this.handler = handler;
 		// Create the client thread.
 		clientThread = new Thread(this);
@@ -321,7 +321,7 @@ public class TCPClientCommunicator implements Runnable
 			String ip = socket.getInetAddress().getHostAddress();
 			try
 			{	// Attempt to login the bot on the database
-				Bot bot = dbi.login(content.getString("token"), this, mode, ip);
+				Bot bot = dbm.login(content.getString("token"), this, mode, ip);
 				// No exception caught -> the login was successful.
 				this.bot = bot;
 				// Notify the server a bot just logged in.
@@ -489,7 +489,7 @@ public class TCPClientCommunicator implements Runnable
 			if (isValidNickname(nick))
 			{
 				// Attempt to create the bot on the database.
-				String token = dbi.createBot(nick);
+				String token = dbm.createBot(nick);
 				if (token != null)
 				{
 					outputContent = new JSONObject();
@@ -535,10 +535,10 @@ public class TCPClientCommunicator implements Runnable
 		// Get the token to remove.
 		String token = content.getString("token");
 		// Check that the bot is not logged in elsewhere.
-		if (dbi.isBotOnline(token) == false)
+		if (dbm.isBotOnline(token) == false)
 		{
 			// Try to remove the bot.
-			if (dbi.removeBot(token))
+			if (dbm.removeBot(token))
 			{
 				outputMessage = "Bot removed";
 			}
@@ -657,7 +657,7 @@ public class TCPClientCommunicator implements Runnable
 				// TODO: remove the bot from its game.
 			}
 			// Notify the database the bot is logged out.
-			dbi.disconnect(bot.getNick());
+			dbm.logout(bot.getNick());
 			// Notify the game server the bot is logged out.
 			if (handler != null)
 			{

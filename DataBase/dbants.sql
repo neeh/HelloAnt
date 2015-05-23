@@ -1,7 +1,7 @@
 
 -- MYSQL DATABASE: dbants
 -- 03/04/2015 12:16AM
--- hekat
+-- neeh
 
 DELIMITER ;
 
@@ -91,8 +91,6 @@ BEGIN
 	END IF;
 	RETURN rtoken;
 END$$
-
--- todo: unit tests
 
 /* Updates the base score value and scales all bot scores.
  * CALL UpdateBaseScore(2000, TRUE);
