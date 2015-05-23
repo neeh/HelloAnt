@@ -53,7 +53,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 	/**
 	 * The list of games being played.
 	 */
-	//private ArrayList<GameThread> gameThreads;
+	private ArrayList<GameThread> gameThreads;
 	
 	/**
 	 * Creates a new game server.
@@ -131,9 +131,10 @@ public class GameServer implements TCPClientHandler, GameHandler
 	@Override
 	public void handleGameCreated(Game game)
 	{
-		//Thread gameThread = new GameThread(game);
-		//gameThreads.add(gameThread);
-		//gameThread.start();
+		GameThread gameThread = new GameThread(game);
+		gameThreads.add(gameThread);
+		// Start the game.
+		gameThread.start();
 		System.out.println(System.currentTimeMillis() + ": Game created");
 	}
 	

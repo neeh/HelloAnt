@@ -81,7 +81,8 @@ public class AntGameServer extends GameServer
 				}
 				catch (InvalidMapFormatException e)
 				{	// May not be a map file...
-					LOGGER.error("Cannot parse file '" + filename + "': " + e.getMessage());
+					LOGGER.error("Cannot parse file '" + filename + "': " +
+							e.getMessage());
 				}
 				catch (IOException e)
 				{

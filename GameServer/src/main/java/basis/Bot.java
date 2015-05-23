@@ -173,7 +173,7 @@ public class Bot
 	 * A bot which is not in game is waiting for a game.
 	 * @return true if the bot is in a game
 	 */
-	public Boolean isInGame()
+	public boolean isInGame()
 	{
 		return (game != null);
 	}

@@ -42,12 +42,12 @@ public class Ant extends AntGameObject
 	/**
 	 * Whether the ant holds food.
 	 */
-	private Boolean food;
+	private boolean food;
 	
 	/**
 	 * Whether the ant is dead.
 	 */
-	private Boolean dead;
+	private boolean dead;
 	
 	/**
 	 * The replay data for this ant. Stored in a JSON array.
@@ -58,7 +58,7 @@ public class Ant extends AntGameObject
 	/**
 	 * Indicates whether the ant has moved for this round.
 	 */
-	private Boolean moved;
+	private boolean moved;
 	
 	/**
 	 * Creates a new ant for a bot from a column and a row identifier.
@@ -155,7 +155,7 @@ public class Ant extends AntGameObject
 	 * Returns whether the ant holds food.
 	 * @return true if the ant holds food, false otherwise.
 	 */
-	public Boolean hasFood()
+	public boolean hasFood()
 	{
 		return food;
 	}
@@ -164,7 +164,7 @@ public class Ant extends AntGameObject
 	 * Returns whether the ant is dead.
 	 * @return true is the ant is dead, false otherwise.
 	 */
-	public Boolean isDead()
+	public boolean isDead()
 	{
 		return dead;
 	}
@@ -202,7 +202,7 @@ public class Ant extends AntGameObject
 	 * Returns whether the ant has moved for this round.
 	 * @return true if the ant moved, false otherwise.
 	 */
-	public Boolean hasMoved()
+	public boolean hasMoved()
 	{
 		return moved;
 	}
@@ -211,7 +211,7 @@ public class Ant extends AntGameObject
 	 * Sets whether the ant holds food.
 	 * @param food true if the ant holds food, false otherwise.
 	 */
-	public void setFood(Boolean food)
+	public void setFood(boolean food)
 	{
 		this.food = food;
 	}
@@ -234,7 +234,7 @@ public class Ant extends AntGameObject
 	 * Sets whether the ant has moved for this round.
 	 * @return true if the ant moved, false otherwise.
 	 */
-	public void setMoved(Boolean moved)
+	public void setMoved(boolean moved)
 	{
 		this.moved = moved;
 	}

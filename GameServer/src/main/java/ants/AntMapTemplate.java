@@ -359,7 +359,7 @@ public class AntMapTemplate
 	/**
 	 * Gets the string array representation of the map.
 	 * This method is used to generate the map rows as string for other export methods.
-	 * We use StringBuilder objects to simplify string the cooking of the strings.
+	 * We use StringBuilder objects to simplify the cooking of the strings.
 	 * @return a list of strings representing the rows of the map.
 	 */
 	private ArrayList<StringBuilder> _toStringArray()

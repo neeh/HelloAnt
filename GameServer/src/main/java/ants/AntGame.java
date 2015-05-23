@@ -167,7 +167,7 @@ public class AntGame extends Game
 	 * @return true if the game is finished, false otherwise.
 	 */
 	@Override
-	public Boolean isFinished()
+	public boolean isFinished()
 	{
 		// TODO
 		return true;

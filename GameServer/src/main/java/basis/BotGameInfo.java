@@ -38,7 +38,7 @@ public class BotGameInfo
 	 * next round. It means it does not have to wait for the response delay to finish.
 	 * @see Documentation/protocol/gameactions.html
 	 */
-	private Boolean played;
+	private boolean played;
 	
 	/**
 	 * The timestamp of the sending of the current game state. (in milliseconds)
@@ -51,7 +51,7 @@ public class BotGameInfo
 	/**
 	 * Whether the bot was muted in its game.
 	 */
-	private Boolean muted;
+	private boolean muted;
 	
 	/**
 	 * The current game score of the bot.
@@ -73,7 +73,7 @@ public class BotGameInfo
 	 * Gets whether the bot has played for the current round.
 	 * @return true if the bot has already played for this round, false otherwise.
 	 */
-	public Boolean hasPlayed()
+	public boolean hasPlayed()
 	{
 		return played;
 	}
@@ -91,7 +91,7 @@ public class BotGameInfo
 	 * Gets whether the bot is muted for the game.
 	 * @return true if the bot is muted, false otherwise.
 	 */
-	public Boolean isMuted()
+	public boolean isMuted()
 	{
 		return muted;
 	}
@@ -109,7 +109,7 @@ public class BotGameInfo
 	 * Sets whether the bot has played for the current round.
 	 * @param played true if the bot has played for this round, false otherwise.
 	 */
-	public void setPlayed(Boolean played)
+	public void setPlayed(boolean played)
 	{
 		this.played = played;
 	}
@@ -128,7 +128,7 @@ public class BotGameInfo
 	 * Mutes or unmutes the bot for the game.
 	 * @param muted true to mute the bot, false otherwise.
 	 */
-	public void setMuted(Boolean muted)
+	public void setMuted(boolean muted)
 	{
 		this.muted = muted;
 	}

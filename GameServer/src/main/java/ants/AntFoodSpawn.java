@@ -36,7 +36,7 @@ public class AntFoodSpawn extends AntGameObject
 	/**
 	 * Whether food is available on the spawn.
 	 */
-	private Boolean food;
+	private boolean food;
 	
 	/**
 	 * The last time food was taken from the food spawn.
@@ -113,7 +113,7 @@ public class AntFoodSpawn extends AntGameObject
 	 * Returns whether a food unit is present on the food spawn.
 	 * @return true if food there is food on the spawn, false otherwise.
 	 */
-	public Boolean hasFood()
+	public boolean hasFood()
 	{
 		return food;
 	}

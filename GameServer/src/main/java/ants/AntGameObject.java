@@ -46,12 +46,12 @@ public class AntGameObject
 	/**
 	 * Whether the game object can be moved on the map.
 	 */
-	protected Boolean movable;
+	protected boolean movable;
 	
 	/**
 	 * Whether the game object can share a cell with another game object.
 	 */
-	protected Boolean collideable;
+	protected boolean collideable;
 	
 	/**
 	 * The handler used to effectively move the game object on the map.
@@ -66,7 +66,7 @@ public class AntGameObject
 	 * @param movable true if the game object can be moved on the map.
 	 * @param collideable false if the game object can share a cell with another one.
 	 */
-	public AntGameObject(int col, int row, Boolean movable, Boolean collideable)
+	public AntGameObject(int col, int row, boolean movable, boolean collideable)
 	{
 		this.col = col;
 		this.row = row;
@@ -81,7 +81,7 @@ public class AntGameObject
 	 * @param movable true if the game object can be moved on the map.
 	 * @param collideable false if the game object can share a cell with another one.
 	 */
-	public AntGameObject(Cell cell, Boolean movable, Boolean collideable)
+	public AntGameObject(Cell cell, boolean movable, boolean collideable)
 	{
 		col = cell.getCol();
 		row = cell.getRow();
@@ -120,7 +120,7 @@ public class AntGameObject
 	 * Returns whether a game object can be moved on the map.
 	 * @return true if it is possible to move the game object, false otherwise.
 	 */
-	public Boolean isMovable()
+	public boolean isMovable()
 	{
 		return movable;
 	}
@@ -129,7 +129,7 @@ public class AntGameObject
 	 * Returns whether the game object is collideable.
 	 * @return true if the game object can't share its cell with another game object.
 	 */
-	public Boolean isCollideable()
+	public boolean isCollideable()
 	{
 		return collideable;
 	}

@@ -160,7 +160,7 @@ public class DBManager implements BotDBCallback
 	 * @param token the token of the bot to test.
 	 * @return true if the bot is logged in, false otherwise.
 	 */
-	public Boolean isBotOnline(String token)
+	public boolean isBotOnline(String token)
 	{
 		// The number of result:
 		int count = 0;
@@ -325,7 +325,7 @@ public class DBManager implements BotDBCallback
 	 * @param token the token of the bot to remove.
 	 * @return true if the bot was successfully removed, false otherwise.
 	 */
-	public Boolean removeBot(String token) {
+	public boolean removeBot(String token) {
 		int result = 0;
 		try
 		{	// DELETE FROM bots WHERE token = ?;

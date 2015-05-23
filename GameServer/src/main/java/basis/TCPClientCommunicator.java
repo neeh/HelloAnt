@@ -97,14 +97,14 @@ public class TCPClientCommunicator implements Runnable
 	 * A muted client can still send messages, but those messages are queued because the
 	 * communicator no longer read those.
 	 */
-	private Boolean muted;
+	private boolean muted;
 	
 	/**
 	 * Whether the listening thread is closed.
 	 * Turning this boolean to true will stop the listening thread from running.
 	 * @warning there is no way to restart the client thread.
 	 */
-	private Boolean closed;
+	private boolean closed;
 
 	/**
 	 * Creates a new TCP client communicator without handler.
@@ -715,7 +715,7 @@ public class TCPClientCommunicator implements Runnable
 	 * @param nick the desired nickname for a bot.
 	 * @return true if the nickname is valid, false otherwise.
 	 */
-	private Boolean isValidNickname(String nick)
+	private boolean isValidNickname(String nick)
 	{
 		return nick.matches("^[a-zA-Z][a-zA-Z0-9]{3,16}$");
 	}
@@ -724,7 +724,7 @@ public class TCPClientCommunicator implements Runnable
 	 * Returns whether the client is logged in with a bot.
 	 * @return true if the client is logged in, false otherwise
 	 */
-	public Boolean isBotLoggedIn()
+	public boolean isBotLoggedIn()
 	{
 		// When a client logs in, his bot object is assigned to the 'bot' property of this
 		// class, so we can simply test this property.

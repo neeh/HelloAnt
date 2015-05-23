@@ -62,7 +62,7 @@ public class FakeCommunicator extends TCPClientCommunicator
 	}
 	
 	@Override
-	public Boolean isBotLoggedIn()
+	public boolean isBotLoggedIn()
 	{
 		return true;
 	}
