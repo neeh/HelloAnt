@@ -87,7 +87,12 @@ public abstract class Game
 	 * Returns whether the current game state matches the game ending conditions.
 	 * @return true if the game is finished, false otherwise.
 	 */
-	public abstract boolean isFinished();
+	public boolean isFinished()
+	{
+		// A trivial ending condition is the maximum number of round reached.
+		if (maxRound > 0 && curRound == maxRound) return true;
+		return false;
+	}
 	
 	/**
 	 * Updates the score of each bot based on its final game score.
@@ -330,10 +335,7 @@ public abstract class Game
 		{
 			content.put("reason", reason);
 		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
+		catch (JSONException e) {}
 		return content;
 	}
 	

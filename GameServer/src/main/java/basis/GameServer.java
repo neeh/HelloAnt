@@ -157,7 +157,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 					// game still needs the data of the bot to run the game normally, so
 					// the game keeps the communicator and the bot instance of a bot that
 					// is no longer logged in.
-					// Therefore, I have to check that the bot is still logged in.
+					// Therefore, I had to check that the bot is still logged in.
 					// -------------------------------------------------------------------
 					gameManager.addBot(bot);
 				}

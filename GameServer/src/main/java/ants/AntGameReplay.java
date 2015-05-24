@@ -37,12 +37,18 @@ public class AntGameReplay
 	/**
 	 * The track of bot ants.
 	 */
-	ArrayList<JSONArray> ants;
+	private ArrayList<JSONArray> ants;
 	
 	/**
 	 * The track of food units.
 	 */
-	ArrayList<JSONArray> food;
+	private ArrayList<JSONArray> food;
+	
+	/**
+	 * The name of the cut-off rule that ended the game.
+	 */
+	@SuppressWarnings("unused")
+	private String cutoff;
 	
 	/**
 	 * Creates a new game replay object.
@@ -85,5 +91,14 @@ public class AntGameReplay
 	public void addFoodData(JSONArray foodData)
 	{
 		food.add(foodData);
+	}
+	
+	/**
+	 * Sets the name of the cut-off rule that ended the game.
+	 * @param status the name of the cut-off rule.
+	 */
+	public void setCutoff(String cutoff)
+	{
+		this.cutoff = cutoff;
 	}
 }
