@@ -569,7 +569,7 @@ public class TCPClientCommunicator implements Runnable
 	private void send(String type, int error, String message, JSONObject content)
 	{
 		// A closed communicator is not supposed to receive messages. Do nothing.
-		if (closed = true) return;
+		// if (closed = true) return;
 		// The JSONObject containing the message.
 		JSONObject msgObj = new JSONObject();
 		try

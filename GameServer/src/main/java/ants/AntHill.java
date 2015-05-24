@@ -30,7 +30,7 @@ import basis.Bot;
  * @class
  * @author Benjamin
  */
-public class AntHill extends AntGameObject 
+public class AntHill extends AntGameObject implements Comparable<AntHill>
 {
 	/**
 	 * The bot that owns the ant hill.
@@ -38,9 +38,9 @@ public class AntHill extends AntGameObject
 	private Bot bot;
 	
 	/**
-	 * The last time an ant spawned from the hill.
+	 * The last time an ant was on top of the hill.
 	 */
-	private int lastPopRound;
+	private int lastVisitRound;
 	
 	/**
 	 * Creates a new ant hill for a bot from a column and a row identifier.
@@ -77,16 +77,7 @@ public class AntHill extends AntGameObject
 	}
 	
 	/**
-	 * Gets the last time an ant spawned from the hill.
-	 * @return the last time an ant spawned from the hill.
-	 */
-	public int getLastPopRound()
-	{
-		return lastPopRound;
-	}
-	
-	/**
-	 * Gets a JSON representation of a wall.
+	 * Gets a JSON representation of a hill.
 	 * @see Documentation/protocol/gamestate.html
 	 * @param botId the bot identifier of the owner, viewed by the bot.
 	 * @return [ "H", col, row, owner_id ]
@@ -106,11 +97,29 @@ public class AntHill extends AntGameObject
 	}
 	
 	/**
-	 * Sets the last time an ant spawned from the hill.
-	 * @param lastPopRound the last time an ant spawned from the hill.
+	 * Gets the last time an ant was on top of the hill.
+	 * @return the last time an ant was on top of the hill.
 	 */
-	public void setLastPopRound(int lastPopRound)
+	public int getLastVisitRound()
 	{
-		this.lastPopRound = lastPopRound;
+		return lastVisitRound;
+	}
+	
+	/**
+	 * Sets the last time an ant was on top of the hill.
+	 * @param lastPopRound the last time an ant was on top of the hill.
+	 */
+	public void setLastVisitRound(int lastVisitRound)
+	{
+		this.lastVisitRound = lastVisitRound;
+	}
+
+	/**
+	 * Used to get less recently visited hill first using a sort.
+	 */
+	@Override
+	public int compareTo(AntHill o)
+	{
+		return getLastVisitRound() - o.getLastVisitRound();
 	}
 }

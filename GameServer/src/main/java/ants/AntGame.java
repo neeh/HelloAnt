@@ -20,6 +20,7 @@
 package ants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -73,13 +74,12 @@ public class AntGame extends Game
 	/**
 	 * The mask that simulates fog war for battles.
 	 */
-	@SuppressWarnings("unused")
 	private AntGameMapMask attackMask;
 	
 	/**
 	 * The class that holds replay data for the ant game.
 	 */
-	private AntGameReplay replay;
+	private AntGameReplayData replay;
 	
 	/**
 	 * Creates a new ant game from a map template and a list of bots playing in this game.
@@ -118,7 +118,31 @@ public class AntGame extends Game
 		viewMask = new AntGameMapMask(77.0f);
 		attackMask = new AntGameMapMask(5.0f);
 		// Create replay object.
-		replay = new AntGameReplay();
+		replay = new AntGameReplayData(mapTemplate, 77.0f, 5.0f, maxRound,
+				loadTimeMs, responseTimeMs);
+	}
+	
+	/**
+	 * Adds an ant to the game.
+	 * @param ant the ant to add to the ants lists.
+	 */
+	protected void addAnt(Ant ant)
+	{
+		replay.addAntData(ant.getReplayData());
+		ants.add(ant);
+		((AntBotGameInfo) botInfos.get(ant.getBot())).addAnt(ant);
+		map.addGameObject(ant);
+	}
+	
+	/**
+	 * Removes an ant from the game.
+	 * @param ant the ant to remove from the ants lists.
+	 */
+	protected void removeAnt(Ant ant)
+	{
+		ants.remove(ant);
+		((AntBotGameInfo) botInfos.get(ant.getBot())).removeAnt(ant);
+		map.removeGameObject(ant);
 	}
 	
 	/**
@@ -170,13 +194,75 @@ public class AntGame extends Game
 				map.addGameObject(hill);
 				// Create an initial ant inside the created hill for the bot.
 				Ant ant = new Ant(hillCell, bot, botInfo.getId(), curRound);
-				replay.addAntData(ant.getReplayData());
-				botInfo.addAnt(ant);
-				map.addGameObject(ant);
+				addAnt(ant);
 				// Each bot start with 1 point per hill.
 				botInfo.addGameScore(+1);
 			}
 		}
+	}
+	
+	/**
+	 * Returns whether the rank is stabilized (i.e. no player with at least one remaining 
+	 *  hill can beat the score of any of his opponents).
+	 * @return true if the rank is stabilized, false otherwise.
+	 */
+	private boolean isRankStabilized()
+	{
+		for (BotGameInfo player : botInfos.values())
+		{
+			AntBotGameInfo botInfo = (AntBotGameInfo) player;
+			if (botInfo.isAlive() && botInfo.hasHills())
+			{
+				// There are 2 cases :
+				// - The opponent has the same score as the player
+				//   In this case, the player must be able to get a score strictly
+				//    superior to the opponent for the rank to change
+				// - The opponent has a higher score than the player
+				//   In this case, the player must be able to get at least the same score
+				//    as the opponent for the rank to change
+				int maxPlayerScore = botInfo.getGameScore(),
+						minEqualOpponentScore = Integer.MAX_VALUE,
+						minSuperiorOpponentScore = Integer.MAX_VALUE;
+				for (BotGameInfo opponent : botInfos.values())
+				{
+					AntBotGameInfo opponentInfo = (AntBotGameInfo) opponent;
+					if (opponent == player ||
+							botInfo.getGameScore() > opponentInfo.getGameScore())
+					{
+						continue;
+					}
+					int currentMinOpponentScore = opponentInfo.getGameScore();
+					Iterator<AntHill> hillIt = opponentInfo.getHillIterator();
+					while (hillIt.hasNext())
+					{
+						hillIt.next();
+						currentMinOpponentScore -= 1;
+						maxPlayerScore += 2;
+					}
+					if (botInfo.getGameScore() == opponentInfo.getGameScore())
+					{
+						if (currentMinOpponentScore < minEqualOpponentScore)
+						{
+							minEqualOpponentScore = currentMinOpponentScore;
+						}
+					}
+					else
+					{
+						if (currentMinOpponentScore < minSuperiorOpponentScore)
+						{
+							minSuperiorOpponentScore = currentMinOpponentScore;
+						}
+					}
+				}
+				// If we can catch up, the rank is not stabilized yet
+				if(maxPlayerScore >= minSuperiorOpponentScore
+						|| maxPlayerScore > minEqualOpponentScore)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	/**
@@ -188,7 +274,37 @@ public class AntGame extends Game
 	@Override
 	public boolean isFinished()
 	{
-		// TODO
+		// Turn limit rule
+		if (super.isFinished())
+		{
+			replay.setCutoff("turn limit reached");
+			return true;
+		}
+		// Alive player rules (extermination / lone survivor)
+		int remainingPlayers = 0;
+		for (BotGameInfo bgi : botInfos.values())
+		{
+			if(((AntBotGameInfo) bgi).isAlive())
+			{
+				remainingPlayers++;
+			}
+		}
+		if (remainingPlayers == 0)
+		{
+			replay.setCutoff("extermination");
+			return true;
+		}
+		if (remainingPlayers == 1)
+		{
+			replay.setCutoff("lone survivor");
+			return true;
+		}
+		// Rank stabilization rule
+		if (isRankStabilized())
+		{
+			replay.setCutoff("rank stabilized");
+			return true;
+		}
 		return true;
 	}
 	
@@ -199,22 +315,67 @@ public class AntGame extends Game
 	@Override
 	public void update()
 	{
+		// Remove ants that died last round.
+		for (Ant ant : ants)
+		{
+			if(ant.isDead())
+			{
+				removeAnt(ant);
+			}
+		}
 		// Resolve battles.
+		HashMap<Ant, ArrayList<Ant>> nearbyEnemies = new HashMap<Ant, ArrayList<Ant>>();
+		for (Ant ant : ants)
+		{
+			Bot owner = ant.getBot();
+			ArrayList<Ant> antEnemies = new ArrayList<Ant>();
+			ArrayList<AntGameObject> attackable = map.applyMask(ant.getCol(),
+					ant.getRow(), attackMask);
+			for (AntGameObject obj : attackable)
+			{
+				if(obj instanceof Ant && ((Ant) obj).getBot() != owner)
+				{
+					antEnemies.add((Ant) obj);
+				}
+			}
+			nearbyEnemies.put(ant, antEnemies);
+		}
+		for (Ant ant : ants)
+		{
+			ArrayList<Ant> enemies = nearbyEnemies.get(ant);
+			int weakness = enemies.size();
+			if(weakness == 0) continue;
+			int minEnemyWeakness = Integer.MAX_VALUE;
+			for (Ant enemy : enemies)
+			{
+				int enemyWeakness = nearbyEnemies.get(enemy).size(); 
+				if(enemyWeakness < minEnemyWeakness)
+				{
+					minEnemyWeakness = enemyWeakness;
+				}
+			}
+			if(minEnemyWeakness <= weakness)
+			{
+				ant.kill(curRound);
+			}
+		}
 		// Raze hills & spawn ants.
 		for (Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
 		{
 			Bot bot = entry.getKey();
 			AntBotGameInfo botInfo = (AntBotGameInfo) entry.getValue();
+			ArrayList<AntHill> availableHills = new ArrayList<AntHill>();
 			// Raze hills.
 			Iterator<AntHill> hillIt = botInfo.getHillIterator();
 			while (hillIt.hasNext())
 			{
 				AntHill hill = hillIt.next();
 				Ant razerAnt = map.getAntAt(hill.getCol(), hill.getRow());
-				if (razerAnt != null && razerAnt.getBot() != bot)
+				if (razerAnt != null)
 				{
 					if (razerAnt.getBot() == bot)
 					{	// Both ant and hill belong to the bot.
+						hill.setLastVisitRound(curRound);
 						if (razerAnt.hasFood() == true)
 						{	// If the ant holds a food unit, then increment the hive.
 							botInfo.incrementHive();
@@ -232,11 +393,22 @@ public class AntGame extends Game
 						botInfo.addGameScore(-1);
 					}
 				}
+				else
+				{
+					// No ant is on this hill, it is available for an ant spawn.
+					availableHills.add(hill);
+				}
 			}
 			// Spawn ants.
-			while (botInfo.getHive() > 0)
+			Collections.sort(availableHills);
+			for (Iterator<AntHill> availIt = availableHills.iterator(); availIt.hasNext()
+					&& botInfo.getHive() > 0;)
 			{
-				
+				AntHill antHill = (AntHill) availIt.next();
+				Ant ant = new Ant(antHill.getCol(), antHill.getRow(), bot,
+						botInfo.getId(), curRound);
+				addAnt(ant);
+				botInfo.decrementHive();
 			}
 		}
 		// Gather & spawn food.

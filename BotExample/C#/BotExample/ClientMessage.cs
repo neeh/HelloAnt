@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+using System.Collections;
 
 namespace BotExample
 {
@@ -44,21 +45,15 @@ namespace BotExample
         }
         public void AddMove(int col, int row, string dir)
         {
-            ((GameActionsMessageContent) content).moves.Add(new GameMove() { col = col, row = row, dir = dir });
+            ((GameActionsMessageContent)content).moves.Add(new ArrayList() { row, col, dir });
         }
     }
     class GameActionsMessageContent
     {
-        public List<GameMove> moves;
+        public List<ArrayList> moves;
         public GameActionsMessageContent()
         {
-            moves = new List<GameMove>();
+            moves = new List<ArrayList>();
         }
-    }
-    class GameMove
-    {
-        public int col;
-        public int row;
-        public string dir;
     }
 }

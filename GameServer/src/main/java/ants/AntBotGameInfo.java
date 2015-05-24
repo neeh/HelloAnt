@@ -218,4 +218,22 @@ public class AntBotGameInfo extends BotGameInfo
 	{
 		if (hive > 0) hive--;
 	}
+	
+	/**
+	 * Is the player alive ? (at least one ant)
+	 * @return whether the bot is alive or not
+	 */
+	public boolean isAlive()
+	{
+		return !isMuted() && ants.size() > 0;
+	}
+	
+	/**
+	 * Does the player still have at least one hill ?
+	 * @return whether the bot has hills or not
+	 */
+	public boolean hasHills()
+	{
+		return !isMuted() && hills.size() > 0;
+	}
 }
