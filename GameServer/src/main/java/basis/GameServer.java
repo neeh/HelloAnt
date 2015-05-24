@@ -137,7 +137,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 	}
 	
 	/**
-	 * Removes a game thread from the game server.
+	 * Terminates a game thread on the game server.
 	 * @param gameThread the game thread to remove.
 	 */
 	public void removeGameThread(GameThread gameThread)
@@ -150,7 +150,17 @@ public class GameServer implements TCPClientHandler, GameHandler
 			Bot bot = botIt.next();
 			if (bot.isFake() == false)
 			{	// If it's a real bot, add it to the lobby.
-				gameManager.addBot(bot);
+				if (bot.getCommunicator().isBotLoggedIn())
+				{	// TRICKY FIX /!\
+					// -------------------------------------------------------------------
+					// Sometimes a bot can suddenly quit/logout during a game. But the
+					// game still needs the data of the bot to run the game normally, so
+					// the game keeps the communicator and the bot instance of a bot that
+					// is no longer logged in.
+					// Therefore, I have to check that the bot is still logged in.
+					// -------------------------------------------------------------------
+					gameManager.addBot(bot);
+				}
 			}
 		}
 		System.out.println(System.currentTimeMillis() + ": Game terminated");

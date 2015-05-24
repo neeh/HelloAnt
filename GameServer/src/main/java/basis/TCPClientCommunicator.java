@@ -568,6 +568,8 @@ public class TCPClientCommunicator implements Runnable
 	 */
 	private void send(String type, int error, String message, JSONObject content)
 	{
+		// A closed communicator is not supposed to receive messages. Do nothing.
+		if (closed = true) return;
 		// The JSONObject containing the message.
 		JSONObject msgObj = new JSONObject();
 		try
@@ -654,8 +656,8 @@ public class TCPClientCommunicator implements Runnable
 		if (isBotLoggedIn())
 		{
 			if (bot.isInGame())
-			{
-				// TODO: remove the bot from its game.
+			{	// Mute the bot in the game it was playing.
+				bot.getGame().muteBot(bot, "You leaved your bot");
 			}
 			// Notify the database the bot is logged out.
 			dbm.logout(bot.getNick());
@@ -708,7 +710,6 @@ public class TCPClientCommunicator implements Runnable
 		// Interrupt the thread so it no longer reads messages from client.
 		clientThread.interrupt();
 	}
-	
 	
 	/**
 	 * Tests whether a nickname is valid according to the nickname specifications.

@@ -127,7 +127,7 @@ public abstract class Game
 	 * @param bot the bot to mute.
 	 * @param reason a message explaining why the bot was muted.
 	 */
-	private void muteBot(Bot bot, String reason)
+	public void muteBot(Bot bot, String reason)
 	{
 		BotGameInfo botInfo = botInfos.get(bot);
 		botInfo.setGamestateTimestampMs(0);
