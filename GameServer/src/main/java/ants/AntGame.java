@@ -144,6 +144,27 @@ public class AntGame extends Game
 		((AntBotGameInfo) botInfos.get(ant.getBot())).removeAnt(ant);
 		map.removeGameObject(ant);
 	}
+
+	/**
+	 * Adds a hill to the game.
+	 * @param hill the hill to add to the hills lists.
+	 */
+	protected void addHill(AntHill hill)
+	{
+		replay.addHillData(hill.getReplayData());
+		((AntBotGameInfo) botInfos.get(hill.getBot())).addHill(hill);
+		map.addGameObject(hill);
+	}
+	
+	/**
+	 * Removes a hill from the game.
+	 * @param hill the hill to remove from the hills lists.
+	 */
+	protected void removeHill(AntHill hill)
+	{
+		((AntBotGameInfo) botInfos.get(hill.getBot())).removeHill(hill);
+		map.removeGameObject(hill);
+	}
 	
 	/**
 	 * Initializes an ant game.
@@ -189,9 +210,8 @@ public class AntGame extends Game
 			{
 				Cell hillCell = hillIt.next();
 				// Create the hill on the map for the bot.
-				AntHill hill = new AntHill(hillCell, bot);
-				botInfo.addHill(hill);
-				map.addGameObject(hill);
+				AntHill hill = new AntHill(hillCell, bot, botInfo.getId());
+				addHill(hill);
 				// Create an initial ant inside the created hill for the bot.
 				Ant ant = new Ant(hillCell, bot, botInfo.getId(), curRound);
 				addAnt(ant);
@@ -315,7 +335,14 @@ public class AntGame extends Game
 	@Override
 	public void update()
 	{
-		// Remove ants that died last round.
+		// Save hives and scores state
+		for (BotGameInfo botInfo : botInfos.values())
+		{
+			AntBotGameInfo antBotInfo = (AntBotGameInfo) botInfo;
+			replay.addHiveHistoryRecord(antBotInfo.getId(), antBotInfo.getHive());
+			replay.addScoresRecord(antBotInfo.getId(), antBotInfo.getGameScore());
+		}
+		// Remove ants which died last round.
 		for (Ant ant : ants)
 		{
 			if(ant.isDead())
@@ -384,8 +411,8 @@ public class AntGame extends Game
 					}
 					else
 					{	// The ant does not belong to the bot that owns the hill, raze it.
-						botInfo.removeHill(hill);
-						map.removeGameObject(hill);
+						hill.raze(curRound);
+						removeHill(hill);
 						// Update game score of both parties.
 						AntBotGameInfo opponentInfo = (AntBotGameInfo)
 								botInfos.get(razerAnt.getBot());

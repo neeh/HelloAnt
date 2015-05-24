@@ -43,16 +43,23 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	private int lastVisitRound;
 	
 	/**
+	 * The replay data for this hill. Stored in a JSON array.
+	 * [ col, row, owner_id, turn_death ]
+	 */
+	private JSONArray replayData;
+	
+	/**
 	 * Creates a new ant hill for a bot from a column and a row identifier.
 	 * @constructor
 	 * @param col the column identifier of the hill.
 	 * @param row the row identifier of the hill.
 	 * @param bot the bot that owns the hill.
 	 */
-	public AntHill(int col, int row, Bot bot)
+	public AntHill(int col, int row, Bot bot, int botId)
 	{
 		super(col, row, false, false);
 		this.bot = bot;
+		createReplayData(botId);
 	}
 	
 	/**
@@ -61,10 +68,28 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	 * @param cell the cell descriptor that positions the hill on the map.
 	 * @param bot the bot the hill belong to.
 	 */
-	public AntHill(Cell cell, Bot bot)
+	public AntHill(Cell cell, Bot bot, int botId)
 	{
 		super(cell, false, false);
 		this.bot = bot;
+		createReplayData(botId);
+	}
+	
+	/**
+	 * Creates replay data for the ant.
+	 * @param botId the id associated with the bot.
+	 * @param round the current round.
+	 */
+	private void createReplayData(int botId)
+	{
+		replayData = new JSONArray();
+		try
+		{
+			replayData.put(0, col);
+			replayData.put(1, row);
+			replayData.put(2, botId);
+		}
+		catch (JSONException e) {}
 	}
 	
 	/**
@@ -97,6 +122,15 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	}
 	
 	/**
+	 * Gets the replay data for this hill.
+	 * @return the replay data of the hill.
+	 */
+	public JSONArray getReplayData()
+	{
+		return replayData;
+	}
+	
+	/**
 	 * Gets the last time an ant was on top of the hill.
 	 * @return the last time an ant was on top of the hill.
 	 */
@@ -114,6 +148,19 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 		this.lastVisitRound = lastVisitRound;
 	}
 
+	/**
+	 * Razes the hill.
+	 * @param round the round at which the hill was razed (used for replay data).
+	 */
+	public void raze(int round)
+	{
+		try
+		{
+			replayData.put(3, round);
+		}
+		catch (JSONException e) {}
+	}
+	
 	/**
 	 * Used to get less recently visited hill first using a sort.
 	 */
