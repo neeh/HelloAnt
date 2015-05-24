@@ -33,17 +33,24 @@ public class GameThread extends Thread
 	private Game game;
 	
 	/**
+	 * The handler used to notify the server when the thread has terminated its work.
+	 */
+	private GameHandler gameHandler;
+	
+	/**
 	 * Creates a new game thread from a game instance.
 	 * @constructor
-	 * @param game The game to run with the game thread.
+	 * @param game the game to run with the game thread.
+	 * @param gameHandler the handler used to notify the server when the work is done.
 	 */
-	public GameThread(Game game)
+	public GameThread(Game game, GameHandler gameHandler)
 	{
 		this.game = game;
+		this.gameHandler = gameHandler;
 	}
 	
 	/**
-	 * Runs the mechanics of a generic game.
+	 * Runs the mechanic of a generic game.
 	 */
 	public void run()
 	{
@@ -55,7 +62,7 @@ public class GameThread extends Thread
 		{
 			Thread.sleep(game.getLoadTimeMs());
 		}
-		catch (InterruptedException e1) {}
+		catch (InterruptedException e) {}
 		while (game.isFinished() == false)
 		{
 			// Mute bot(s) that has not played.
@@ -68,7 +75,7 @@ public class GameThread extends Thread
 			{	// Wait for all bots to give actions OR response delay overcame
 				try
 				{
-					Thread.sleep(1);
+					Thread.sleep(50);
 				}
 				catch (InterruptedException e){}
 			}
@@ -80,5 +87,15 @@ public class GameThread extends Thread
 		// Send the "gameend" message.
 		game.sendGameEnd();
 		//game.finalize();
+		gameHandler.removeGameThread(this);
+	}
+	
+	/**
+	 * Gets the game runned by this game thread.
+	 * @return the game the thread is running.
+	 */
+	public Game getGame()
+	{
+		return game;
 	}
 }

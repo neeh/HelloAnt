@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import basis.Bot;
+import basis.BotMode;
 import basis.GameHandler;
 import basis.GameManager;
 
@@ -67,9 +68,8 @@ public class AntGameManager extends GameManager
 	public void run()
 	{
 		int nbPlayers;
-		int sizeMapList = maps.size();
 		
-		AntMapTemplate map = maps.get(rand.nextInt(sizeMapList));
+		AntMapTemplate map = maps.get(rand.nextInt(maps.size()));
 		nbPlayers = map.getBotCount();
 		
 		fillChallengers();
@@ -100,7 +100,31 @@ public class AntGameManager extends GameManager
 				bot.setGame(game);
 				removeBot(bot);
 			}
-			gameHandler.handleGameCreated(game);
+			gameHandler.addGame(game);
+		}
+	}
+	
+	/**
+	 * Adds a bot in the game manager specific to the game of ants.
+	 * If the bot is in training mode, the game manager immediately creates a game for it.
+	 * @bot the bot to add in the game manager lobby.
+	 */
+	public void addBot(Bot bot)
+	{
+		if (bot.getMode() == BotMode.TRAINING)
+		{	// Take a random map.
+			AntMapTemplate map = maps.get(rand.nextInt(maps.size()));
+			int botCount = map.getBotCount();
+			// Create the bot list and add the bot in training mode.
+			ArrayList<Bot> bots = new ArrayList<Bot>(botCount);
+			bots.add(bot);
+			// Create the ant game and run it on the server.
+			AntGame game = new AntGame(bots, map);
+			gameHandler.addGame(game);
+		}
+		else
+		{	// Let the generic game manager do the work.
+			super.addBot(bot);
 		}
 	}
 }

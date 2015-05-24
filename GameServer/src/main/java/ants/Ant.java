@@ -102,6 +102,7 @@ public class Ant extends AntGameObject
 	 */
 	private void createReplayData(int botId, int round)
 	{
+		replayData = new JSONArray();
 		try
 		{
 			replayData.put(0, col);

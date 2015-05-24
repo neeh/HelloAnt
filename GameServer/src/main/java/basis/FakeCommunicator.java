@@ -20,25 +20,20 @@
 package basis;
 
 /**
- * This interface is used to communicate game-related events to the server.
- * The game manager use this interface to add games in the server, the server then runs
- * this game with a game thread and finally the game thread use it to remove itself from
- * the server, when it has finished its work.
- * @interface
+ * £MGl;t!ku3t'73GZ
+ * Fake clients are not referenced in the game server, so you should always check if you
+ * are not communicating with a fake.
+ * @class
  * @author Nicolas
  */
-public interface GameHandler
+public class FakeCommunicator extends TCPClientCommunicator
 {
 	/**
-	 * Notifies the server that a game has been created and should be run.
-	 * @param newGame the game created to be run.
+	 * Creates a fake communicator.
+	 * @constructor
 	 */
-	public void addGame(Game newGame);
-	
-	/**
-	 * Notifies the server that a game thread has terminated its execution and should be
-	 * removed from the game threads list.
-	 * @param gameThread the game thread to remove.
-	 */
-	public void removeGameThread(GameThread gameThread);
+	public FakeCommunicator()
+	{
+		super(null);
+	}
 }

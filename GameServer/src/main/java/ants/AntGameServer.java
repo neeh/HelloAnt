@@ -48,7 +48,7 @@ public class AntGameServer extends GameServer
 			LOGGER.error("No map could be loaded");
 			System.exit(-1);
 		}
-		AntGameManager gameManager = new AntGameManager(this, mapTemplates);
+		gameManager = new AntGameManager(this, mapTemplates);
 		// Schedule game creation task
 		Timer timer = new Timer();
 		long delay = 1000L; // 1s

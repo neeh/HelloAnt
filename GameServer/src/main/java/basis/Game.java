@@ -338,6 +338,15 @@ public abstract class Game
 	}
 	
 	/**
+	 * Gets an iterator that iterates over bots in this game.
+	 * @return an iterator from the bot list.
+	 */
+	public Iterator<Bot> getBotIterator()
+	{
+		return bots.iterator();
+	}
+	
+	/**
 	 * Returns whether the game is ready to update itself for the current round.
 	 * @return true if all bots have played, false otherwise.
 	 */

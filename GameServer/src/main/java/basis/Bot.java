@@ -64,15 +64,14 @@ public class Bot
 	 */
 	private double score;
 	
-	
 	/**
-	 * The priority of the bot
-	 * Helps setting the matchmaking
+	 * The priority of the bot in the game manager lobby.
 	 */
 	private int priority;
 	
 	/**
 	 * The database handler used to manipulate bot data on the database.
+	 * Is null for fake bots.
 	 */
 	private BotDBCallback dbHandler;
 	
@@ -136,6 +135,16 @@ public class Bot
 	public TCPClientCommunicator getCommunicator()
 	{
 		return com;
+	}
+	
+	/**
+	 * Returns whether the bot is a fake bot.
+	 * A fake bot is a bot created by the server to play with real bots.
+	 * @return true if the bot is a fake, false otherwise.
+	 */
+	public boolean isFake()
+	{
+		return com instanceof FakeCommunicator;
 	}
 	
 	/**
@@ -218,7 +227,14 @@ public class Bot
 	 */
 	public void setScore(double score)
 	{
-		this.score = score;
-		dbHandler.updateBotScore(this);
+		if (dbHandler != null)
+		{	// If the handler is null, it probably means that the bot does not want its
+			// score to be updated in the database.
+			// Actually, I use it to prevent the score of a fake bot from being updated
+			// (see GameThread.java, AntGame.java in ants pkg)
+			// Poor fix but... It works! neeh-
+			this.score = score;
+			dbHandler.updateBotScore(this);
+		}
 	}
 }

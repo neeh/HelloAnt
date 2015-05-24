@@ -20,6 +20,8 @@
 package basis;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +55,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 	/**
 	 * The list of games being played.
 	 */
-	private ArrayList<GameThread> gameThreads;
+	protected ArrayList<GameThread> gameThreads;
 	
 	/**
 	 * Creates a new game server.
@@ -63,7 +65,9 @@ public class GameServer implements TCPClientHandler, GameHandler
 	{
 		// Setup the database.
 		DBManager.init("dbants", "root", "");
+		// Create client and game threads list
 		clients = new ArrayList<TCPClientCommunicator>();
+		gameThreads = new ArrayList<GameThread>();
 		// Create the listener that will receive client.
 		listener = new TCPClientListener(port, this);
 	}
@@ -99,14 +103,8 @@ public class GameServer implements TCPClientHandler, GameHandler
 	@Override
 	public void handleBotLogin(Bot newBot)
 	{
-		if (newBot.getMode() == BotMode.TRAINING)
-		{	// Create a game for the bot.
-			// TODO
-		}
-		else
-		{	// Add the bot into the lobby.
-			gameManager.addBot(newBot);
-		}
+		// In the generic game server, we don't care about gaming mode.
+		gameManager.addBot(newBot);
 		System.out.println(System.currentTimeMillis() + ": Bot " + newBot.getNick()
 				+ " logged in (" + newBot.getMode().toString().toLowerCase() + " mode)");
 	}
@@ -125,13 +123,13 @@ public class GameServer implements TCPClientHandler, GameHandler
 	}
 	
 	/**
-	 * Handles a game that was just created.
-	 * @param game the created game.
+	 * Adds a game on the game server and creates a thread to run it.
+	 * @param game the instance of the game to add.
 	 */
 	@Override
-	public void handleGameCreated(Game game)
+	public void addGame(Game game)
 	{
-		GameThread gameThread = new GameThread(game);
+		GameThread gameThread = new GameThread(game, this);
 		gameThreads.add(gameThread);
 		// Start the game.
 		gameThread.start();
@@ -139,11 +137,22 @@ public class GameServer implements TCPClientHandler, GameHandler
 	}
 	
 	/**
-	 * Handles a game that was just terminated.
-	 * @param game the terminated game.
+	 * Removes a game thread from the game server.
+	 * @param gameThread the game thread to remove.
 	 */
-	public void handleGameTerminated(Game game)
+	public void removeGameThread(GameThread gameThread)
 	{
-		// TODO
+		gameThreads.remove(gameThread);
+		// Reinsert bots in the game manager lobby.
+		Iterator<Bot> botIt = gameThread.getGame().getBotIterator();
+		while (botIt.hasNext())
+		{
+			Bot bot = botIt.next();
+			if (bot.isFake() == false)
+			{	// If it's a real bot, add it to the lobby.
+				gameManager.addBot(bot);
+			}
+		}
+		System.out.println(System.currentTimeMillis() + ": Game terminated");
 	}
 }

@@ -20,6 +20,7 @@
 package ants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -77,6 +78,7 @@ public class AntBotGameInfo extends BotGameInfo
 		this.id = id;
 		ants = new ArrayList<Ant>();
 		hills = new ArrayList<AntHill>(1);
+		relativeBotIds = new HashMap<Bot, Integer>();
 	}
 	
 	/**

@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import basis.Bot;
-import basis.TCPClientCommunicator;
+import basis.FakeCommunicator;
 
 /**
  * This class represents a fake communicator that aims to play with a bot in training
@@ -39,7 +39,7 @@ import basis.TCPClientCommunicator;
  * @class
  * @author JMN
  */
-public class AntFakeCommunicator extends TCPClientCommunicator
+public class AntFakeCommunicator extends FakeCommunicator
 {
 	private static final Logger LOGGER =
 			LoggerFactory.getLogger(AntFakeCommunicator.class);
@@ -55,7 +55,7 @@ public class AntFakeCommunicator extends TCPClientCommunicator
 	 */
 	public AntFakeCommunicator(AntGameMapView mapView)
 	{
-		super(null, null);
+		super();
 		this.mapView = mapView;
 	}
 	
@@ -146,10 +146,10 @@ public class AntFakeCommunicator extends TCPClientCommunicator
 			
 			for (int i = 0; i < myAnts.size(); i++)
 			{
-				JSONObject move = new JSONObject();
-				move.put("col", myAnts.get(i).getInt(2));
-				move.put("row", myAnts.get(i).getInt(1));
-				move.put("move", myMoves.get(i));
+				JSONArray move = new JSONArray();
+				move.put(0, myAnts.get(i).getInt(1)); // row
+				move.put(1, myAnts.get(i).getInt(2)); // col
+				move.put(2, myMoves.get(i)); // move
 				moves.put(move);
 			}
 			

@@ -154,8 +154,10 @@ public class TCPClientCommunicator implements Runnable
 		{	// (handler is null for fake communicators)
 			handler.handleClientConnected(this);
 		}
-		// Send the welcome message.
-		sendWelcome();
+		if (socket != null)
+		{	// If client accepts network, send the welcome message.
+			sendWelcome();
+		}
 	}
 	
 	/**
@@ -324,9 +326,8 @@ public class TCPClientCommunicator implements Runnable
 				Bot bot = dbm.login(content.getString("token"), this, mode, ip);
 				// No exception caught -> the login was successful.
 				this.bot = bot;
-				// Notify the server a bot just logged in.
 				if (handler != null)
-				{
+				{	// Notify the server a bot just logged in.
 					handler.handleBotLogin(bot);
 				}
 				outputMessage = "Logged in (" + mode.toString().toLowerCase() + " mode)";

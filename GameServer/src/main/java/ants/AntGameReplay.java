@@ -44,6 +44,15 @@ public class AntGameReplay
 	 */
 	ArrayList<JSONArray> food;
 	
+	/**
+	 * Creates a new game replay object.
+	 * @constructor
+	 */
+	public AntGameReplay()
+	{
+		ants = new ArrayList<JSONArray>();
+		food = new ArrayList<JSONArray>();
+	}
 	
 	/**
 	 * Generates the replay of an ant game as a JSON object.

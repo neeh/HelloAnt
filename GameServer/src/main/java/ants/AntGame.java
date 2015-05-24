@@ -20,6 +20,7 @@
 package ants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,15 +32,12 @@ import org.json.JSONObject;
 import util.Cell;
 import util.Move;
 import basis.Bot;
+import basis.BotGameInfo;
+import basis.BotMode;
 import basis.Game;
 
 public class AntGame extends Game
 {
-	/**
-	 * The informations relative to bots required for an ant game.
-	 */
-	private Map<Bot, AntBotGameInfo> botInfos;
-	
 	/**
 	 * The static map template used to initialize the game objects of the game map.
 	 * It represents the generic layout of the game map.
@@ -53,15 +51,9 @@ public class AntGame extends Game
 	private AntGameMap map;
 	
 	/**
-	 * The mask that simulates fog war for vision.
+	 * The list of ants present on the map.
 	 */
-	private AntGameMapMask viewMask;
-	
-	/**
-	 * The mask that simulates fog war for battles.
-	 */
-	@SuppressWarnings("unused")
-	private AntGameMapMask attackMask;
+	private ArrayList<Ant> ants;
 	
 	/**
 	 * The list of food spawns present on the map.
@@ -74,20 +66,42 @@ public class AntGame extends Game
 	private static int foodRespawnDelay = 15;
 	
 	/**
+	 * The mask that simulates fog war for vision.
+	 */
+	private AntGameMapMask viewMask;
+	
+	/**
+	 * The mask that simulates fog war for battles.
+	 */
+	@SuppressWarnings("unused")
+	private AntGameMapMask attackMask;
+	
+	/**
 	 * The class that holds replay data for the ant game.
 	 */
 	private AntGameReplay replay;
 	
 	/**
 	 * Creates a new ant game from a map template and a list of bots playing in this game.
+	 * Fake bots are created to play with the other bots if there is not enough bots.
 	 * @constructor
 	 * @param bots the list of bots that are gonna play in this game.
 	 * @param mapTemplate the template used to initialize the game map.
 	 */
 	public AntGame(ArrayList<Bot> bots, AntMapTemplate mapTemplate)
 	{
+		// Add fake bots to supply the correct bot count for the map.
+		int fakeBotCount = mapTemplate.getBotCount() - bots.size();
+		for (int i = 0; i < fakeBotCount; i++)
+		{	// Create communicators and bots for fake bots.
+			AntFakeCommunicator fakeCom = new AntFakeCommunicator(map);
+			Bot fakeBot = new Bot(fakeCom, "CPU" + i, BotMode.TRAINING, 0, null);
+			fakeCom.setBot(fakeBot);
+			bots.add(fakeBot);
+		}
 		this.bots = bots;
 		// Create bot game info for each bot.
+		botInfos = new HashMap<Bot, BotGameInfo>(bots.size());
 		Iterator<Bot> botIt = bots.iterator();
 		int botId = 0;
 		while (botIt.hasNext())
@@ -96,10 +110,15 @@ public class AntGame extends Game
 			botInfos.put(bot, new AntBotGameInfo(botId++));
 		}
 		this.mapTemplate = mapTemplate;
+		// Create game map and game objects.
 		map = new AntGameMap(mapTemplate.getCols(), mapTemplate.getRows());
-		// Initilize fog war masks.
+		ants = new ArrayList<Ant>();
+		foodSpawns = new ArrayList<AntFoodSpawn>();
+		// Create fog war masks.
 		viewMask = new AntGameMapMask(77.0f);
 		attackMask = new AntGameMapMask(5.0f);
+		// Create replay object.
+		replay = new AntGameReplay();
 	}
 	
 	/**
@@ -109,9 +128,9 @@ public class AntGame extends Game
 	public void init()
 	{
 		// Initialize bot game info for each bot.
-		for(Map.Entry<Bot, AntBotGameInfo> entry : botInfos.entrySet())
+		for(Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
 		{
-			entry.getValue().init(entry.getKey());
+			((AntBotGameInfo) entry.getValue()).init(entry.getKey());
 		}
 		// Clears the map.
 		map.clear();
@@ -139,7 +158,7 @@ public class AntGame extends Game
 		while (botHillsIt.hasNext())
 		{
 			Bot bot = botIt.next();
-			AntBotGameInfo botInfo = botInfos.get(bot);
+			AntBotGameInfo botInfo = (AntBotGameInfo) botInfos.get(bot);
 			ArrayList<Cell> botHills = botHillsIt.next();
 			Iterator<Cell> hillIt = botHills.iterator();
 			while (hillIt.hasNext())
@@ -182,10 +201,10 @@ public class AntGame extends Game
 	{
 		// Resolve battles.
 		// Raze hills & spawn ants.
-		for (Map.Entry<Bot, AntBotGameInfo> entry : botInfos.entrySet())
+		for (Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
 		{
 			Bot bot = entry.getKey();
-			AntBotGameInfo botInfo = entry.getValue();
+			AntBotGameInfo botInfo = (AntBotGameInfo) entry.getValue();
 			// Raze hills.
 			Iterator<AntHill> hillIt = botInfo.getHillIterator();
 			while (hillIt.hasNext())
@@ -207,7 +226,8 @@ public class AntGame extends Game
 						botInfo.removeHill(hill);
 						map.removeGameObject(hill);
 						// Update game score of both parties.
-						AntBotGameInfo opponentInfo = botInfos.get(razerAnt.getBot());
+						AntBotGameInfo opponentInfo = (AntBotGameInfo)
+								botInfos.get(razerAnt.getBot());
 						opponentInfo.addGameScore(+2);
 						botInfo.addGameScore(-1);
 					}
@@ -229,7 +249,8 @@ public class AntGame extends Game
 				Ant gatherAnt = map.getAntAt(foodSpawn.getCol(), foodSpawn.getRow());
 				if (gatherAnt != null && gatherAnt.hasFood() == false)
 				{	// There's an ant that does not hold food on the spawn food.
-					AntBotGameInfo gatherBotInfo = botInfos.get(gatherAnt.getBot());
+					AntBotGameInfo gatherBotInfo = (AntBotGameInfo)
+							botInfos.get(gatherAnt.getBot());
 					foodSpawn.harvestFood(gatherBotInfo.getId(), curRound);
 					gatherAnt.setFood(true);
 				}
@@ -245,9 +266,9 @@ public class AntGame extends Game
 			}
 		}
 		// Detect ants that did not move during this round.
-		for (Map.Entry<Bot, AntBotGameInfo> entry : botInfos.entrySet())
+		for (Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
 		{
-			AntBotGameInfo botInfo = entry.getValue();
+			AntBotGameInfo botInfo = (AntBotGameInfo) entry.getValue();
 			Iterator<Ant> antIt = botInfo.getAntIterator();
 			while (antIt.hasNext())
 			{
@@ -289,7 +310,7 @@ public class AntGame extends Game
 				ArrayList<AntGameObject> gobs = map.getGameObjectsAt(ant.getCol(),
 					ant.getRow());
 				Iterator<AntGameObject> gobIt = gobs.iterator();
-				AntBotGameInfo botInfo = botInfos.get(bot);
+				AntBotGameInfo botInfo = (AntBotGameInfo) botInfos.get(bot);
 				while (gobIt.hasNext())
 				{
 					AntGameObject gob = gobIt.next();
@@ -317,7 +338,7 @@ public class AntGame extends Game
 		JSONObject content = new JSONObject();
 		// Get visible game objects.
 		HashSet<AntGameObject> visibleGobs = new HashSet<AntGameObject>();
-		AntBotGameInfo botInfo = botInfos.get(bot);
+		AntBotGameInfo botInfo = (AntBotGameInfo) botInfos.get(bot);
 		Iterator<Ant> antIt = botInfo.getAntIterator();
 		while (antIt.hasNext())
 		{
