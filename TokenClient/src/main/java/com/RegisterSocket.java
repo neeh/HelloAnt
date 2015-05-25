@@ -74,7 +74,7 @@ public class RegisterSocket
 		String reponse = in.readLine();
 		JSONObject reponseJson = new JSONObject(reponse);
 	
-		String test = reponseJson.getJSONObject("content").getString("Token");
+		String test = reponseJson.getJSONObject("content").getString("token");
 		if (test!=null)
 		{
 			this.setResult(test);

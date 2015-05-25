@@ -181,11 +181,7 @@ public class Interface
 			javax.swing.JOptionPane.showMessageDialog(null,"The botName must contains between 3 and 16 caracters.");
 			return false;
 		}
-		if(!Character.isUpperCase(botName.charAt(0)))
-		{
-			javax.swing.JOptionPane.showMessageDialog(null,"The bot name must start with uppercase.");
-			return false;
-		}
+		
 		for(int i=0;i<botName.length();++i)
 		{
 			if(!(Character.isAlphabetic(botName.charAt(i))||Character.isDigit(botName.charAt(i))))
