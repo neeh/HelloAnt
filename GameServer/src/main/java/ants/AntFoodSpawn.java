@@ -39,21 +39,23 @@ public class AntFoodSpawn extends AntGameObject
 	private boolean food;
 	
 	/**
-	 * The last time food was taken from the food spawn.
+	 * The last time food was harvested from the food spawn.
 	 */
 	private int lastHarvestRound;
 	
 	/**
 	 * The replay data of the food currently present in the spawn.
-	 * [ col, row, pop_round, gth_round, bot_id ]
+	 * [ row, col, pop_round, gth_round, bot_id ]
+	 * @see Documentation/protocol/replayformat.html
 	 */
 	private JSONArray replayData;
 	
 	/**
 	 * Creates a new food spawn from a column and row identifier.
 	 * @constructor
-	 * @param col the column identifier of the food spawn.
-	 * @param row the row identifier of the food spawn.
+	 * @param moveHandler the handler used to move the food spawn on the game map.
+	 * @param col the initial column identifier of the food spawn.
+	 * @param row the initial row identifier of the food spawn.
 	 */
 	public AntFoodSpawn(AntGameMapCallback moveHandler, int col, int row)
 	{
@@ -65,6 +67,7 @@ public class AntFoodSpawn extends AntGameObject
 	/**
 	 * Creates a new food spawn from a cell descriptor.
 	 * @constructor
+	 * @param moveHandler the handler used to move the food spawn on the game map.
 	 * @param cell the cell descriptor that positions the food spawn on the map.
 	 */
 	public AntFoodSpawn(AntGameMapCallback moveHandler, Cell cell)
@@ -76,15 +79,15 @@ public class AntFoodSpawn extends AntGameObject
 	
 	/**
 	 * Creates food on the food spawn.
-	 * @param round the round at which the food is spawned.
+	 * @param round the game round at which the food is spawned.
 	 */
 	public void createFood(int round)
 	{
 		replayData = new JSONArray();
 		try
 		{
-			replayData.put(0, col);
-			replayData.put(1, row);
+			replayData.put(0, row);
+			replayData.put(1, col);
 			replayData.put(2, round);
 		}
 		catch (JSONException e) {}
@@ -94,7 +97,7 @@ public class AntFoodSpawn extends AntGameObject
 	/**
 	 * Harvests food on the food spawn.
 	 * @param botId the identifier of the bot that harvested the food unit.
-	 * @param round the round at which the food is harvested.
+	 * @param round the game round at which the food is harvested.
 	 */
 	public void harvestFood(int botId, int round)
 	{
@@ -107,6 +110,27 @@ public class AntFoodSpawn extends AntGameObject
 		replayData = null;
 		food = false;
 		lastHarvestRound = round;
+	}
+	
+	/**
+	 * Gets a JSON representation of a food unit.
+	 * @see Documentation/protocol/gamestate.html
+	 * @note the function returns null when the spawn is empty because bots should not
+	 *       know a food spawn is there, unless food is currently present on it.
+	 * @return [ "F", row, col ] when food is present.
+	 */
+	public JSONArray toJSONArray()
+	{
+		if (food == false) return null;
+		JSONArray array = new JSONArray();
+		try
+		{
+			array.put(0, "F");
+			array.put(1, row);
+			array.put(2, col);
+		}
+		catch (JSONException e) {}
+		return array;
 	}
 	
 	/**
@@ -125,27 +149,6 @@ public class AntFoodSpawn extends AntGameObject
 	public int getLastHarvestRound()
 	{
 		return lastHarvestRound;
-	}
-	
-	/**
-	 * Gets a JSON representation of a food unit.
-	 * @see Documentation/protocol/gamestate.html
-	 * @note the function returns null when the spawn is empty because bots should not
-	 *       know a food spawn is there, unless food is currently present on it.
-	 * @return [ "F", col, row ] when food is present.
-	 */
-	public JSONArray toJSONArray()
-	{
-		if (food == false) return null;
-		JSONArray array = new JSONArray();
-		try
-		{
-			array.put(0, "F");
-			array.put(1, row);
-			array.put(2, col);
-		}
-		catch (JSONException e) {}
-		return array;
 	}
 	
 	/**

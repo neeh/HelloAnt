@@ -51,7 +51,7 @@ public class Ant extends AntGameObject
 	
 	/**
 	 * The replay data for this ant, stored in a JSON array.
-	 * [ col, row, pop_round, dth_round, owner_id, moves_string ]
+	 * [ row, col, pop_round, dth_round, owner_id, move_string ]
 	 * @see Documentation/protocol/replayformat.html
 	 */
 	private JSONArray replayData;
@@ -64,6 +64,7 @@ public class Ant extends AntGameObject
 	/**
 	 * Creates a new ant for a bot from a column and a row identifier.
 	 * @constructor
+	 * @param moveHandler the handler used to moved the ant on the game map.
 	 * @param col the initial column identifier of the ant.
 	 * @param row the initial row identifier of the ant.
 	 * @param bot the bot that owns the ant.
@@ -83,6 +84,7 @@ public class Ant extends AntGameObject
 	/**
 	 * Creates a new ant from a cell descriptor and a reference to the owner of the ant.
 	 * @constructor
+	 * @param moveHandler the handler used to moved the ant on the game map.
 	 * @param cell the cell descriptor that positions the ant on the map.
 	 * @param bot the bot that owns the ant.
 	 * @param botId the id associated with the bot (used for replay data).

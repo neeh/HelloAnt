@@ -64,7 +64,7 @@ public class AntBotGameInfo extends BotGameInfo
 	private ArrayList<AntHill> hills;
 	
 	/**
-	 * The state a the hive. The hive is the number of ant to spawn from the hill(s).
+	 * The state of the hive. The hive is the number of ant to spawn from the hill(s).
 	 */
 	private int hive;
 	
@@ -82,7 +82,7 @@ public class AntBotGameInfo extends BotGameInfo
 	}
 	
 	/**
-	 * Initializes a ant game info structure.
+	 * Initializes an ant game info structure.
 	 * @param bot the bot associated with those info.
 	 */
 	public void init(Bot bot)
@@ -141,8 +141,26 @@ public class AntBotGameInfo extends BotGameInfo
 	}
 	
 	/**
-	 * Gets an iterator on the list of ants of the bot.
-	 * @return an iterator on the ants of the bot.
+	 * Returns whether the bot still controls one ant at least in the game.
+	 * @return true if the bot is alive in the game, false otherwise.
+	 */
+	public boolean isAlive()
+	{
+		return !isMuted() && getAntCount() > 0;
+	}
+	
+	/**
+	 * Returns whether the bot still controls one hill at least in the game.
+	 * @return true if the bot has hill(s), false otherwise.
+	 */
+	public boolean hasHills()
+	{
+		return !isMuted() && hills.size() > 0;
+	}
+	
+	/**
+	 * Gets an iterator over ants of the bot.
+	 * @return an iterator over ants of the bot.
 	 */
 	public Iterator<Ant> getAntIterator()
 	{
@@ -150,8 +168,8 @@ public class AntBotGameInfo extends BotGameInfo
 	}
 	
 	/**
-	 * Gets an iterator on the list of hills of the bot.
-	 * @return an iterator on the hills of the bot.
+	 * Gets an iterator over hills of the bot.
+	 * @return an iterator over hills of the bot.
 	 */
 	public Iterator<AntHill> getHillIterator()
 	{
@@ -217,23 +235,5 @@ public class AntBotGameInfo extends BotGameInfo
 	public void decrementHive()
 	{
 		if (hive > 0) hive--;
-	}
-	
-	/**
-	 * Is the player alive ? (at least one ant)
-	 * @return whether the bot is alive or not
-	 */
-	public boolean isAlive()
-	{
-		return !isMuted() && ants.size() > 0;
-	}
-	
-	/**
-	 * Does the player still have at least one hill ?
-	 * @return whether the bot has hills or not
-	 */
-	public boolean hasHills()
-	{
-		return !isMuted() && hills.size() > 0;
 	}
 }
