@@ -61,13 +61,15 @@ public class AntGameObject
 	/**
 	 * Creates a new game object from a column and a row identifier.
 	 * @constructor
+	 * @param moveHandler the handler used to effectively move the game object on the map.
 	 * @param col the column identifier of the game object.
 	 * @param row the row identifier of the game object.
 	 * @param movable true if the game object can be moved on the map.
 	 * @param collideable false if the game object can share a cell with another one.
 	 */
-	public AntGameObject(int col, int row, boolean movable, boolean collideable)
+	public AntGameObject(AntGameMapCallback moveHandler, int col, int row, boolean movable, boolean collideable)
 	{
+		this.moveHandler = moveHandler;
 		this.col = col;
 		this.row = row;
 		this.movable = movable;
@@ -77,16 +79,14 @@ public class AntGameObject
 	/**
 	 * Creates a new game object from a cell descriptor.
 	 * @constructor
+	 * @param moveHandler the handler used to effectively move the game object on the map.
 	 * @param cell the cell descriptor that positions the game object on the map.
 	 * @param movable true if the game object can be moved on the map.
 	 * @param collideable false if the game object can share a cell with another one.
 	 */
-	public AntGameObject(Cell cell, boolean movable, boolean collideable)
+	public AntGameObject(AntGameMapCallback moveHandler, Cell cell, boolean movable, boolean collideable)
 	{
-		col = cell.getCol();
-		row = cell.getRow();
-		this.movable = movable;
-		this.collideable = collideable;
+		this(moveHandler, cell.getCol(), cell.getRow(), movable, collideable);
 	}
 	
 	/**

@@ -74,16 +74,16 @@ namespace BotExample
                     Console.WriteLine("Error ("+type+") : "+message.message);
                     return;
                 }
-                dynamic content = message.content;
-                if      (type.Equals("login"))     ReceivedLogin(content);
-                else if (type.Equals("gamestart")) ReceivedGameStart(content);
-                else if (type.Equals("gamestate")) ReceivedGameState(content);
-                else if (type.Equals("gameend"))   ReceivedGameEnd(content);
-                else if (type.Equals("gamemute"))  ReceivedGameMute(content);
+                if      (type.Equals("login"))     ReceivedLogin(message.content);
+                else if (type.Equals("gamestart")) ReceivedGameStart(message.content);
+                else if (type.Equals("gamestate")) ReceivedGameState(message.content);
+                else if (type.Equals("gameend"))   ReceivedGameEnd(message.content);
+                else if (type.Equals("gamemute"))  ReceivedGameMute(message.content);
+                // else Console.WriteLine("Received no-error " + type);
             }
             catch (RuntimeBinderException)
             {
-                Console.WriteLine("Error: malformed server message");
+                Console.WriteLine("Error: malformed server message.");
             }
         }
 
@@ -112,7 +112,7 @@ namespace BotExample
                 }
                 muted = false;
                 inGame = true;
-                Console.WriteLine("A game just started");
+                Console.WriteLine("A game just started ("+map.Cols+"x"+map.Rows+")");
             }
             catch (RuntimeBinderException)
             {
@@ -165,12 +165,9 @@ namespace BotExample
                     }
                 }
                 // Uncomment to display the map in the console every turn
-                //Console.WriteLine("New turn. Current known map :");
-                //Console.Write(map);
-                map.ComputeMoves();
+                Console.Write("\n"+map);
                 GameActionsMessage msg = new GameActionsMessage();
-                map.GetMoves(msg);
-                map.ApplyMoves();
+                map.ComputeMoves(msg);
                 SendMessage(msg);
             }
             catch (RuntimeBinderException)
@@ -182,10 +179,11 @@ namespace BotExample
         {
             try
             {
+                SendMessage(new LogoutMessage());
                 inGame = false;
                 string filename = SAVE_DIRECTORY + "\\replay-" + DateTime.Now.Ticks + ".json";
                 File.WriteAllText(filename, content.replay.ToString());
-                Console.WriteLine("Game ended ... Saving replay to " + filename);
+                Console.WriteLine("Game ended (" + content.replay.cutoff + ") ... Saving replay to " + filename);
             }
             catch (RuntimeBinderException)
             {
@@ -212,6 +210,7 @@ namespace BotExample
          */
         private void ReceiveData()
         {
+            string buffer = "";
             while (true)
             {
                 if (sock.Connected)
@@ -224,17 +223,30 @@ namespace BotExample
                     if (sock.Available > 0)
                     {
                         string messageReceived = null;
-                        while (sock.Available > 0)
+                        int newlinePos;
+                        int avail;
+                        while ((avail = sock.Available) > 0)
                         {
                             try
                             {
-                                byte[] msg = new Byte[sock.Available];
+                                byte[] msg = new Byte[avail];
                                 //Receive data
-                                sock.Receive(msg, 0, sock.Available, SocketFlags.None);
-                                messageReceived = System.Text.Encoding.UTF8.GetString(msg).Trim();
-                                //Console.WriteLine(messageReceived);
-                                dynamic obj = serializer.Deserialize(messageReceived, typeof(object));
-                                Received(obj);
+                                sock.Receive(msg, 0, avail, SocketFlags.None);
+                                buffer += System.Text.Encoding.UTF8.GetString(msg);
+                                while((newlinePos = buffer.IndexOf('\n')) > -1)
+                                {
+                                    messageReceived = buffer.Substring(0, newlinePos);
+                                    buffer = buffer.Substring(newlinePos + 1);
+                                    //try
+                                    //{
+                                        dynamic obj = serializer.Deserialize(messageReceived, typeof(object));
+                                        Received(obj);
+                                    //}
+                                    //catch (ArgumentException)
+                                    //{
+                                    //    Console.WriteLine("Error: malformed server message. The message is :\n" + messageReceived);
+                                    //}
+                                }
                             }
                             catch (SocketException E)
                             {

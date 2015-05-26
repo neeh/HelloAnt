@@ -89,7 +89,7 @@ public class AntFakeCommunicator extends FakeCommunicator
 			row += 1;
 			break;
 		}
-		return mapView.getGameObjectsAt(row, col);
+		return mapView.getGameObjectsAt(col, row);
 	}
 	
 	/**
@@ -110,7 +110,8 @@ public class AntFakeCommunicator extends FakeCommunicator
 			for (int i = 0; i < objects.length(); i++)
 			{
 				JSONArray object = objects.getJSONArray(i);
-				if (object.getString(0).equals("a") && object.getInt(3) == 0)
+				String type = object.getString(0).toLowerCase();
+				if ((type.equals("a") || type.equals("b")) && object.getInt(3) == 0)
 				{
 					myAnts.add(object);
 					StringBuilder untriedMoves = new StringBuilder("NEWS");

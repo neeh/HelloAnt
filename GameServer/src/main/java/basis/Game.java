@@ -151,7 +151,7 @@ public abstract class Game
 		{	// For each bot, test whether it played.
 			Bot bot = info.getKey();
 			BotGameInfo botInfo = info.getValue();
-			if (botInfo.hasPlayed() == false)
+			if (bot.getCommunicator().isBotLoggedIn() && botInfo.hasPlayed() == false && botInfo.isMuted() == false)
 			{	// The bot has not played for this round, mute it.
 				muteBot(bot, "You did not send your game actions");
 			}
@@ -195,6 +195,7 @@ public abstract class Game
 				if (System.currentTimeMillis() - botInfo.getGamestateTimestampMs() <=
 					responseTimeMs)
 				{
+					botInfo.setPlayed(true);
 					executeActions(bot, content);
 					// If all the bots have played for this round, change the ready state
 					// of the game.
@@ -234,7 +235,7 @@ public abstract class Game
 	 * is supposed to return its game action within the imposed response delay.
 	 * @see Documentation/protocol/gamestate.html
 	 * @param bot the bot that will receive the "gamestate" message.
-	 * @param canPlay whether the bot canPlay for this round. The bot is then supposed to
+	 * @param canPlay whether the bot can play for this round. The bot is then supposed to
 	 *        play the game by returning a "gameactions" message within the alloted
 	 *        response time.
 	 */
@@ -242,14 +243,14 @@ public abstract class Game
 	{
 		// Get the current state of the bot.
 		BotGameInfo info = botInfos.get(bot);
-		// Send the cooked message.
-		bot.getCommunicator().sendGameState(genGameStateMessageContent(bot));
-		if (canPlay == true)
+		if (canPlay == true && info.isMuted() == false)
 		{	// Memorize the timestamp of the sending.
 			info.setGamestateTimestampMs(System.currentTimeMillis());
 			// Wait for the bot to play during this round.
 			info.setPlayed(false); // should be set to false BEFORE!
 		}
+		// Send the cooked message.
+		bot.getCommunicator().sendGameState(genGameStateMessageContent(bot));
 	}
 	
 	/**
@@ -259,11 +260,13 @@ public abstract class Game
 	 */
 	public void sendGameState()
 	{
+		ready = false;
 		Iterator<Bot> botIt = bots.iterator();
 		while (botIt.hasNext())
 		{	// For each bot, send the game state and wait for actions.
 			Bot bot = botIt.next();
-			sendGameState(bot, true);
+			if (bot.getCommunicator().isBotLoggedIn())
+				sendGameState(bot, true);
 		}
 	}
 	
@@ -289,7 +292,8 @@ public abstract class Game
 		while (botIt.hasNext())
 		{	// For each bot, send the game start message.
 			Bot bot = botIt.next();
-			bot.getCommunicator().sendGameEnd(genGameEndMessageContent(bot));
+			if (bot.getCommunicator().isBotLoggedIn())
+				bot.getCommunicator().sendGameEnd(genGameEndMessageContent(bot));
 		}
 	}
 	

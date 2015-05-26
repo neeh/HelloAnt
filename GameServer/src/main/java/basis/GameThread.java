@@ -65,12 +65,10 @@ public class GameThread extends Thread
 		catch (InterruptedException e) {}
 		while (game.isFinished() == false)
 		{
-			// Mute bot(s) that has not played.
-			game.muteNonPlayerBots();
 			// Send the current game state to bots.
 			game.sendGameState();
 			long ms = System.currentTimeMillis();
-			while (game.isReady() == false ||
+			while (game.isReady() == false &&
 					System.currentTimeMillis() - ms < game.getResponseTimeMs())
 			{	// Wait for all bots to give actions OR response delay overcame
 				try
@@ -79,6 +77,8 @@ public class GameThread extends Thread
 				}
 				catch (InterruptedException e){}
 			}
+			// Mute bot(s) that has not played.
+			game.muteNonPlayerBots();
 			// Update the game.
 			game.update();
 		}

@@ -69,9 +69,9 @@ public class Ant extends AntGameObject
 	 * @param botId the id associated with the bot (used for replay data).
 	 * @param round the current round (used for replay data).
 	 */
-	public Ant(int col, int row, Bot bot, int botId, int round)
+	public Ant(AntGameMapCallback moveHandler, int col, int row, Bot bot, int botId, int round)
 	{
-		super(col, row, true, false);
+		super(moveHandler, col, row, true, true);
 		this.bot = bot;
 		food = false;
 		dead = false;
@@ -86,9 +86,9 @@ public class Ant extends AntGameObject
 	 * @param botId the id associated with the bot (used for replay data).
 	 * @param round the current round (used for replay data).
 	 */
-	public Ant(Cell cell, Bot bot, int botId, int round)
+	public Ant(AntGameMapCallback moveHandler, Cell cell, Bot bot, int botId, int round)
 	{
-		super(cell, true, false);
+		super(moveHandler, cell, true, true);
 		this.bot = bot;
 		food = false;
 		dead = false;
@@ -182,8 +182,8 @@ public class Ant extends AntGameObject
 		try
 		{
 			array.put(0, dead == false ? food == false ? "A" : "B" : "X");
-			array.put(1, col);
-			array.put(2, row);
+			array.put(1, row);
+			array.put(2, col);
 			array.put(3, botId);
 		}
 		catch (JSONException e) {}

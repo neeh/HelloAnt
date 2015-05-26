@@ -148,6 +148,8 @@ public class GameServer implements TCPClientHandler, GameHandler
 		while (botIt.hasNext())
 		{
 			Bot bot = botIt.next();
+			// He is not in a game anymore
+			bot.setGame(null);
 			if (bot.isFake() == false)
 			{	// If it's a real bot, add it to the lobby.
 				if (bot.getCommunicator().isBotLoggedIn())

@@ -37,6 +37,13 @@ import basis.GameManager;
 public class AntGameManager extends GameManager
 {
 	/**
+	 * Game settings
+	 */
+	private static final int FOOD_RESPAWN_DELAY = 15;
+	private static final float VIEW_RADIUS_2 = 77.0f;
+	private static final float ATTACK_RADIUS_2 = 5.0f;
+	
+	/**
 	 * The list of playable map templates.
 	 */
 	private ArrayList<AntMapTemplate> maps;
@@ -94,7 +101,8 @@ public class AntGameManager extends GameManager
 	{
 		for (ArrayList<Bot> botsInGame : toFightList)
 		{	// For each game to create...
-			AntGame game = new AntGame(botsInGame, map);
+			AntGame game = new AntGame(botsInGame, RESPONSE_TIME_MS, LOAD_TIME_MS, map,
+					FOOD_RESPAWN_DELAY, VIEW_RADIUS_2, ATTACK_RADIUS_2);
 			for (Bot bot : botsInGame)
 			{	// For each bot in the game...
 				bot.setGame(game);
@@ -112,14 +120,20 @@ public class AntGameManager extends GameManager
 	public void addBot(Bot bot)
 	{
 		if (bot.getMode() == BotMode.TRAINING)
-		{	// Take a random map.
+		{
+			// Could be nice to have a small delay, to let the user some time to logout
+			//    between 2 games (for exemple put this in a TimerTask)
+			
+			// Take a random map.
 			AntMapTemplate map = maps.get(rand.nextInt(maps.size()));
 			int botCount = map.getBotCount();
 			// Create the bot list and add the bot in training mode.
 			ArrayList<Bot> bots = new ArrayList<Bot>(botCount);
 			bots.add(bot);
 			// Create the ant game and run it on the server.
-			AntGame game = new AntGame(bots, map);
+			AntGame game = new AntGame(bots, RESPONSE_TIME_MS, LOAD_TIME_MS, map,
+					FOOD_RESPAWN_DELAY, VIEW_RADIUS_2, ATTACK_RADIUS_2);
+			bot.setGame(game);
 			gameHandler.addGame(game);
 		}
 		else

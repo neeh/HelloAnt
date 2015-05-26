@@ -149,7 +149,6 @@ public class AntGameReplayData
 		{
 			scores.put(i, new JSONArray(this.scores.get(i)));
 		}
-		
 		JSONObject replaydata = new JSONObject();
 		replaydata.put("cutoff", cutoff);
 		replaydata.put("ants", new JSONArray(ants));

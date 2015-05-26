@@ -11,13 +11,11 @@ namespace BotExample
         public bool HasFood { get; set; }
         // History of moves (used to backtrack)
         public Stack<AntDirection> History { get; set; }
-        public AntDirection CurrentMove { get; set; }
 
         public Ant()
         {
             HasFood = false;
             History = new Stack<AntDirection>();
-            CurrentMove = AntDirection.U;
         }
     }
 

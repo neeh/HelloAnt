@@ -29,5 +29,5 @@ public interface AntGameMapView
 	 * @param col X-coordinate of the objects to get
 	 * @return A list of objects that are at this position
 	 */
-	public List<AntGameObject> getGameObjectsAt(int row, int col);
+	public List<AntGameObject> getGameObjectsAt(int col, int row);
 }

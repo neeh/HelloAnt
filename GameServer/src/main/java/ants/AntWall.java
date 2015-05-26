@@ -37,9 +37,9 @@ public class AntWall extends AntGameObject
 	 * @param col the column identifier of the wall.
 	 * @param row the row identifier of the wall.
 	 */
-	public AntWall(int col, int row)
+	public AntWall(AntGameMapCallback moveHandler, int col, int row)
 	{
-		super(col, row, false, true);
+		super(moveHandler, col, row, false, true);
 	}
 	
 	/**
@@ -47,9 +47,9 @@ public class AntWall extends AntGameObject
 	 * @constructor
 	 * @param cell the cell description that positions the wall on the map.
 	 */
-	public AntWall(Cell cell)
+	public AntWall(AntGameMapCallback moveHandler, Cell cell)
 	{
-		super(cell, false, true);
+		super(moveHandler, cell, false, true);
 	}
 	
 	/**
@@ -63,8 +63,8 @@ public class AntWall extends AntGameObject
 		try
 		{
 			array.put(0, "W");
-			array.put(1, col);
-			array.put(2, row);
+			array.put(1, row);
+			array.put(2, col);
 		}
 		catch (JSONException e) {}
 		return array;

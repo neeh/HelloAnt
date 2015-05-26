@@ -44,54 +44,47 @@ public sealed class DynamicJsonConverter : JavaScriptConverter
 
         public override string ToString()
         {
-            var sb = new StringBuilder("{");
-            ToString(sb);
-            return sb.ToString();
+            return ToString(_dictionary);
         }
 
-        private void ToString(StringBuilder sb)
+        private string ToString(dynamic obj)
         {
-            var firstInDictionary = true;
-            foreach (var pair in _dictionary)
+            if (obj == null)
+                return "null";
+            if (obj is IDictionary<string, object>)
             {
-                if (!firstInDictionary)
-                    sb.Append(",");
-                firstInDictionary = false;
-                var value = pair.Value;
-                var name = pair.Key;
-                if (value is string)
+                StringBuilder sb = new StringBuilder("{");
+                bool first = true;
+                foreach (var pair in obj)
                 {
-                    sb.AppendFormat("\"{0}\":\"{1}\"", name, value);
+                    if (!first)
+                        sb.Append(",");
+                    else
+                        first = false;
+                    sb.AppendFormat("\"{0}\":{1}", pair.Key, ToString(pair.Value));
                 }
-                else if (value is IDictionary<string, object>)
-                {
-                    new DynamicJsonObject((IDictionary<string, object>)value).ToString(sb);
-                }
-                else if (value is ArrayList)
-                {
-                    sb.Append(name + ":[");
-                    var firstInArray = true;
-                    foreach (var arrayValue in (ArrayList)value)
-                    {
-                        if (!firstInArray)
-                            sb.Append(",");
-                        firstInArray = false;
-                        if (arrayValue is IDictionary<string, object>)
-                            new DynamicJsonObject((IDictionary<string, object>)arrayValue).ToString(sb);
-                        else if (arrayValue is string)
-                            sb.AppendFormat("\"{0}\"", arrayValue);
-                        else
-                            sb.AppendFormat("{0}", arrayValue);
-
-                    }
-                    sb.Append("]");
-                }
-                else
-                {
-                    sb.AppendFormat("\"{0}\":{1}", name, value);
-                }
+                sb.Append("}");
+                return sb.ToString();
             }
-            sb.Append("}");
+            if (obj is ArrayList)
+            {
+                StringBuilder sb = new StringBuilder("[");
+                bool first = true;
+                foreach (var arrayValue in (ArrayList)obj)
+                {
+                    if (!first)
+                        sb.Append(",");
+                    else
+                        first = false;
+                    sb.AppendFormat("{0}", ToString(arrayValue));
+
+                }
+                sb.Append("]");
+                return sb.ToString();
+            }
+            if (obj is string)
+                return "\"" + obj + "\"";
+            return String.Format("{0}", obj);
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)

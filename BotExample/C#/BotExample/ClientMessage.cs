@@ -35,6 +35,16 @@ namespace BotExample
         public string mode;
     }
 
+    /* Logout message */
+    class LogoutMessage : ClientMessage
+    {
+        public LogoutMessage()
+        {
+            type = "logout";
+            content = new Object();
+        }
+    }
+
     /* Game actions message */
     class GameActionsMessage : ClientMessage
     {

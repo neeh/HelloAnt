@@ -55,9 +55,9 @@ public class AntFoodSpawn extends AntGameObject
 	 * @param col the column identifier of the food spawn.
 	 * @param row the row identifier of the food spawn.
 	 */
-	public AntFoodSpawn(int col, int row)
+	public AntFoodSpawn(AntGameMapCallback moveHandler, int col, int row)
 	{
-		super(col, row, false, false);
+		super(moveHandler, col, row, false, false);
 		food = true;
 		lastHarvestRound = 0;
 	}
@@ -67,9 +67,9 @@ public class AntFoodSpawn extends AntGameObject
 	 * @constructor
 	 * @param cell the cell descriptor that positions the food spawn on the map.
 	 */
-	public AntFoodSpawn(Cell cell)
+	public AntFoodSpawn(AntGameMapCallback moveHandler, Cell cell)
 	{
-		super(cell, false, false);
+		super(moveHandler, cell, false, false);
 		food = true;
 		lastHarvestRound = 0;
 	}
@@ -141,8 +141,8 @@ public class AntFoodSpawn extends AntGameObject
 		try
 		{
 			array.put(0, "F");
-			array.put(1, col);
-			array.put(2, row);
+			array.put(1, row);
+			array.put(2, col);
 		}
 		catch (JSONException e) {}
 		return array;

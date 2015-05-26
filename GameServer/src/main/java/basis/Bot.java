@@ -201,7 +201,7 @@ public class Bot
 	 */
 	public void setGame(Game game)
 	{
-		if (this.game == null)
+		if (game == null || this.game == null)
 		{
 			this.game = game;
 		}
@@ -227,7 +227,7 @@ public class Bot
 	 */
 	public void setScore(double score)
 	{
-		if (dbHandler != null)
+		if (this.mode != BotMode.TRAINING && dbHandler != null)
 		{	// If the handler is null, it probably means that the bot does not want its
 			// score to be updated in the database.
 			// Actually, I use it to prevent the score of a fake bot from being updated

@@ -38,13 +38,10 @@ public enum Move
 	 */
 	public static Move fromString(String direction)
 	{
-		switch (direction)
-		{
-		case "N": return NORTH;
-		case "S": return SOUTH;
-		case "E": return EAST;
-		case "W": return WEST;
-		}
+		if      ("N".equalsIgnoreCase(direction)) return NORTH;
+		else if ("S".equalsIgnoreCase(direction)) return SOUTH;
+		else if ("E".equalsIgnoreCase(direction)) return EAST;
+		else if ("W".equalsIgnoreCase(direction)) return WEST;
 		// Returning null here can cause problems.
 		// EAST could be the default move.
 		return EAST;

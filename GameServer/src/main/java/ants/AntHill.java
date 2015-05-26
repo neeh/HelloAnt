@@ -55,9 +55,9 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	 * @param row the row identifier of the hill.
 	 * @param bot the bot that owns the hill.
 	 */
-	public AntHill(int col, int row, Bot bot, int botId)
+	public AntHill(AntGameMapCallback moveHandler, int col, int row, Bot bot, int botId)
 	{
-		super(col, row, false, false);
+		super(moveHandler, col, row, false, false);
 		this.bot = bot;
 		createReplayData(botId);
 	}
@@ -68,9 +68,9 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	 * @param cell the cell descriptor that positions the hill on the map.
 	 * @param bot the bot the hill belong to.
 	 */
-	public AntHill(Cell cell, Bot bot, int botId)
+	public AntHill(AntGameMapCallback moveHandler, Cell cell, Bot bot, int botId)
 	{
-		super(cell, false, false);
+		super(moveHandler, cell, false, false);
 		this.bot = bot;
 		createReplayData(botId);
 	}
@@ -113,8 +113,8 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 		try
 		{
 			array.put(0, "H");
-			array.put(1, col);
-			array.put(2, row);
+			array.put(1, row);
+			array.put(2, col);
 			array.put(3, botId);
 		}
 		catch (JSONException e) {}

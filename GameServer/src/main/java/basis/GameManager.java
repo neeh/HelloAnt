@@ -41,6 +41,17 @@ public class GameManager extends TimerTask
 	/** The maximum number of bots in a created game. */
 	public static int NB_PLAYERS_MAX;
 	
+	/**
+	 * The time the server has to wait after "gamestart" message. (in milliseconds)
+	 */
+	protected static final int RESPONSE_TIME_MS = 1000;
+	
+	/**
+	 * The time of response a bot should respect to send its "gameactions" message after a
+	 * "gamestate" message from the server. (in milliseconds)
+	 */
+	protected static final int LOAD_TIME_MS = 3000;
+	
 	private HashMap<Bot, Vector<Bot>> botMap;
 	
 	private Random rand = new Random();
@@ -152,7 +163,8 @@ public class GameManager extends TimerTask
 	public ArrayList<ArrayList<Bot>> chooseFights(ArrayList<ArrayList<Bot>> matchsList)
 	{
 		ArrayList<ArrayList<Bot>> toRet = new ArrayList<>();
-		while(!isEachListUnique(matchsList)){
+		while(!isEachListUnique(matchsList))
+		{
 			int[] weight = new int[matchsList.size()];
 			/*
 			 * Setting a weight for each possible match
@@ -160,7 +172,7 @@ public class GameManager extends TimerTask
 			for (int i=0; i<matchsList.size(); i++)
 			{
 				weight[i] = 0;
-				for(Bot bot : matchsList.get(i))
+				for (Bot bot : matchsList.get(i))
 				{
 					weight[i] += bot.getPriority();
 				}
@@ -184,13 +196,17 @@ public class GameManager extends TimerTask
 			 * it's not a feasible match
 			 */
 			ArrayList<Bot> listBots = matchsList.get(index);
-			for(Bot b : listBots)
-				for(int i = 0; i < matchsList.size(); i++)
+			for (Bot b : listBots)
+			{
+				for (int i = 0; i < matchsList.size(); i++)
+				{
 					if(matchsList.get(i).contains(b))
 					{
 						matchsList.remove(i);
 						i--;
 					}
+				}
+			}
 			toRet.add(listBots);
 		}
 		return toRet;

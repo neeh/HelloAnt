@@ -29,6 +29,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import util.Cell;
 import util.Move;
@@ -39,6 +41,8 @@ import basis.Game;
 
 public class AntGame extends Game
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AntGame.class);
+	
 	/**
 	 * The static map template used to initialize the game objects of the game map.
 	 * It represents the generic layout of the game map.
@@ -64,7 +68,7 @@ public class AntGame extends Game
 	/**
 	 * The number of rounds required for food to respawn.
 	 */
-	private static int foodRespawnDelay = 15;
+	private int foodRespawnDelay;
 	
 	/**
 	 * The mask that simulates fog war for vision.
@@ -86,10 +90,22 @@ public class AntGame extends Game
 	 * Fake bots are created to play with the other bots if there is not enough bots.
 	 * @constructor
 	 * @param bots the list of bots that are gonna play in this game.
+	 * @param responseTime the maximum response time for a bot in ms.
+	 * @param loadTime the time allowed to the bots to init their AI in ms.
 	 * @param mapTemplate the template used to initialize the game map.
+	 * @param foodRespawnDelay the number of turns between 2 food spawns.
+	 * @param viewRadius2 the square of the view radius of an ant.
+	 * @param attackRadius2 the square of the attack radius of an ant.
 	 */
-	public AntGame(ArrayList<Bot> bots, AntMapTemplate mapTemplate)
+	public AntGame(ArrayList<Bot> bots, int responseTime, int loadTime,
+			AntMapTemplate mapTemplate, int foodRespawnDelay, float viewRadius2,
+			float attackRadius2)
 	{
+		this.mapTemplate = mapTemplate;
+		// Create game map and game objects.
+		map = new AntGameMap(mapTemplate.getCols(), mapTemplate.getRows());
+		ants = new ArrayList<Ant>();
+		foodSpawns = new ArrayList<AntFoodSpawn>();
 		// Add fake bots to supply the correct bot count for the map.
 		int fakeBotCount = mapTemplate.getBotCount() - bots.size();
 		for (int i = 0; i < fakeBotCount; i++)
@@ -97,6 +113,7 @@ public class AntGame extends Game
 			AntFakeCommunicator fakeCom = new AntFakeCommunicator(map);
 			Bot fakeBot = new Bot(fakeCom, "CPU" + i, BotMode.TRAINING, 0, null);
 			fakeCom.setBot(fakeBot);
+			fakeBot.setGame(this);
 			bots.add(fakeBot);
 		}
 		this.bots = bots;
@@ -109,16 +126,15 @@ public class AntGame extends Game
 			Bot bot = botIt.next();
 			botInfos.put(bot, new AntBotGameInfo(botId++));
 		}
-		this.mapTemplate = mapTemplate;
-		// Create game map and game objects.
-		map = new AntGameMap(mapTemplate.getCols(), mapTemplate.getRows());
-		ants = new ArrayList<Ant>();
-		foodSpawns = new ArrayList<AntFoodSpawn>();
 		// Create fog war masks.
-		viewMask = new AntGameMapMask(77.0f);
-		attackMask = new AntGameMapMask(5.0f);
+		viewMask = new AntGameMapMask(viewRadius2);
+		attackMask = new AntGameMapMask(attackRadius2);
+		// Init settings
+		this.loadTimeMs = loadTime;
+		this.responseTimeMs = responseTime;
+		this.foodRespawnDelay = foodRespawnDelay;
 		// Create replay object.
-		replay = new AntGameReplayData(mapTemplate, 77.0f, 5.0f, maxRound,
+		replay = new AntGameReplayData(mapTemplate, viewRadius2, attackRadius2, maxRound,
 				loadTimeMs, responseTimeMs);
 	}
 	
@@ -133,7 +149,7 @@ public class AntGame extends Game
 		((AntBotGameInfo) botInfos.get(ant.getBot())).addAnt(ant);
 		map.addGameObject(ant);
 	}
-	
+
 	/**
 	 * Removes an ant from the game.
 	 * @param ant the ant to remove from the ants lists.
@@ -141,6 +157,19 @@ public class AntGame extends Game
 	protected void removeAnt(Ant ant)
 	{
 		ants.remove(ant);
+		((AntBotGameInfo) botInfos.get(ant.getBot())).removeAnt(ant);
+		map.removeGameObject(ant);
+	}
+	
+	/**
+	 * Removes an ant from the game, while being safe used in a loop.
+	 * @param ant the ant to remove from the ants lists.
+	 * @param antIt the iterator used in the loop (used for safe removal, must be an
+	 * 		iterator on the "ants" array).
+	 */
+	protected void removeAnt(Ant ant, Iterator<Ant> antIt)
+	{
+		antIt.remove();
 		((AntBotGameInfo) botInfos.get(ant.getBot())).removeAnt(ant);
 		map.removeGameObject(ant);
 	}
@@ -167,6 +196,17 @@ public class AntGame extends Game
 	}
 	
 	/**
+	 * Removes a will from the game, while being safe used in a loop.
+	 * @param hill the hill to remove from the hills lists.
+	 * @param hillIt the iterator used in the loop (have to be from botInfo.getHillIterator()).
+	 */
+	protected void removeHill(AntHill hill, Iterator<AntHill> hillIt)
+	{
+		hillIt.remove();
+		map.removeGameObject(hill);
+	}
+	
+	/**
 	 * Initializes an ant game.
 	 */
 	@Override
@@ -183,14 +223,14 @@ public class AntGame extends Game
 		Iterator<Cell> wallIt = mapTemplate.getWalls().iterator();
 		while (wallIt.hasNext())
 		{
-			map.addGameObject(new AntWall(wallIt.next()));
+			map.addGameObject(new AntWall(map, wallIt.next()));
 		}
 		// Create food spawns on the map.
 		foodSpawns.clear();
 		Iterator<Cell> foodSpawnIt = mapTemplate.getFoodSpawns().iterator();
 		while (foodSpawnIt.hasNext())
 		{
-			AntFoodSpawn foodSpawn = new AntFoodSpawn(foodSpawnIt.next());
+			AntFoodSpawn foodSpawn = new AntFoodSpawn(map, foodSpawnIt.next());
 			foodSpawns.add(foodSpawn);
 			map.addGameObject(foodSpawn);
 			// Pop initial food.
@@ -210,10 +250,10 @@ public class AntGame extends Game
 			{
 				Cell hillCell = hillIt.next();
 				// Create the hill on the map for the bot.
-				AntHill hill = new AntHill(hillCell, bot, botInfo.getId());
+				AntHill hill = new AntHill(map, hillCell, bot, botInfo.getId());
 				addHill(hill);
 				// Create an initial ant inside the created hill for the bot.
-				Ant ant = new Ant(hillCell, bot, botInfo.getId(), curRound);
+				Ant ant = new Ant(map, hillCell, bot, botInfo.getId(), curRound);
 				addAnt(ant);
 				// Each bot start with 1 point per hill.
 				botInfo.addGameScore(+1);
@@ -325,7 +365,7 @@ public class AntGame extends Game
 			replay.setCutoff("rank stabilized");
 			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	/**
@@ -343,11 +383,13 @@ public class AntGame extends Game
 			replay.addScoresRecord(antBotInfo.getId(), antBotInfo.getGameScore());
 		}
 		// Remove ants which died last round.
-		for (Ant ant : ants)
+		for (Iterator<Ant> antIt = ants.iterator(); antIt.hasNext();)
 		{
+			Ant ant = antIt.next();
 			if(ant.isDead())
 			{
-				removeAnt(ant);
+				// Avoid random ConcurrentModificationException by removing using the iterator
+				removeAnt(ant, antIt);
 			}
 		}
 		// Resolve battles.
@@ -412,7 +454,7 @@ public class AntGame extends Game
 					else
 					{	// The ant does not belong to the bot that owns the hill, raze it.
 						hill.raze(curRound);
-						removeHill(hill);
+						removeHill(hill, hillIt);
 						// Update game score of both parties.
 						AntBotGameInfo opponentInfo = (AntBotGameInfo)
 								botInfos.get(razerAnt.getBot());
@@ -432,7 +474,7 @@ public class AntGame extends Game
 					&& botInfo.getHive() > 0;)
 			{
 				AntHill antHill = (AntHill) availIt.next();
-				Ant ant = new Ant(antHill.getCol(), antHill.getRow(), bot,
+				Ant ant = new Ant(map, antHill.getCol(), antHill.getRow(), bot,
 						botInfo.getId(), curRound);
 				addAnt(ant);
 				botInfo.decrementHive();
@@ -501,7 +543,7 @@ public class AntGame extends Game
 			Move direction = Move.fromString(move.getString(2));
 			// Get game objects from the game map.
 			Ant ant = map.getAntAt(col, row);
-			if (ant != null && ant.getBot() == bot && ant.isDead() == false)
+			if (ant != null && ant.getBot() == bot)
 			{	// there's an alive ant at this cell and this ant belongs to the bot.
 				// We can move it in the desired direction.
 				ant.move(direction);
@@ -509,15 +551,14 @@ public class AntGame extends Game
 				ArrayList<AntGameObject> gobs = map.getGameObjectsAt(ant.getCol(),
 					ant.getRow());
 				Iterator<AntGameObject> gobIt = gobs.iterator();
-				AntBotGameInfo botInfo = (AntBotGameInfo) botInfos.get(bot);
 				while (gobIt.hasNext())
 				{
 					AntGameObject gob = gobIt.next();
-					if (gob.isCollideable())
+					if (gob != ant && gob.isCollideable())
 					{	// The ant in on a wall, just remove it from the ant list of the
 						// bot and from the map.
-						botInfo.removeAnt(ant);
-						map.removeGameObject(ant);
+						ant.kill(curRound);
+						removeAnt(ant);
 						break;
 					}
 				}
@@ -586,14 +627,45 @@ public class AntGame extends Game
 	@Override
 	protected JSONObject genGameStartMessageContent(Bot bot)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		try
+		{
+			JSONObject jsonContent = new JSONObject();
+			JSONObject jsonMap = new JSONObject();
+			jsonMap.put("cols", map.getCols());
+			jsonMap.put("rows", map.getRows());
+			AntBotGameInfo botInfo = (AntBotGameInfo) botInfos.get(bot);
+			for (Iterator<AntHill> iterator = botInfo.getHillIterator(); iterator.hasNext();)
+			{
+				AntHill hill = iterator.next();
+				JSONObject jsonHill = new JSONObject();
+				jsonHill.put("col", hill.getCol());
+				jsonHill.put("row", hill.getRow());
+				jsonMap.append("hills", jsonHill);
+			}
+			jsonContent.put("map", jsonMap);
+			return jsonContent;
+		}
+		catch (JSONException e)
+		{
+			LOGGER.error("Could not generate the game start message content.");
+			return null;
+		}
 	}
 	
 	@Override
 	protected JSONObject genGameEndMessageContent(Bot bot)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// TODO !
+		try
+		{
+			JSONObject jsonContent = new JSONObject();
+			jsonContent.put("replay", replay.toJSONObject());
+			return jsonContent;
+		}
+		catch (JSONException e)
+		{
+			LOGGER.error("Could not generate the game end message content.");
+			return null;
+		}
 	}
 }
