@@ -50,26 +50,28 @@ public class Ant extends AntGameObject
 	private boolean dead;
 	
 	/**
-	 * The replay data for this ant. Stored in a JSON array.
+	 * The replay data for this ant, stored in a JSON array.
 	 * [ col, row, pop_round, dth_round, owner_id, moves_string ]
+	 * @see Documentation/protocol/replayformat.html
 	 */
 	private JSONArray replayData;
 	
 	/**
-	 * Indicates whether the ant has moved for this round.
+	 * Whether the ant has moved for this round.
 	 */
 	private boolean moved;
 	
 	/**
 	 * Creates a new ant for a bot from a column and a row identifier.
 	 * @constructor
-	 * @param col the column identifier of the ant.
-	 * @param row the row identifier of the ant.
+	 * @param col the initial column identifier of the ant.
+	 * @param row the initial row identifier of the ant.
 	 * @param bot the bot that owns the ant.
 	 * @param botId the id associated with the bot (used for replay data).
-	 * @param round the current round (used for replay data).
+	 * @param round the current game round (used for replay data).
 	 */
-	public Ant(AntGameMapCallback moveHandler, int col, int row, Bot bot, int botId, int round)
+	public Ant(AntGameMapCallback moveHandler, int col, int row, Bot bot, int botId,
+			int round)
 	{
 		super(moveHandler, col, row, true, true);
 		this.bot = bot;
@@ -84,7 +86,7 @@ public class Ant extends AntGameObject
 	 * @param cell the cell descriptor that positions the ant on the map.
 	 * @param bot the bot that owns the ant.
 	 * @param botId the id associated with the bot (used for replay data).
-	 * @param round the current round (used for replay data).
+	 * @param round the current game round (used for replay data).
 	 */
 	public Ant(AntGameMapCallback moveHandler, Cell cell, Bot bot, int botId, int round)
 	{
@@ -97,16 +99,17 @@ public class Ant extends AntGameObject
 	
 	/**
 	 * Creates replay data for the ant.
+	 * @see Documentation/protocol/replayformat.html
 	 * @param botId the id associated with the bot.
-	 * @param round the current round.
+	 * @param round the current game round.
 	 */
 	private void createReplayData(int botId, int round)
 	{
 		replayData = new JSONArray();
 		try
 		{
-			replayData.put(0, col);
-			replayData.put(1, row);
+			replayData.put(0, row);
+			replayData.put(1, col);
 			replayData.put(2, round);
 			replayData.put(4, botId);
 			replayData.put(5, "");
@@ -116,6 +119,7 @@ public class Ant extends AntGameObject
 	
 	/**
 	 * Adds a blank move to the move string of the replay data of the ant.
+	 * @see Documentation/protocol/replayformat.html
 	 */
 	public void addBlankMove()
 	{
@@ -128,23 +132,51 @@ public class Ant extends AntGameObject
 	
 	/**
 	 * Moves an ant on the game map.
-	 * This function is overridden to manage replay data.
+	 * This method overrides the one of its parent to manage replay data.
 	 */
 	@Override
 	public void move(Move direction)
 	{
 		super.move(direction);
 		try
-		{
+		{	// Add the move in the move string.
 			String moveChar = Move.toString(direction).toLowerCase();
 			replayData.put(5, replayData.getString(5) + moveChar);
+			// ---------------------------------------------------------------------------
+			// Now, we set a boolean 'moved' to true to remember that a move was already
+			// added in the move string of this ant during the current game round.
+			// After each round, the game will check for ants that did not move and add a
+			// blank move in the move string for these ants to ensure the consistency of
+			// the move string over time.
+			// Hence, 'moved' should be reset to false at the end of a game round.
+			// ---------------------------------------------------------------------------
 			moved = true;
 		}
 		catch (JSONException e) {}
 	}
 	
 	/**
-	 * Gets the bot the ant belong to.
+	 * Gets a JSON representation of the ant.
+	 * @see Documentation/protocol/gamestate.html
+	 * @param botId the bot identifier of the owner, viewed by the bot.
+	 * @return [ ["A" | "B" | "X"], col, row, owner_id ]
+	 */
+	public JSONArray toJSONArray(int botId)
+	{
+		JSONArray array = new JSONArray();
+		try
+		{
+			array.put(0, dead == false ? food == false ? "A" : "B" : "X");
+			array.put(1, row);
+			array.put(2, col);
+			array.put(3, botId);
+		}
+		catch (JSONException e) {}
+		return array;
+	}
+	
+	/**
+	 * Gets the bot the ant belongs to.
 	 * @return the bot that owns the ant.
 	 */
 	public Bot getBot()
@@ -168,26 +200,6 @@ public class Ant extends AntGameObject
 	public boolean isDead()
 	{
 		return dead;
-	}
-	
-	/**
-	 * Gets a JSON representation of the ant.
-	 * @see Documentation/protocol/gamestate.html
-	 * @param botId the bot identifier of the owner, viewed by the bot.
-	 * @return [ ["A" | "B" | "X"], col, row, owner_id ]
-	 */
-	public JSONArray toJSONArray(int botId)
-	{
-		JSONArray array = new JSONArray();
-		try
-		{
-			array.put(0, dead == false ? food == false ? "A" : "B" : "X");
-			array.put(1, row);
-			array.put(2, col);
-			array.put(3, botId);
-		}
-		catch (JSONException e) {}
-		return array;
 	}
 	
 	/**
@@ -232,7 +244,7 @@ public class Ant extends AntGameObject
 	}
 	
 	/**
-	 * Sets whether the ant has moved for this round.
+	 * Sets whether the ant has moved for this game round.
 	 * @return true if the ant moved, false otherwise.
 	 */
 	public void setMoved(boolean moved)
