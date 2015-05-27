@@ -226,4 +226,30 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 		}
 		return null;
 	}
+	
+	/**
+	 * Prints the game map on the console.
+	 */
+	public void _DEBUG_print_map()
+	{
+		Iterator<ArrayList<ArrayList<AntGameObject>>> rowIt = cells.iterator();
+		while (rowIt.hasNext())
+		{
+			String rowString = "";
+			Iterator<ArrayList<AntGameObject>> colIt = rowIt.next().iterator();
+			while (colIt.hasNext())
+			{
+				Iterator<AntGameObject> gobIt = colIt.next().iterator();
+				while (gobIt.hasNext())
+				{
+					AntGameObject gob = gobIt.next();
+					if (gob instanceof AntWall) { rowString += "#"; break; }
+					else if (gob instanceof Ant) { rowString += "a"; break; }
+					else if (gob instanceof AntHill) { rowString += "@"; break; }
+					else if (gob instanceof AntFoodSpawn) { rowString += "*"; break; }
+				}
+			}
+			System.out.println(rowString);
+		}
+	}
 }

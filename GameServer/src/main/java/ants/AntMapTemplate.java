@@ -438,29 +438,29 @@ public class AntMapTemplate
 	}
 	
 	/**
-	 * Gets the list of ant hills for each bot on the map.
-	 * @return the list of ant hills.
+	 * Gets an iterator over the hills of the map.
+	 * @return an iterator over hills.
 	 */
-	public ArrayList<ArrayList<Cell>> getHills()
+	public Iterator<ArrayList<Cell>> getHillIterator()
 	{
-		return hills;
+		return hills.iterator();
 	}
 	
 	/**
-	 * Gets the list of food spawns placed on the map.
-	 * @return the list of food spawns.
+	 * Gets an iterator over the food spawns of the map.
+	 * @return an iterator over foos spawns.
 	 */
-	public ArrayList<Cell> getFoodSpawns()
+	public Iterator<Cell> getFoodSpawnIterator()
 	{
-		return foodSpawns;
+		return foodSpawns.iterator();
 	}
 	
 	/**
-	 * Gets the list of walls on the map.
-	 * @return the list of walls.
+	 * Gets an iterator over the walls of the map.
+	 * @return an iterator over walls.
 	 */
-	public ArrayList<Cell> getWalls()
+	public Iterator<Cell> getWallIterator()
 	{
-		return walls;
+		return walls.iterator();
 	}
 }

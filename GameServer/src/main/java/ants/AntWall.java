@@ -26,7 +26,7 @@ import util.Cell;
 
 /**
  * A wall is an unmovable, unpierceable game object placed on the map.
- * @constructor
+ * @class
  * @author Benjamin
  */
 public class AntWall extends AntGameObject
@@ -34,8 +34,9 @@ public class AntWall extends AntGameObject
 	/**
 	 * Creates a wall from a column and a row identifier.
 	 * @constructor
-	 * @param col the column identifier of the wall.
-	 * @param row the row identifier of the wall.
+	 * @param moveHandler the handler used to move the wall.
+	 * @param col the initial column identifier of the wall.
+	 * @param row the initial row identifier of the wall.
 	 */
 	public AntWall(AntGameMapCallback moveHandler, int col, int row)
 	{
@@ -45,6 +46,7 @@ public class AntWall extends AntGameObject
 	/**
 	 * Creates a wall from a cell descriptor.
 	 * @constructor
+	 * @param moveHandler the handler used to move the wall.
 	 * @param cell the cell description that positions the wall on the map.
 	 */
 	public AntWall(AntGameMapCallback moveHandler, Cell cell)
@@ -55,7 +57,7 @@ public class AntWall extends AntGameObject
 	/**
 	 * Gets a JSON representation of a wall.
 	 * @see Documentation/protocol/gamestate.html
-	 * @return [ "W", col, row ]
+	 * @return [ "W", row, col ]
 	 */
 	public JSONArray toJSONArray()
 	{

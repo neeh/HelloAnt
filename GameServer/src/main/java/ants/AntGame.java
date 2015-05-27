@@ -220,14 +220,14 @@ public class AntGame extends Game
 		// Clears the map.
 		map.clear();
 		// Create walls on the map.
-		Iterator<Cell> wallIt = mapTemplate.getWalls().iterator();
+		Iterator<Cell> wallIt = mapTemplate.getWallIterator();
 		while (wallIt.hasNext())
 		{
 			map.addGameObject(new AntWall(map, wallIt.next()));
 		}
 		// Create food spawns on the map.
 		foodSpawns.clear();
-		Iterator<Cell> foodSpawnIt = mapTemplate.getFoodSpawns().iterator();
+		Iterator<Cell> foodSpawnIt = mapTemplate.getFoodSpawnIterator();
 		while (foodSpawnIt.hasNext())
 		{
 			AntFoodSpawn foodSpawn = new AntFoodSpawn(map, foodSpawnIt.next());
@@ -238,7 +238,7 @@ public class AntGame extends Game
 			replay.addFoodData(foodSpawn.getReplayData());
 		}
 		// Create initial ant(s) and hill(s) for each bot on the map.
-		Iterator<ArrayList<Cell>> botHillsIt = mapTemplate.getHills().iterator();
+		Iterator<ArrayList<Cell>> botHillsIt = mapTemplate.getHillIterator();
 		Iterator<Bot> botIt = bots.iterator();
 		while (botHillsIt.hasNext())
 		{

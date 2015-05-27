@@ -40,7 +40,6 @@ public class InvalidMapFormatException extends Exception
 	 * @constructor
 	 * @see Documentation/specifications/mapformat.html
 	 * @param message the message describing the exception.
-	 * @return the exception.
 	 */
 	public InvalidMapFormatException(String message)
 	{
