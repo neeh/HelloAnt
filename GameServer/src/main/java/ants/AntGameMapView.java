@@ -21,13 +21,20 @@ package ants;
 
 import java.util.List;
 
+/**
+ * This interface provides a method that can be called to view the game objects of the
+ * map. The ant fake communicator uses it to see where it can move its bot.
+ * @interface
+ * @author Nicolas
+ */
 public interface AntGameMapView
 {
 	/**
-	 * Get the list of objects at a specific position on the map
-	 * @param row Y-coordinate of the objects to get
-	 * @param col X-coordinate of the objects to get
-	 * @return A list of objects that are at this position
+	 * Gets the list of game objects present in a specific cell of the game map.
+	 * The method takes the toroidal shape of the map in account.
+	 * @param col the column identifier of the cell.
+	 * @param row the row identifier of the cell.
+	 * @return the content of the cell.
 	 */
 	public List<AntGameObject> getGameObjectsAt(int col, int row);
 }

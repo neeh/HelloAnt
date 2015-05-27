@@ -108,6 +108,8 @@ public class AntFoodSpawn extends AntGameObject
 		}
 		catch (JSONException e) {}
 		replayData = null;
+		// replay data is cleared here, but there's still a reference to it in the food
+		// track list in the game replay data class.
 		food = false;
 		lastHarvestRound = round;
 	}

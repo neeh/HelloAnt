@@ -161,7 +161,7 @@ public class Ant extends AntGameObject
 	 * Gets a JSON representation of the ant.
 	 * @see Documentation/protocol/gamestate.html
 	 * @param botId the bot identifier of the owner, viewed by the bot.
-	 * @return [ ["A" | "B" | "X"], col, row, owner_id ]
+	 * @return [ ["A" | "B" | "X"], row, col, owner_id ]
 	 */
 	public JSONArray toJSONArray(int botId)
 	{

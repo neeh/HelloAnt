@@ -26,7 +26,8 @@ import util.Cell;
 import basis.Bot;
 
 /**
- * This class represents an ant hill where ants can spawn from. A hill belongs to a bot.
+ * This class represents an ant hill where ants can spawn from.
+ * A hill belongs to a bot.
  * @class
  * @author Benjamin
  */
@@ -38,22 +39,25 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	private Bot bot;
 	
 	/**
-	 * The last time an ant was on top of the hill.
+	 * The last time an ant visited the hill.
 	 */
 	private int lastVisitRound;
 	
 	/**
 	 * The replay data for this hill. Stored in a JSON array.
-	 * [ col, row, owner_id, turn_death ]
+	 * [ row, col, owner_id, turn_death ]
+	 * @see Documentation/protocol/replayformat.html
 	 */
 	private JSONArray replayData;
 	
 	/**
 	 * Creates a new ant hill for a bot from a column and a row identifier.
 	 * @constructor
-	 * @param col the column identifier of the hill.
-	 * @param row the row identifier of the hill.
+	 * @param moveHandler the handler used to move the hill.
+	 * @param col the initial column identifier of the hill.
+	 * @param row the initial row identifier of the hill.
 	 * @param bot the bot that owns the hill.
+	 * @param botId the id associated with the bot (used for replay data).
 	 */
 	public AntHill(AntGameMapCallback moveHandler, int col, int row, Bot bot, int botId)
 	{
@@ -65,8 +69,10 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	/**
 	 * Creates a new ant hill from a cell descriptor and a reference to the owner.
 	 * @constructor
+	 * @param moveHandler the handler used to move the hill.
 	 * @param cell the cell descriptor that positions the hill on the map.
-	 * @param bot the bot the hill belong to.
+	 * @param bot the bot that owns the hill.
+	 * @param botId the id associated with the bot (used for replay data).
 	 */
 	public AntHill(AntGameMapCallback moveHandler, Cell cell, Bot bot, int botId)
 	{
@@ -78,34 +84,48 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	/**
 	 * Creates replay data for the ant.
 	 * @param botId the id associated with the bot.
-	 * @param round the current round.
+	 * @param round the current game round.
 	 */
 	private void createReplayData(int botId)
 	{
 		replayData = new JSONArray();
 		try
 		{
-			replayData.put(0, col);
-			replayData.put(1, row);
+			replayData.put(0, row);
+			replayData.put(1, col);
 			replayData.put(2, botId);
 		}
 		catch (JSONException e) {}
 	}
 	
 	/**
-	 * Gets the owner of the ant hill.
-	 * @return the bot that owns the hill.
+	 * Razes the hill.
+	 * @param round the game round at which the hill was razed (used for replay data).
 	 */
-	public Bot getBot()
+	public void raze(int round)
 	{
-		return bot;
+		try
+		{
+			replayData.put(3, round);
+		}
+		catch (JSONException e) {}
+	}
+	
+	/**
+	 * Compares with another hill to get the less recently visited first using a sort.
+	 * @param hill The ant hill to compare to.
+	 */
+	@Override
+	public int compareTo(AntHill hill)
+	{
+		return getLastVisitRound() - hill.getLastVisitRound();
 	}
 	
 	/**
 	 * Gets a JSON representation of a hill.
 	 * @see Documentation/protocol/gamestate.html
 	 * @param botId the bot identifier of the owner, viewed by the bot.
-	 * @return [ "H", col, row, owner_id ]
+	 * @return [ "H", row, col, owner_id ]
 	 */
 	public JSONArray toJSONArray(int botId)
 	{
@@ -119,6 +139,15 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 		}
 		catch (JSONException e) {}
 		return array;
+	}
+	
+	/**
+	 * Gets the owner of the ant hill.
+	 * @return the bot that owns the hill.
+	 */
+	public Bot getBot()
+	{
+		return bot;
 	}
 	
 	/**
@@ -146,27 +175,5 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 	public void setLastVisitRound(int lastVisitRound)
 	{
 		this.lastVisitRound = lastVisitRound;
-	}
-
-	/**
-	 * Razes the hill.
-	 * @param round the round at which the hill was razed (used for replay data).
-	 */
-	public void raze(int round)
-	{
-		try
-		{
-			replayData.put(3, round);
-		}
-		catch (JSONException e) {}
-	}
-	
-	/**
-	 * Used to get less recently visited hill first using a sort.
-	 */
-	@Override
-	public int compareTo(AntHill o)
-	{
-		return getLastVisitRound() - o.getLastVisitRound();
 	}
 }

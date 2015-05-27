@@ -149,7 +149,11 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 	 * @return the list of game objects in the mask.
 	 */
 	public ArrayList<AntGameObject> applyMask(int col, int row, AntGameMapMask mask)
-	{
+	{	// -------------------------------------------------------------------------------
+		// CAUTION: The mask has to be smaller than the game map, else, due to the
+		// toroidal nature of the map, some objects will be added twice in the array.
+		// You can fix this by using a Set/HashSet instead of a simple ArrayList.
+		// -------------------------------------------------------------------------------
 		ArrayList<AntGameObject> gobs = new ArrayList<AntGameObject>();
 		ArrayList<Cell> maskCells = mask.getCells();
 		int vRow, vCol;
@@ -198,7 +202,7 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 	 * @param gob the input game object.
 	 * @return the content of the cell.
 	 */
-	public ArrayList<AntGameObject> getGameObjectAt(AntGameObject gob)
+	public ArrayList<AntGameObject> getGameObjectsAt(AntGameObject gob)
 	{
 		return getGameObjectsAt(gob.getCol(), gob.getRow());
 	}

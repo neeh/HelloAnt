@@ -548,8 +548,7 @@ public class AntGame extends Game
 				// We can move it in the desired direction.
 				ant.move(direction);
 				// Check that the ant did not go into a wall.
-				ArrayList<AntGameObject> gobs = map.getGameObjectsAt(ant.getCol(),
-					ant.getRow());
+				ArrayList<AntGameObject> gobs = map.getGameObjectsAt(ant);
 				Iterator<AntGameObject> gobIt = gobs.iterator();
 				while (gobIt.hasNext())
 				{

@@ -46,28 +46,31 @@ public class AntGameObject
 	/**
 	 * Whether the game object can be moved on the map.
 	 */
-	protected boolean movable;
+	private boolean movable;
 	
 	/**
 	 * Whether the game object can share a cell with another game object.
+	 * {@code collideable = true;} means that the game object cannot share its cell with
+	 * another game object.
 	 */
-	protected boolean collideable;
+	private boolean collideable;
 	
 	/**
-	 * The handler used to effectively move the game object on the map.
+	 * The handler used to move the game object on the game map.
 	 */
 	private AntGameMapCallback moveHandler;
 	
 	/**
 	 * Creates a new game object from a column and a row identifier.
 	 * @constructor
-	 * @param moveHandler the handler used to effectively move the game object on the map.
-	 * @param col the column identifier of the game object.
-	 * @param row the row identifier of the game object.
+	 * @param moveHandler the handler used to move the game object on the game map.
+	 * @param col the initial column identifier of the game object.
+	 * @param row the initial row identifier of the game object.
 	 * @param movable true if the game object can be moved on the map.
 	 * @param collideable false if the game object can share a cell with another one.
 	 */
-	public AntGameObject(AntGameMapCallback moveHandler, int col, int row, boolean movable, boolean collideable)
+	public AntGameObject(AntGameMapCallback moveHandler, int col, int row,
+			boolean movable, boolean collideable)
 	{
 		this.moveHandler = moveHandler;
 		this.col = col;
@@ -79,16 +82,17 @@ public class AntGameObject
 	/**
 	 * Creates a new game object from a cell descriptor.
 	 * @constructor
-	 * @param moveHandler the handler used to effectively move the game object on the map.
+	 * @param moveHandler the handler used to move the game object on the game map.
 	 * @param cell the cell descriptor that positions the game object on the map.
 	 * @param movable true if the game object can be moved on the map.
 	 * @param collideable false if the game object can share a cell with another one.
 	 */
-	public AntGameObject(AntGameMapCallback moveHandler, Cell cell, boolean movable, boolean collideable)
+	public AntGameObject(AntGameMapCallback moveHandler, Cell cell, boolean movable,
+			boolean collideable)
 	{
 		this(moveHandler, cell.getCol(), cell.getRow(), movable, collideable);
 	}
-	
+
 	/**
 	 * Moves the game object on the map to the given direction.
 	 * @param direction where to move the game object.
@@ -96,6 +100,17 @@ public class AntGameObject
 	public void move(Move direction)
 	{
 		if (movable) moveHandler.moveGameObject(this, direction);
+	}
+	
+	/**
+	 * Gets a JSON representation of the game object.
+	 * @see Documentation/protocol/gamestate.html
+	 * @return the game object as a JSON array.
+	 */
+	public JSONArray toJSONArray()
+	{
+		// To override...
+		return null;
 	}
 	
 	/**
@@ -127,21 +142,11 @@ public class AntGameObject
 	
 	/**
 	 * Returns whether the game object is collideable.
-	 * @return true if the game object can't share its cell with another game object.
+	 * @return true if the game object cannot share its cell with another game object.
 	 */
 	public boolean isCollideable()
 	{
 		return collideable;
-	}
-	
-	/**
-	 * Gets a JSON representation of the game object.
-	 * @see Documentation/protocol/gamestate.html
-	 * @return the game object as a JSON array.
-	 */
-	public JSONArray toJSONArray()
-	{
-		return null;
 	}
 	
 	/**
