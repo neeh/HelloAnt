@@ -166,28 +166,40 @@ public class GameManager extends TimerTask
 		while(!isEachListUnique(matchsList))
 		{
 			int[] weight = new int[matchsList.size()];
+			int[] score = new int[matchsList.size()];
 			/*
 			 * Setting a weight for each possible match
 			 */
 			for (int i=0; i<matchsList.size(); i++)
 			{
 				weight[i] = 0;
+				score[i] = 0;
 				for (Bot bot : matchsList.get(i))
 				{
 					weight[i] += bot.getPriority();
+					score[i] += bot.getScore();
 				}
 			}
 			/*
 			 * Get the higher weight
 			 */
 			int compareWeight = -1;
+			int compareScore = -1;
 			int index = -1;
 			for (int i = 0; i < weight.length; i++)
 			{
 				if (weight[i] > compareWeight)
 				{
 					compareWeight = weight[i];
+					compareScore = score[i];
 					index = i;
+				}
+				else if (weight[i] == compareWeight)
+				{
+					if(score[i] > compareScore){
+						compareScore = score[i];
+						index = i;
+					}
 				}
 			}
 			
@@ -209,6 +221,9 @@ public class GameManager extends TimerTask
 			}
 			toRet.add(listBots);
 		}
+		for (ArrayList<Bot> botList : matchsList)
+			toRet.add(botList);
+		
 		return toRet;
 	}
 	
@@ -311,20 +326,21 @@ public class GameManager extends TimerTask
 	
 	/**
 	 * Checks the uniqueness of each list in the bot matrix.
+	 * Uniqueness is here defined as the presence of a bot in AT MOST ONE list
 	 * @param botMatrix the list of list to check.
 	 * @return true if each list is unique, false otherwise.
 	 */
-	private boolean isEachListUnique(ArrayList<ArrayList<Bot>> botMatrix)
+	public boolean isEachListUnique(ArrayList<ArrayList<Bot>> botMatrix)
 	{
-		for (ArrayList<Bot> botList : botMatrix)
+		for (int i=0; i<botMatrix.size(); i++)
 		{
-			for (ArrayList<Bot> botListToSearchIn : botMatrix)
+			for (int j=0; j<botMatrix.size(); j++)
 			{
-				if (!botListToSearchIn.equals(botList))
+				if (i!=j)
 				{
-					for (Bot bot : botList)
+					for (int k=0; k<botMatrix.get(i).size(); k++)
 					{
-						if (botListToSearchIn.contains(bot))
+						if(botMatrix.get(j).contains(botMatrix.get(i).get(k)))
 							return false;
 					}
 				}
