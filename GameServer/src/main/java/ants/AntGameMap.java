@@ -34,12 +34,12 @@ import util.Move;
 public class AntGameMap implements AntGameMapCallback, AntGameMapView
 {
 	/**
-	 * The number of rows of the game map.
+	 * The number of columns of the game map.
 	 */
 	private int cols;
 	
 	/**
-	 * The number of columns of the game map.
+	 * The number of rows of the game map.
 	 */
 	private int rows;
 	
@@ -52,6 +52,7 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 	
 	/**
 	 * Creates a new game map from a column count and a row count.
+	 * @constructor
 	 * @param cols the number of columns of the game map.
 	 * @param rows the number of rows of the game map.
 	 */
@@ -109,7 +110,7 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 	}
 	
 	/**
-	 * Moves a game object on the map in a given direction.
+	 * Moves a game object on the game map in a given direction.
 	 * @param gob the game object to move.
 	 * @param direction where to move the game object.
 	 */
@@ -139,10 +140,11 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 	}
 	
 	/**
-	 * This function finds all the objects that are presents in the mask.
+	 * This method finds all the objects that are presents in the mask.
 	 * The center of the mask is given by the column and row identifiers.
-	 * @param col the column identifier.
-	 * @param row the row identifier
+	 * The method takes the toroidal shape of the map in account.
+	 * @param col the column identifier of the position.
+	 * @param row the row identifier of the position.
 	 * @param mask the mask to apply at this position.
 	 * @return the list of game objects in the mask.
 	 */
@@ -180,7 +182,7 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 	
 	/**
 	 * Gets the list of game objects present in a specific cell of the game map.
-	 * The function takes the toroidal shape of the map in account.
+	 * The method takes the toroidal shape of the map in account.
 	 * @param col the column identifier of the cell.
 	 * @param row the row identifier of the cell.
 	 * @return the content of the cell.
@@ -192,7 +194,7 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 	
 	/**
 	 * Gets the list of game objects that are in the same cell than a given game object.
-	 * The function takes the toroidal shape of the map in account.
+	 * The method takes the toroidal shape of the map in account.
 	 * @param gob the input game object.
 	 * @return the content of the cell.
 	 */
@@ -205,7 +207,7 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 	 * Gets the alive ant in a given cell of the game map.
 	 * @param col the column identifier of the cell.
 	 * @param row the row identifier of the cell.
-	 * @return The alive ant found in this cell, null if not found.
+	 * @return the alive ant found in this cell, null if no ant found.
 	 */
 	public Ant getAntAt(int col, int row)
 	{

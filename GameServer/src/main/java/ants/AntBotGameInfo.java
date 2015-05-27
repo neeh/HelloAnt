@@ -35,11 +35,6 @@ import basis.BotGameInfo;
 public class AntBotGameInfo extends BotGameInfo
 {
 	/**
-	 * The bot identifier for this game.
-	 */
-	private int id;
-	
-	/**
 	 * Contains the bot identifiers viewed by the bot.
 	 * A bot always view himself as being the bot 0. Every time the bot encounters a bot
 	 * it has not encountered before, a new identifier is given to it. This mechanism
@@ -75,7 +70,7 @@ public class AntBotGameInfo extends BotGameInfo
 	 */
 	public AntBotGameInfo(int id)
 	{
-		this.id = id;
+		super(id);
 		ants = new ArrayList<Ant>();
 		hills = new ArrayList<AntHill>(1);
 		relativeBotIds = new HashMap<Bot, Integer>();
@@ -96,15 +91,6 @@ public class AntBotGameInfo extends BotGameInfo
 		relativeBotIds.put(bot, 0);
 		nbrOfBotsEncountered = 0;
 		hive = 0;
-	}
-	
-	/**
-	 * Gets the bot identifier for this game.
-	 * @return the bot identifier for this game.
-	 */
-	public int getId()
-	{
-		return id;
 	}
 	
 	/**

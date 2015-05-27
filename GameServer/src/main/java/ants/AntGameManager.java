@@ -36,11 +36,13 @@ import basis.GameManager;
  */
 public class AntGameManager extends GameManager
 {
-	/**
-	 * Game settings
-	 */
+	/** The number of rounds required for food to respawn. */
 	private static final int FOOD_RESPAWN_DELAY = 15;
+	
+	/** The squared radius of the view mask. */
 	private static final float VIEW_RADIUS_2 = 77.0f;
+	
+	/** The squared radius of the attack mask. */
 	private static final float ATTACK_RADIUS_2 = 5.0f;
 	
 	/**
@@ -89,11 +91,10 @@ public class AntGameManager extends GameManager
 	}
 	
 	/**
-	 * Set the bots in the list as fighting.
+	 * Sets the bots in the list as fighting.
 	 * Implies resetting the priority,
-	 * removing them from the map
-	 * and from the vector of the other bots,
-	 * and set their status as inGame.
+	 * removing them from the map and from the vector of the other bots,
+	 * and setting their status as inGame.
 	 * @param toFightList a list of games to create/bots associations.
 	 * @param map the map on which the bots will fight.
 	 */
@@ -115,15 +116,15 @@ public class AntGameManager extends GameManager
 	/**
 	 * Adds a bot in the game manager specific to the game of ants.
 	 * If the bot is in training mode, the game manager immediately creates a game for it.
-	 * @bot the bot to add in the game manager lobby.
+	 * @param the bot to add in the game manager lobby.
 	 */
 	public void addBot(Bot bot)
 	{
 		if (bot.getMode() == BotMode.TRAINING)
-		{
+		{	// ---------------------------------------------------------------------------
 			// Could be nice to have a small delay, to let the user some time to logout
-			//    between 2 games (for exemple put this in a TimerTask)
-			
+			//    between 2 games (for example put this in a TimerTask)
+			// ---------------------------------------------------------------------------
 			// Take a random map.
 			AntMapTemplate map = maps.get(rand.nextInt(maps.size()));
 			int botCount = map.getBotCount();

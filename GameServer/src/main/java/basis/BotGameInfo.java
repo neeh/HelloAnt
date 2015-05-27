@@ -31,6 +31,12 @@ package basis;
 public class BotGameInfo
 {
 	/**
+	 * The identifier specific to the bot for this game.
+	 * Can be used to reference the bot in replay data or other stuff.
+	 */
+	private int botId;
+	
+	/**
 	 * Whether the bot has played for the current round.
 	 * If the bot sends a "gameactions" whereas this boolean is set to true, then the bot
 	 * will receive a "Already played for this round" error message.
@@ -59,6 +65,16 @@ public class BotGameInfo
 	private int gameScore;
 	
 	/**
+	 * Creates a new bot game info structure.
+	 * @constructor
+	 * @param botId the identifier of the bot for this game.
+	 */
+	public BotGameInfo(int botId)
+	{
+		this.botId = botId;
+	}
+	
+	/**
 	 * Initializes a bot game info structure.
 	 */
 	public void init()
@@ -67,6 +83,15 @@ public class BotGameInfo
 		gamestateTimestampMs = 0;
 		muted = false;
 		gameScore = 0;
+	}
+	
+	/**
+	 * Gets the identifier specific to the bot for this game.
+	 * @return the identifier of the bot for this game.
+	 */
+	public int getId()
+	{
+		return botId;
 	}
 	
 	/**

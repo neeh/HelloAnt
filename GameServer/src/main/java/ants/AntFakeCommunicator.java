@@ -45,13 +45,14 @@ public class AntFakeCommunicator extends FakeCommunicator
 			LoggerFactory.getLogger(AntFakeCommunicator.class);
 	
 	/**
-	 * The interface giving an reading access to the game map.
+	 * The interface giving a reading access to the game map.
 	 */
 	private AntGameMapView mapView;
 	
 	/**
 	 * Creates a fake communicator that will send game actions to a training game.
-	 * @param mapView the interface giving an reading access to the game map.
+	 * @constructor
+	 * @param mapView the interface giving a reading access to the game map.
 	 */
 	public AntFakeCommunicator(AntGameMapView mapView)
 	{
@@ -66,7 +67,7 @@ public class AntFakeCommunicator extends FakeCommunicator
 	}
 	
 	/**
-	 * Gets objects one cell away in a direction from a specified cell.
+	 * Gets game objects one cell away in a direction from a specified cell.
 	 * @param row the row index of the origin cell.
 	 * @param col the column index of the origin cell.
 	 * @param direction the direction token from the origin.
@@ -93,9 +94,11 @@ public class AntFakeCommunicator extends FakeCommunicator
 	}
 	
 	/**
-	 * This method overrides the communicator sendGameState method.
+	 * This method overrides the communicator's sendGameState method.
 	 * No message is sent over the network. The fake communicator reads the input and
 	 * returns its game actions immediately.
+	 * @see Documentation/protocol/gamestate.html
+	 * @param content the content of the "gamestate" message.
 	 */
 	@Override
 	public void sendGameState(JSONObject content)

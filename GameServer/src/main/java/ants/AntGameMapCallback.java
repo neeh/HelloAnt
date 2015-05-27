@@ -21,8 +21,18 @@ package ants;
 
 import util.Move;
 
+/**
+ * This interface provides a method that can be called by a game object to move itself on
+ * the game map.
+ * @interface
+ * @author Nicolas
+ */
 public interface AntGameMapCallback
 {
-	public void moveGameObject(AntGameObject object, Move dir);
-	
+	/**
+	 * Moves a game object on the game map in a given direction.
+	 * @param gob the game object to move.
+	 * @param direction where to move the game object.
+	 */
+	public void moveGameObject(AntGameObject gob, Move dir);
 }
