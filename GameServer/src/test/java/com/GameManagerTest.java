@@ -141,15 +141,19 @@ public class GameManagerTest extends TestCase
 	 */
 	public void testChooseFights_Complete()
 	{
-		/*
-		 * A, B and E should fight together
-		 */
 		
 		Bot a = new Bot(null, "A", null, 30, null);
 		Bot b = new Bot(null, "B", null, 30, null);
-		Bot c = new Bot(null, "C", null, 29, null);
-		Bot d = new Bot(null, "D", null, 29, null);
+		Bot c = new Bot(null, "C", null, 30, null);
+		Bot d = new Bot(null, "D", null, 30, null);
 		Bot e = new Bot(null, "E", null, 30, null);
+
+		/*
+		 * A, B and E should fight together
+		 */
+		a.incPriority();
+		b.incPriority();
+		e.incPriority();
 		
 		GameManager gm = new GameManager(null);
 		gm.addBot(a);

@@ -165,41 +165,29 @@ public class GameManager extends TimerTask
 		ArrayList<ArrayList<Bot>> toRet = new ArrayList<>();
 		while(!isEachListUnique(matchsList))
 		{
-			int[] weight = new int[matchsList.size()];
-			int[] score = new int[matchsList.size()];
+			double[] weight = new double[matchsList.size()];
 			/*
 			 * Setting a weight for each possible match
 			 */
 			for (int i=0; i<matchsList.size(); i++)
 			{
 				weight[i] = 0;
-				score[i] = 0;
 				for (Bot bot : matchsList.get(i))
 				{
 					weight[i] += bot.getPriority();
-					score[i] += bot.getScore();
 				}
 			}
 			/*
 			 * Get the higher weight
 			 */
-			int compareWeight = -1;
-			int compareScore = -1;
+			double compareWeight = -1;
 			int index = -1;
 			for (int i = 0; i < weight.length; i++)
 			{
 				if (weight[i] > compareWeight)
 				{
 					compareWeight = weight[i];
-					compareScore = score[i];
 					index = i;
-				}
-				else if (weight[i] == compareWeight)
-				{
-					if(score[i] > compareScore){
-						compareScore = score[i];
-						index = i;
-					}
 				}
 			}
 			
