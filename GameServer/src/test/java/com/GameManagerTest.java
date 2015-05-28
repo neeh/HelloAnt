@@ -1,12 +1,10 @@
 package com;
 
-import java.security.AlgorithmConstraints;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import basis.Bot;
 import basis.GameManager;
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

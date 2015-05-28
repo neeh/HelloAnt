@@ -39,7 +39,6 @@ public class GameServer implements TCPClientHandler, GameHandler
 	 * The client listener used to listen for incoming TCP connections and creating
 	 * communicators to exchange with these clients.
 	 */
-	@SuppressWarnings("unused")
 	private TCPClientListener listener;
 	
 	/**
@@ -58,11 +57,17 @@ public class GameServer implements TCPClientHandler, GameHandler
 	protected ArrayList<GameThread> gameThreads;
 	
 	/**
+	 * Whether the server is in the process of closing or not.
+	 */
+	protected boolean closing;
+	
+	/**
 	 * Creates a new game server.
 	 * @param port the port to listen for client interactions.
 	 */
-	public GameServer(int port)
+	public GameServer(int port) throws IllegalArgumentException
 	{
+		closing = false;
 		// Setup the database.
 		DBManager.init("dbants", "root", "");
 		// Create client and game threads list
@@ -70,6 +75,21 @@ public class GameServer implements TCPClientHandler, GameHandler
 		gameThreads = new ArrayList<GameThread>();
 		// Create the listener that will receive client.
 		listener = new TCPClientListener(port, this);
+	}
+	
+	/**
+	 * Closes the server and every associated thread.
+	 */
+	public void close()
+	{
+		closing = true;
+		listener.stop();
+		for (GameThread gameThread : gameThreads)
+		{
+			gameThread.interrupt();
+		}
+		while (!clients.isEmpty())
+			clients.get(0).close();
 	}
 	
 	/**
@@ -81,7 +101,8 @@ public class GameServer implements TCPClientHandler, GameHandler
 	public void handleClientConnected(TCPClientCommunicator newClient)
 	{
 		clients.add(newClient);
-		System.out.println(System.currentTimeMillis() + ": client joined");
+		LOGGER.info("client joined");
+		//System.out.println(System.currentTimeMillis() + ": client joined");
 	}
 	
 	/**
@@ -93,7 +114,8 @@ public class GameServer implements TCPClientHandler, GameHandler
 	public void handleClientDisconnected(TCPClientCommunicator oldClient)
 	{
 		clients.remove(oldClient);
-		System.out.println(System.currentTimeMillis() + ": client left");
+		LOGGER.info("client left");
+		//System.out.println(System.currentTimeMillis() + ": client left");
 	}
 	
 	/**
@@ -105,8 +127,10 @@ public class GameServer implements TCPClientHandler, GameHandler
 	{
 		// In the generic game server, we don't care about gaming mode.
 		gameManager.addBot(newBot);
-		System.out.println(System.currentTimeMillis() + ": Bot " + newBot.getNick()
-				+ " logged in (" + newBot.getMode().toString().toLowerCase() + " mode)");
+		LOGGER.info("bot logged in (nick: " + newBot.getNick() + ", mode: "
+				+ newBot.getMode().toString().toLowerCase() + ")");
+		//System.out.println(System.currentTimeMillis() + ": Bot " + newBot.getNick()
+		//		+ " logged in (" + newBot.getMode().toString().toLowerCase() + " mode)");
 	}
 	
 	/**
@@ -118,8 +142,9 @@ public class GameServer implements TCPClientHandler, GameHandler
 	{
 		// Attempt to remove the bot from the lobby.
 		gameManager.removeBot(oldBot);
-		System.out.println(System.currentTimeMillis() + ": Bot " + oldBot.getNick()
-				+ " logged out");
+		LOGGER.info("bot logged out (nick: " + oldBot.getNick() + ")");
+		//System.out.println(System.currentTimeMillis() + ": Bot " + oldBot.getNick()
+		//		+ " logged out");
 	}
 	
 	/**
@@ -142,7 +167,13 @@ public class GameServer implements TCPClientHandler, GameHandler
 	 */
 	public void removeGameThread(GameThread gameThread)
 	{
+		System.out.println(System.currentTimeMillis() + ": Game terminated");
 		gameThreads.remove(gameThread);
+		// If the server is closing, don't reinsert the bots.
+		if (closing)
+		{
+			return;
+		}
 		// Reinsert bots in the game manager lobby.
 		Iterator<Bot> botIt = gameThread.getGame().getBotIterator();
 		while (botIt.hasNext())
@@ -165,6 +196,5 @@ public class GameServer implements TCPClientHandler, GameHandler
 				}
 			}
 		}
-		System.out.println(System.currentTimeMillis() + ": Game terminated");
 	}
 }

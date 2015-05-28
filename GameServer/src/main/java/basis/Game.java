@@ -84,6 +84,11 @@ public abstract class Game
 	public abstract void init();
 	
 	/**
+	 * Terminates the game and cleans it.
+	 */
+	public abstract void terminate();
+	
+	/**
 	 * Returns whether the current game state matches the game ending conditions.
 	 * @return true if the game is finished, false otherwise.
 	 */

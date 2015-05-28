@@ -102,7 +102,7 @@ public class AntGameManager extends GameManager
 	{
 		for (ArrayList<Bot> botsInGame : toFightList)
 		{	// For each game to create...
-			AntGame game = new AntGame(botsInGame, RESPONSE_TIME_MS, LOAD_TIME_MS, map,
+			AntGame game = new AntGame(botsInGame, MAX_ROUND, RESPONSE_TIME_MS, LOAD_TIME_MS, map,
 					FOOD_RESPAWN_DELAY, VIEW_RADIUS_2, ATTACK_RADIUS_2);
 			for (Bot bot : botsInGame)
 			{	// For each bot in the game...
@@ -132,7 +132,7 @@ public class AntGameManager extends GameManager
 			ArrayList<Bot> bots = new ArrayList<Bot>(botCount);
 			bots.add(bot);
 			// Create the ant game and run it on the server.
-			AntGame game = new AntGame(bots, RESPONSE_TIME_MS, LOAD_TIME_MS, map,
+			AntGame game = new AntGame(bots, MAX_ROUND, RESPONSE_TIME_MS, LOAD_TIME_MS, map,
 					FOOD_RESPAWN_DELAY, VIEW_RADIUS_2, ATTACK_RADIUS_2);
 			bot.setGame(game);
 			gameHandler.addGame(game);

@@ -141,6 +141,8 @@ public class AntFakeCommunicator extends FakeCommunicator
 						// If this zone empty, it's ok
 						if (moveAvailable) break;
 					}
+					// We should check here that there is not already another of our ants
+					// in this direction
 					myMoves.add(move);
 				}
 			}

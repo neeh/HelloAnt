@@ -19,12 +19,15 @@
 
 package ants;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,10 +89,16 @@ public class AntGame extends Game
 	private AntGameReplayData replay;
 	
 	/**
+	 * The game starting date.
+	 */
+	private Date startDate;
+	
+	/**
 	 * Creates a new ant game from a map template and a list of bots playing in this game.
 	 * Fake bots are created to play with the other bots if there is not enough bots.
 	 * @constructor
 	 * @param bots the list of bots that are gonna play in this game.
+	 * @param maxRound the maximum number of round in this game.
 	 * @param responseTime the maximum response time for a bot in ms.
 	 * @param loadTime the time allowed to the bots to init their AI in ms.
 	 * @param mapTemplate the template used to initialize the game map.
@@ -97,10 +106,11 @@ public class AntGame extends Game
 	 * @param viewRadius2 the square of the view radius of an ant.
 	 * @param attackRadius2 the square of the attack radius of an ant.
 	 */
-	public AntGame(ArrayList<Bot> bots, int responseTime, int loadTime,
+	public AntGame(ArrayList<Bot> bots, int maxRound, int responseTime, int loadTime,
 			AntMapTemplate mapTemplate, int foodRespawnDelay, float viewRadius2,
 			float attackRadius2)
 	{
+		this.startDate = new Date();
 		this.mapTemplate = mapTemplate;
 		// Create game map and game objects.
 		map = new AntGameMap(mapTemplate.getCols(), mapTemplate.getRows());
@@ -130,6 +140,7 @@ public class AntGame extends Game
 		viewMask = new AntGameMapMask(viewRadius2);
 		attackMask = new AntGameMapMask(attackRadius2);
 		// Init settings
+		this.maxRound = maxRound;
 		this.loadTimeMs = loadTime;
 		this.responseTimeMs = responseTime;
 		this.foodRespawnDelay = foodRespawnDelay;
@@ -259,6 +270,58 @@ public class AntGame extends Game
 				botInfo.addGameScore(+1);
 			}
 		}
+		//map._DEBUG_print_map();
+	}
+	
+	/**
+	 * Terminates the ant game and cleans it.
+	 */
+	@Override
+	public void terminate()
+	{
+		// TODO : Bonus points
+		// Kill remaining ants
+		for (Ant ant : ants)
+		{
+			ant.kill(curRound + 1);
+		}
+		// Clear reamining food
+		for (AntFoodSpawn foodSpawn : foodSpawns)
+		{
+			foodSpawn.cleanFood(curRound + 1);
+		}
+		// Set bot end_turn and raze remaining hills
+		ArrayList<AntBotGameInfo> rankedList = new ArrayList<AntBotGameInfo>();
+		for (BotGameInfo botInfo : botInfos.values())
+		{
+			AntBotGameInfo antBotInfo = (AntBotGameInfo) botInfo;
+			rankedList.add(antBotInfo);
+			if (antBotInfo.getDeathTurn() == -1)
+			{
+				antBotInfo.setDeath(curRound);
+			}
+			for (Iterator<AntHill> iterator = antBotInfo.getHillIterator(); iterator.hasNext();)
+			{
+				AntHill hill = iterator.next();
+				hill.raze(curRound + 1);
+			}
+		}
+		
+		//Compute bots ranks
+		Collections.sort(rankedList);
+		int currentRank = 0;
+		int previousScore = -1;
+		for (int i = 0; i < rankedList.size(); i++)
+		{
+			AntBotGameInfo botInfo = rankedList.get(i);
+			int score = botInfo.getGameScore();
+			if(score != previousScore)
+			{
+				currentRank = i;
+				previousScore = score;
+			}
+			botInfo.setRank(currentRank);
+		}
 	}
 	
 	/**
@@ -334,6 +397,7 @@ public class AntGame extends Game
 	@Override
 	public boolean isFinished()
 	{
+		//if(curRound >= 100) return true;
 		// Turn limit rule
 		if (super.isFinished())
 		{
@@ -375,12 +439,28 @@ public class AntGame extends Game
 	@Override
 	public void update()
 	{
+		curRound++;
 		// Save hives and scores state
 		for (BotGameInfo botInfo : botInfos.values())
 		{
 			AntBotGameInfo antBotInfo = (AntBotGameInfo) botInfo;
 			replay.addHiveHistoryRecord(antBotInfo.getId(), antBotInfo.getHive());
 			replay.addScoresRecord(antBotInfo.getId(), antBotInfo.getGameScore());
+		}
+		for (Ant ant : ants)
+		{
+			// Check that the ant did not go into a wall (or another ant).
+			ArrayList<AntGameObject> gobs = map.getGameObjectsAt(ant);
+			Iterator<AntGameObject> gobIt = gobs.iterator();
+			while (gobIt.hasNext())
+			{
+				AntGameObject gob = gobIt.next();
+				if (gob != ant && gob.isCollideable())
+				{	// The ant in on a wall, kill it instantly.
+					ant.kill();
+					break;
+				}
+			}
 		}
 		// Remove ants which died last round.
 		for (Iterator<Ant> antIt = ants.iterator(); antIt.hasNext();)
@@ -425,7 +505,7 @@ public class AntGame extends Game
 			}
 			if(minEnemyWeakness <= weakness)
 			{
-				ant.kill(curRound);
+				ant.kill();
 			}
 		}
 		// Raze hills & spawn ants.
@@ -520,7 +600,20 @@ public class AntGame extends Game
 				else ant.setMoved(false);
 			}
 		}
-		curRound++;
+		// Detect dead bots
+		for (Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
+		{
+			AntBotGameInfo botInfo = (AntBotGameInfo) entry.getValue();
+			if(!botInfo.isAlive())
+				botInfo.setDeath(curRound, "eliminated");
+		}
+	}
+	
+	@Override
+	public void muteBot(Bot bot, String reason)
+	{
+		((AntBotGameInfo) botInfos.get(bot)).setDeath(curRound + 1, "timeout");
+		super.muteBot(bot, reason);
 	}
 	
 	/**
@@ -543,27 +636,17 @@ public class AntGame extends Game
 			Move direction = Move.fromString(move.getString(2));
 			// Get game objects from the game map.
 			Ant ant = map.getAntAt(col, row);
-			if (ant != null && ant.getBot() == bot)
+			if (ant != null && ant.getBot() == bot && ant.hasMoved() == false)
 			{	// there's an alive ant at this cell and this ant belongs to the bot.
 				// We can move it in the desired direction.
 				ant.move(direction);
-				// Check that the ant did not go into a wall.
-				ArrayList<AntGameObject> gobs = map.getGameObjectsAt(ant);
-				Iterator<AntGameObject> gobIt = gobs.iterator();
-				while (gobIt.hasNext())
-				{
-					AntGameObject gob = gobIt.next();
-					if (gob != ant && gob.isCollideable())
-					{	// The ant in on a wall, just remove it from the ant list of the
-						// bot and from the map.
-						ant.kill(curRound);
-						removeAnt(ant);
-						break;
-					}
-				}
+				// We can't check here if the ant walked into a wall or another ant
+				// Since not every ant has moved.
 			}
 		}
 	}
+	
+	
 	
 	/**
 	 * Generates the content of a "gamestate" message for a specific bot.
@@ -654,11 +737,59 @@ public class AntGame extends Game
 	@Override
 	protected JSONObject genGameEndMessageContent(Bot bot)
 	{
-		// TODO !
 		try
 		{
 			JSONObject jsonContent = new JSONObject();
-			jsonContent.put("replay", replay.toJSONObject());
+			JSONObject jsonReplay = new JSONObject();
+			jsonReplay.put("replaydata", replay.toJSONObject());
+			JSONArray jsonStatus = new JSONArray();
+			JSONArray jsonRank = new JSONArray();
+			JSONArray jsonScore = new JSONArray();
+			JSONArray jsonPlayerTurns = new JSONArray();
+			JSONArray jsonPlayerNames = new JSONArray();
+			JSONArray jsonSubmissionIds = new JSONArray();
+			JSONArray jsonUserIds = new JSONArray();
+			JSONArray jsonChallengeRank = new JSONArray();
+			JSONArray jsonChallengeSkill = new JSONArray();
+			for (Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
+			{
+				Bot b = entry.getKey();
+				AntBotGameInfo botInfo = (AntBotGameInfo) entry.getValue();
+				int id = botInfo.getId();
+				jsonStatus.put(id, botInfo.getDeathReason());
+				jsonRank.put(id, botInfo.getRank());
+				jsonPlayerTurns.put(id, botInfo.getDeathTurn());
+				jsonScore.put(id, botInfo.getGameScore());
+				jsonPlayerNames.put(id, b.getNick());
+				jsonSubmissionIds.put(id, "0");
+				jsonUserIds.put(id, "0");
+				jsonChallengeRank.put(id, "0");
+				jsonChallengeSkill.put(id, "0");
+			}
+			jsonReplay.put("status", jsonStatus);
+			jsonReplay.put("rank", jsonRank);
+			jsonReplay.put("playerturns", jsonPlayerTurns);
+			jsonReplay.put("score", jsonScore);
+			jsonReplay.put("playernames", jsonPlayerNames);
+			jsonReplay.put("submission_ids", jsonSubmissionIds);
+			jsonReplay.put("user_ids", jsonUserIds);
+			jsonReplay.put("challenge_rank", jsonChallengeRank);
+			jsonReplay.put("challenge_skill", jsonChallengeSkill);
+			
+			jsonReplay.put("post_id", 0);
+			jsonReplay.put("matchup_id", 0);
+			jsonReplay.put("challenge", "ants");
+			jsonReplay.put("replayformat", "json");
+			jsonReplay.put("location", "Polytech");
+			jsonReplay.put("game_length", curRound);
+			jsonReplay.put("user_url", "about:blank");
+			jsonReplay.put("game_url", "about:blank");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+			jsonReplay.put("date", dateFormat.format(startDate));
+			jsonReplay.put("game_id", 0);
+			jsonReplay.put("worker_id", 0);
+			
+			jsonContent.put("replay", jsonReplay);
 			return jsonContent;
 		}
 		catch (JSONException e)

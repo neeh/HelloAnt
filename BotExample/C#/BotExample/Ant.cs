@@ -11,11 +11,14 @@ namespace BotExample
         public bool HasFood { get; set; }
         // History of moves (used to backtrack)
         public Stack<AntDirection> History { get; set; }
+        // Used to check every turn that the ant is still alive
+        public bool Confirmed { get; set; }
 
         public Ant()
         {
             HasFood = false;
             History = new Stack<AntDirection>();
+            Confirmed = true;
         }
     }
 

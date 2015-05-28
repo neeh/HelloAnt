@@ -115,6 +115,25 @@ public class AntFoodSpawn extends AntGameObject
 	}
 	
 	/**
+	 * Makes the food on the food spawn disappear (at the end of the game essentially).
+	 * @param round the game round at which the food is cleaned.
+	 */
+	public void cleanFood(int round)
+	{
+		if(food)
+		{
+			try
+			{
+				replayData.put(3, round);
+			}
+			catch (JSONException e) {}
+			replayData = null;
+			food = false;
+			lastHarvestRound = round;
+		}
+	}
+	
+	/**
 	 * Gets a JSON representation of a food unit.
 	 * @see Documentation/protocol/gamestate.html
 	 * @note the function returns null when the spawn is empty because bots should not

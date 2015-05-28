@@ -44,13 +44,18 @@ public class GameManager extends TimerTask
 	/**
 	 * The time the server has to wait after "gamestart" message. (in milliseconds)
 	 */
-	protected static final int RESPONSE_TIME_MS = 1000;
+	protected static final int RESPONSE_TIME_MS = 500;
 	
 	/**
 	 * The time of response a bot should respect to send its "gameactions" message after a
 	 * "gamestate" message from the server. (in milliseconds)
 	 */
 	protected static final int LOAD_TIME_MS = 3000;
+
+	/**
+	 * The maximum number of round of a game.
+	 */
+	protected static final int MAX_ROUND = 1500;
 	
 	private HashMap<Bot, Vector<Bot>> botMap;
 	

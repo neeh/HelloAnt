@@ -62,7 +62,12 @@ public class GameThread extends Thread
 		{
 			Thread.sleep(game.getLoadTimeMs());
 		}
-		catch (InterruptedException e) {}
+		catch (InterruptedException e)
+		{
+			// Game have been cancelled.
+			end();
+			return;
+		}
 		while (game.isFinished() == false)
 		{
 			// Send the current game state to bots.
@@ -75,19 +80,33 @@ public class GameThread extends Thread
 				{
 					Thread.sleep(50);
 				}
-				catch (InterruptedException e){}
+				catch (InterruptedException e)
+				{
+					// Game have been cancelled.
+					end();
+					return;
+				}
 			}
 			// Mute bot(s) that has not played.
 			game.muteNonPlayerBots();
 			// Update the game.
 			game.update();
 		}
+		game.terminate();
 		// Compute new scores.
 		game.computeBotScores();
 		// Send the "gameend" message.
 		game.sendGameEnd();
-		//game.finalize();
+		end();
+	}
+	
+	/**
+	 * Ends the game properly.
+	 */
+	private void end()
+	{
 		gameHandler.removeGameThread(this);
+		return;
 	}
 	
 	/**

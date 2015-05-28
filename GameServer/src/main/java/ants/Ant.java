@@ -244,6 +244,18 @@ public class Ant extends AntGameObject
 		}
 		catch (JSONException e) {}
 	}
+	/**
+	 * Kills the ant.
+	 */
+	public void kill()
+	{
+		dead = true;
+		try
+		{
+			replayData.put(3, replayData.getInt(2) + ((String) replayData.get(5)).length());
+		}
+		catch (JSONException e) {}
+	}
 	
 	/**
 	 * Sets whether the ant has moved for this game round.

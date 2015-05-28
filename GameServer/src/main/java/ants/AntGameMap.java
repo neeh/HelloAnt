@@ -240,14 +240,16 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 			while (colIt.hasNext())
 			{
 				Iterator<AntGameObject> gobIt = colIt.next().iterator();
+				String c = ".";
 				while (gobIt.hasNext())
 				{
 					AntGameObject gob = gobIt.next();
-					if (gob instanceof AntWall) { rowString += "#"; break; }
-					else if (gob instanceof Ant) { rowString += "a"; break; }
-					else if (gob instanceof AntHill) { rowString += "@"; break; }
-					else if (gob instanceof AntFoodSpawn) { rowString += "*"; break; }
+					if (gob instanceof AntWall) { c = "#"; break; }
+					else if (gob instanceof Ant) { c = "a"; break; }
+					else if (gob instanceof AntHill) { c = "@"; break; }
+					else if (gob instanceof AntFoodSpawn) { c = "*"; break; }
 				}
+				rowString += c;
 			}
 			System.out.println(rowString);
 		}

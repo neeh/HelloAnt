@@ -41,10 +41,26 @@ namespace BotExample
         }
 
         // Clear the lists of enemies and food
-        public void ClearTempObjects()
+        public void BeginRound()
         {
             Enemies.Clear();
             Food.Clear();
+            foreach (Ant ant in MyAnts.Values)
+            {
+                ant.Confirmed = false;
+            }
+        }
+
+        public void RemoveUnconfirmedAnts()
+        {
+            List<Coordinates> toRemove = new List<Coordinates>();
+            foreach (KeyValuePair<Coordinates, Ant> pair in MyAnts)
+            {
+                if (!pair.Value.Confirmed)
+                    toRemove.Add(pair.Key);
+            }
+            foreach (Coordinates pos in toRemove)
+                MyAnts.Remove(pos);
         }
 
         public void AddFood(int col, int row)
@@ -64,6 +80,10 @@ namespace BotExample
             if (!MyAnts.ContainsKey(pos))
             {
                 MyAnts.Add(pos, new Ant());
+            }
+            else
+            {
+                MyAnts[pos].Confirmed = true;
             }
         }
 
@@ -127,7 +147,7 @@ namespace BotExample
                 {
                     List<AntDirection> remaining = new List<AntDirection>() { AntDirection.N, AntDirection.S, AntDirection.E, AntDirection.W };
                     int index;
-                    // Try to continue the same way or not ? 50% chance
+                    // First move to try : continue the same way or not ? 50% chance
                     if (ant.History.Count > 0 && rand.NextDouble() < 0.5)
                     {
                         move = ant.History.Peek();
@@ -139,25 +159,33 @@ namespace BotExample
                         move = remaining[index];
                         remaining.RemoveAt(index);
                     }
-                    int size = 3;
+                    int size = remaining.Count;
                     do
                     {
                         Coordinates result = pos.ApplyDirection(move).Normalize(this);
-                        if (!Walls.Contains(result) && !Enemies.Contains(result) && !updated.ContainsKey(result))
+                        if (!Walls.Contains(result) && !MyAnts.ContainsKey(result) && !updated.ContainsKey(result))
                         {
                             break;
                         }
-                        index = rand.Next(size--);
-                        move = remaining[index];
-                        remaining.RemoveAt(index);
-                    } while (size > 1);
+                        if (size > 0)
+                        {
+                            index = rand.Next(size);
+                            move = remaining[index];
+                            remaining.RemoveAt(index);
+                        }
+                        else
+                        {
+                            move = AntDirection.U;
+                        }
+                        size--;
+                    } while (size >= 0);
                 }
                 else
                 {
                     ant.HasFood = true;
                 }
                 next = pos.ApplyDirection(move).Normalize(this);
-                if (!updated.ContainsKey(next))
+                if (move != AntDirection.U && !updated.ContainsKey(next))
                 {
                     ant.History.Push(move);
                     msg.AddMove(pos.Col, pos.Row, move.ToString());

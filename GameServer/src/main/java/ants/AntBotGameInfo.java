@@ -32,7 +32,7 @@ import basis.BotGameInfo;
  * @class
  * @author Nicolas
  */
-public class AntBotGameInfo extends BotGameInfo
+public class AntBotGameInfo extends BotGameInfo implements Comparable<AntBotGameInfo>
 {
 	/**
 	 * Contains the bot identifiers viewed by the bot.
@@ -64,6 +64,20 @@ public class AntBotGameInfo extends BotGameInfo
 	private int hive;
 	
 	/**
+	 * The reason of death.
+	 */
+	private String deathReason;
+	/**
+	 * The turn at which the bot died, or -1 if it is not dead yet.
+	 */
+	private int deathTurn;
+	
+	/**
+	 * Used to store the rank of the bot in the game.
+	 */
+	private int rank;
+	
+	/**
 	 * Creates a new ant game state holder for a bot playing in this ant game.
 	 * @constructor
 	 * @param id the bot identifier for this game.
@@ -91,6 +105,17 @@ public class AntBotGameInfo extends BotGameInfo
 		relativeBotIds.put(bot, 0);
 		nbrOfBotsEncountered = 0;
 		hive = 0;
+		deathReason = "survived";
+		deathTurn = -1;
+	}
+	
+	/**
+	 * Method enabling to sort AntBotGameInfo by score
+	 */
+	@Override
+	public int compareTo(AntBotGameInfo o)
+	{
+		return o.getGameScore() - getGameScore();
 	}
 	
 	/**
@@ -221,5 +246,57 @@ public class AntBotGameInfo extends BotGameInfo
 	public void decrementHive()
 	{
 		if (hive > 0) hive--;
+	}
+	
+	/**
+	 * Gets the bot death reason.
+	 * @return the bot death reason.
+	 */
+	public String getDeathReason()
+	{
+		return deathReason;
+	}
+	/**
+	 * Gets the bot death turn.
+	 * @return the bot death turn.
+	 */
+	public int getDeathTurn()
+	{
+		return deathTurn;
+	}
+
+	/**
+	 * Sets the bot death turn and reason, if it is not already dead.
+	 * @param turn the bot death turn.
+	 * @param reason the bot death reason.
+	 */
+	public void setDeath(int turn, String reason)
+	{
+		if(this.deathTurn == -1)
+		{
+			this.deathTurn = turn;
+			this.deathReason = reason;
+		}
+	}
+	/**
+	 * Sets the bot death turn, if it is not already dead. Let the reason to "survived".
+	 * @param turn the bot death turn.
+	 */
+	public void setDeath(int turn)
+	{
+		if(this.deathTurn == -1)
+		{
+			this.deathTurn = turn;
+		}
+	}
+
+	public int getRank()
+	{
+		return rank;
+	}
+
+	public void setRank(int rank)
+	{
+		this.rank = rank;
 	}
 }

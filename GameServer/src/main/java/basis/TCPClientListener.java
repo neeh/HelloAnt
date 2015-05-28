@@ -71,7 +71,7 @@ public class TCPClientListener implements Runnable
 	 * @param handler the client handler for communicators that will be created.
 	 * @warning the port is supposed to be a 16-bit unsigned integer.
 	 */
-	public TCPClientListener(int port, TCPClientHandler handler)
+	public TCPClientListener(int port, TCPClientHandler handler) throws IllegalArgumentException
 	{
 		this.port = port;
 		this.handler = handler;
@@ -86,10 +86,17 @@ public class TCPClientListener implements Runnable
 		}
 		catch (IOException e)
 		{
-			// TODO: Remove this print.
-			e.printStackTrace();
-			LOGGER.error("GRAVE: The client listener cannot start!\n" + e.getMessage());
+			LOGGER.error("the client listener cannot start. " + e.getMessage());
+			throw new IllegalArgumentException("Port already in use");
 		}
+	}
+	
+	/**
+	 * Stops this listener.
+	 */
+	public void stop()
+	{
+		listenerThread.interrupt();
 	}
 	
 	/**
