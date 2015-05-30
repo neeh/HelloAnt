@@ -13,7 +13,7 @@ The replay format for ant game.
 	"replaydata": {
 		"cutoff": "rank stabilized",
 		"food": [
-			// [row, col, turn_pop, turn_gath, player? (opt)]
+			// [row, col, turn_pop, turn_gath, bot_gather ]
 			// a food unit poping at round 0 will be visible at round 1
 			// a food unit harvested at round 16 will be effective at round 17
 			[64, 86, 0, 16, 0], // food 66
@@ -175,12 +175,7 @@ The replay format for ant game.
 		"food_rate": 5,
 		"revision": 3,
 		"map": {
-			// . = cell
-			// % = wall/void
-			// * = ?
-			// a = ?
-			// A = ?
-			// b = ?
+			// see <a href="../specifications/mapformat.html">map format</a>
 			"cols": 96,
 			"rows": 80,
 			"data": [
