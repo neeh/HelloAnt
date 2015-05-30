@@ -244,6 +244,7 @@ public class Ant extends AntGameObject
 		}
 		catch (JSONException e) {}
 	}
+	
 	/**
 	 * Kills the ant.
 	 */
@@ -252,7 +253,8 @@ public class Ant extends AntGameObject
 		dead = true;
 		try
 		{
-			replayData.put(3, replayData.getInt(2) + ((String) replayData.get(5)).length());
+			replayData.put(3,
+					replayData.getInt(2) + ((String) replayData.get(5)).length());
 		}
 		catch (JSONException e) {}
 	}

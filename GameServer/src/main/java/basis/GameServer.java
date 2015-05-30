@@ -64,6 +64,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 	/**
 	 * Creates a new game server.
 	 * @param port the port to listen for client interactions.
+	 * @throws IllegalArgumentException if the port is already used.
 	 */
 	public GameServer(int port) throws IllegalArgumentException
 	{
@@ -89,7 +90,9 @@ public class GameServer implements TCPClientHandler, GameHandler
 			gameThread.interrupt();
 		}
 		while (!clients.isEmpty())
-			clients.get(0).close();
+		{
+			clients.get(0).close("Server is closing");
+		}
 	}
 	
 	/**

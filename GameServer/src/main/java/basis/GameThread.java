@@ -64,7 +64,7 @@ public class GameThread extends Thread
 		}
 		catch (InterruptedException e)
 		{
-			// Game have been cancelled.
+			// Game has been cancelled.
 			end();
 			return;
 		}
@@ -82,7 +82,7 @@ public class GameThread extends Thread
 				}
 				catch (InterruptedException e)
 				{
-					// Game have been cancelled.
+					// Game has been cancelled.
 					end();
 					return;
 				}

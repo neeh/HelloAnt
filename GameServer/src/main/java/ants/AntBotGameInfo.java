@@ -54,7 +54,7 @@ public class AntBotGameInfo extends BotGameInfo implements Comparable<AntBotGame
 	private ArrayList<Ant> ants;
 	
 	/**
-	 * Ths list of hills that belong to the bot.
+	 * The list of hills that belong to the bot.
 	 */
 	private ArrayList<AntHill> hills;
 	
@@ -67,6 +67,7 @@ public class AntBotGameInfo extends BotGameInfo implements Comparable<AntBotGame
 	 * The reason of death.
 	 */
 	private String deathReason;
+	
 	/**
 	 * The turn at which the bot died, or -1 if it is not dead yet.
 	 */
@@ -110,7 +111,8 @@ public class AntBotGameInfo extends BotGameInfo implements Comparable<AntBotGame
 	}
 	
 	/**
-	 * Method enabling to sort AntBotGameInfo by score
+	 * Method enabling to sort bot game info by score.
+	 * @param o the bot game info structure to compare to.
 	 */
 	@Override
 	public int compareTo(AntBotGameInfo o)
@@ -197,6 +199,33 @@ public class AntBotGameInfo extends BotGameInfo implements Comparable<AntBotGame
 	}
 	
 	/**
+	 * Gets the bot death reason.
+	 * @return the bot death reason.
+	 */
+	public String getDeathReason()
+	{
+		return deathReason;
+	}
+	
+	/**
+	 * Gets the bot death turn.
+	 * @return the bot death turn.
+	 */
+	public int getDeathTurn()
+	{
+		return deathTurn;
+	}
+	
+	/**
+	 * Gets the rank of the bot for this ant game.
+	 * @return the rank of the bot.
+	 */
+	public int getRank()
+	{
+		return rank;
+	}
+	
+	/**
 	 * Adds an ant in the list of ants that belong to the bot.
 	 * @param ant the ant to add to the ants list.
 	 */
@@ -249,52 +278,35 @@ public class AntBotGameInfo extends BotGameInfo implements Comparable<AntBotGame
 	}
 	
 	/**
-	 * Gets the bot death reason.
-	 * @return the bot death reason.
-	 */
-	public String getDeathReason()
-	{
-		return deathReason;
-	}
-	/**
-	 * Gets the bot death turn.
-	 * @return the bot death turn.
-	 */
-	public int getDeathTurn()
-	{
-		return deathTurn;
-	}
-
-	/**
 	 * Sets the bot death turn and reason, if it is not already dead.
 	 * @param turn the bot death turn.
 	 * @param reason the bot death reason.
 	 */
 	public void setDeath(int turn, String reason)
 	{
-		if(this.deathTurn == -1)
+		if (this.deathTurn == -1)
 		{
 			this.deathTurn = turn;
 			this.deathReason = reason;
 		}
 	}
+	
 	/**
 	 * Sets the bot death turn, if it is not already dead. Let the reason to "survived".
 	 * @param turn the bot death turn.
 	 */
 	public void setDeath(int turn)
 	{
-		if(this.deathTurn == -1)
+		if (this.deathTurn == -1)
 		{
 			this.deathTurn = turn;
 		}
 	}
-
-	public int getRank()
-	{
-		return rank;
-	}
-
+	
+	/**
+	 * Sets the rank of the bot for this ant game.
+	 * @param rank the rank of the bot.
+	 */
 	public void setRank(int rank)
 	{
 		this.rank = rank;

@@ -34,7 +34,11 @@ import basis.GameServer;
  */
 public class AntGameServer extends GameServer
 {
+	/**
+	 * The timer used to schedule the game management.
+	 */
 	private Timer managerTimer;
+	
 	/**
 	 * Creates a new game server for an ant game.
 	 * @param port the port to listen for client interactions.

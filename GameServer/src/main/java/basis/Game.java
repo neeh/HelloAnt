@@ -156,7 +156,8 @@ public abstract class Game
 		{	// For each bot, test whether it played.
 			Bot bot = info.getKey();
 			BotGameInfo botInfo = info.getValue();
-			if (bot.getCommunicator().isBotLoggedIn() && botInfo.hasPlayed() == false && botInfo.isMuted() == false)
+			if (bot.getCommunicator().isBotLoggedIn() && botInfo.hasPlayed() == false &&
+					botInfo.isMuted() == false)
 			{	// The bot has not played for this round, mute it.
 				muteBot(bot, "You did not send your game actions");
 			}
@@ -301,11 +302,6 @@ public abstract class Game
 				bot.getCommunicator().sendGameEnd(genGameEndMessageContent(bot));
 		}
 	}
-	
-	/**
-	 * Finalizes the game.
-	 */
-	//public abstract void finalize();
 	
 	/**
 	 * Generates the content of a "gamestate" message for a specific bot.

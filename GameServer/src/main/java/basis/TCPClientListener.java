@@ -70,8 +70,10 @@ public class TCPClientListener implements Runnable
 	 * @param port the network port on which to listen.
 	 * @param handler the client handler for communicators that will be created.
 	 * @warning the port is supposed to be a 16-bit unsigned integer.
+	 * @throws IllegalArgumentException if the port is already used.
 	 */
-	public TCPClientListener(int port, TCPClientHandler handler) throws IllegalArgumentException
+	public TCPClientListener(int port, TCPClientHandler handler)
+			throws IllegalArgumentException
 	{
 		this.port = port;
 		this.handler = handler;
@@ -92,7 +94,7 @@ public class TCPClientListener implements Runnable
 	}
 	
 	/**
-	 * Stops this listener.
+	 * Stops the listener.
 	 */
 	public void stop()
 	{

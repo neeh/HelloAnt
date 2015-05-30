@@ -54,17 +54,17 @@ public class App implements ActionListener
 	public App()
 	{
 		if (!SystemTray.isSupported())
-    	{
+		{
 			LOGGER.error("Systray unsupported");
 			return;
-    	}
+		}
 		servers = new HashMap<Menu, AntGameServer>();
 		SystemTray systray = SystemTray.getSystemTray();
 		try
 		{
 			BufferedImage icon = ImageIO.read(new File("./res/imgs/icon.png"));
 			trayIcon = new TrayIcon(icon, "HelloAnt");
-			// Resize icon (http://stackoverflow.com/questions/12287137/system-tray-icon-looks-distorted)
+			// Resize icon, see http://goo.gl/zq3G2J
 			int size = trayIcon.getSize().width;
 			trayIcon.setImage(icon.getScaledInstance(size, -1, Image.SCALE_SMOOTH));
 			

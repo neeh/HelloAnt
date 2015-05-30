@@ -42,6 +42,14 @@ import basis.BotGameInfo;
 import basis.BotMode;
 import basis.Game;
 
+/**
+ * This class represents an ant game being played. It overloads the generic Game class to
+ * implement a game of ants similar to ants.AIChallenge.
+ * General game rules can be found on the ants.AIChalllenge web site.
+ * @see http://ants.aichallenge.org/specification.php
+ * @class
+ * @author JMN
+ */
 public class AntGame extends Game
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AntGame.class);
@@ -160,7 +168,7 @@ public class AntGame extends Game
 		((AntBotGameInfo) botInfos.get(ant.getBot())).addAnt(ant);
 		map.addGameObject(ant);
 	}
-
+	
 	/**
 	 * Removes an ant from the game.
 	 * @param ant the ant to remove from the ants lists.
@@ -209,7 +217,8 @@ public class AntGame extends Game
 	/**
 	 * Removes a will from the game, while being safe used in a loop.
 	 * @param hill the hill to remove from the hills lists.
-	 * @param hillIt the iterator used in the loop (have to be from botInfo.getHillIterator()).
+	 * @param hillIt the iterator used in the loop (have to be from
+	 *        {@code botInfo.getHillIterator()}).
 	 */
 	protected void removeHill(AntHill hill, Iterator<AntHill> hillIt)
 	{
@@ -224,7 +233,7 @@ public class AntGame extends Game
 	public void init()
 	{
 		// Initialize bot game info for each bot.
-		for(Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
+		for (Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
 		{
 			((AntBotGameInfo) entry.getValue()).init(entry.getKey());
 		}
@@ -300,7 +309,8 @@ public class AntGame extends Game
 			{
 				antBotInfo.setDeath(curRound);
 			}
-			for (Iterator<AntHill> iterator = antBotInfo.getHillIterator(); iterator.hasNext();)
+			for (Iterator<AntHill> iterator = antBotInfo.getHillIterator();
+					iterator.hasNext();)
 			{
 				AntHill hill = iterator.next();
 				hill.raze(curRound + 1);
@@ -315,7 +325,7 @@ public class AntGame extends Game
 		{
 			AntBotGameInfo botInfo = rankedList.get(i);
 			int score = botInfo.getGameScore();
-			if(score != previousScore)
+			if (score != previousScore)
 			{
 				currentRank = i;
 				previousScore = score;
@@ -378,7 +388,7 @@ public class AntGame extends Game
 					}
 				}
 				// If we can catch up, the rank is not stabilized yet
-				if(maxPlayerScore >= minSuperiorOpponentScore
+				if (maxPlayerScore >= minSuperiorOpponentScore
 						|| maxPlayerScore > minEqualOpponentScore)
 				{
 					return false;
@@ -397,7 +407,7 @@ public class AntGame extends Game
 	@Override
 	public boolean isFinished()
 	{
-		//if(curRound >= 100) return true;
+		//if (curRound >= 100) return true;
 		// Turn limit rule
 		if (super.isFinished())
 		{
@@ -408,7 +418,7 @@ public class AntGame extends Game
 		int remainingPlayers = 0;
 		for (BotGameInfo bgi : botInfos.values())
 		{
-			if(((AntBotGameInfo) bgi).isAlive())
+			if (((AntBotGameInfo) bgi).isAlive())
 			{
 				remainingPlayers++;
 			}
@@ -466,9 +476,10 @@ public class AntGame extends Game
 		for (Iterator<Ant> antIt = ants.iterator(); antIt.hasNext();)
 		{
 			Ant ant = antIt.next();
-			if(ant.isDead())
+			if (ant.isDead())
 			{
-				// Avoid random ConcurrentModificationException by removing using the iterator
+				// Avoid random ConcurrentModificationException by removing using the
+				// iterator
 				removeAnt(ant, antIt);
 			}
 		}
@@ -482,7 +493,7 @@ public class AntGame extends Game
 					ant.getRow(), attackMask);
 			for (AntGameObject obj : attackable)
 			{
-				if(obj instanceof Ant && ((Ant) obj).getBot() != owner)
+				if (obj instanceof Ant && ((Ant) obj).getBot() != owner)
 				{
 					antEnemies.add((Ant) obj);
 				}
@@ -493,17 +504,17 @@ public class AntGame extends Game
 		{
 			ArrayList<Ant> enemies = nearbyEnemies.get(ant);
 			int weakness = enemies.size();
-			if(weakness == 0) continue;
+			if (weakness == 0) continue;
 			int minEnemyWeakness = Integer.MAX_VALUE;
 			for (Ant enemy : enemies)
 			{
 				int enemyWeakness = nearbyEnemies.get(enemy).size(); 
-				if(enemyWeakness < minEnemyWeakness)
+				if (enemyWeakness < minEnemyWeakness)
 				{
 					minEnemyWeakness = enemyWeakness;
 				}
 			}
-			if(minEnemyWeakness <= weakness)
+			if (minEnemyWeakness <= weakness)
 			{
 				ant.kill();
 			}
@@ -604,11 +615,19 @@ public class AntGame extends Game
 		for (Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
 		{
 			AntBotGameInfo botInfo = (AntBotGameInfo) entry.getValue();
-			if(!botInfo.isAlive())
+			if (!botInfo.isAlive())
+			{
 				botInfo.setDeath(curRound, "eliminated");
+			}
 		}
 	}
 	
+	/**
+	 * Mutes a bot in this game and sends it a "gamemute" message.
+	 * @see Documentation/protocol/gamemute.html
+	 * @param bot the bot to mute.
+	 * @param reason a message explaining why the bot was muted.
+	 */
 	@Override
 	public void muteBot(Bot bot, String reason)
 	{
@@ -646,13 +665,11 @@ public class AntGame extends Game
 		}
 	}
 	
-	
-	
 	/**
 	 * Generates the content of a "gamestate" message for a specific bot.
+	 * @see Documentation/protocol/gamestate.html
 	 * @param bot the bot that will receive the message.
 	 * @return the content of the "gamestate" message.
-	 * @see Documentation/protocol/gamestate.html
 	 */
 	@Override
 	protected JSONObject genGameStateMessageContent(Bot bot)
@@ -706,6 +723,12 @@ public class AntGame extends Game
 		return content;
 	}
 	
+	/**
+	 * Generates the content of a "gamestart" message for a specific bot.
+	 * @see Documentation/protocol/gamestart.html
+	 * @param bot the bot that will receive the message.
+	 * @return the content of the "gamestart" message.
+	 */
 	@Override
 	protected JSONObject genGameStartMessageContent(Bot bot)
 	{
@@ -716,7 +739,8 @@ public class AntGame extends Game
 			jsonMap.put("cols", map.getCols());
 			jsonMap.put("rows", map.getRows());
 			AntBotGameInfo botInfo = (AntBotGameInfo) botInfos.get(bot);
-			for (Iterator<AntHill> iterator = botInfo.getHillIterator(); iterator.hasNext();)
+			for (Iterator<AntHill> iterator = botInfo.getHillIterator();
+					iterator.hasNext();)
 			{
 				AntHill hill = iterator.next();
 				JSONObject jsonHill = new JSONObject();
@@ -734,6 +758,12 @@ public class AntGame extends Game
 		}
 	}
 	
+	/**
+	 * Generates the content of a "gameend" message for a specific bot.
+	 * @see Documentation/protocol/gameend.html
+	 * @param bot the bot that will receive the message.
+	 * @return the content of the "gameend" message.
+	 */
 	@Override
 	protected JSONObject genGameEndMessageContent(Bot bot)
 	{
@@ -784,7 +814,8 @@ public class AntGame extends Game
 			jsonReplay.put("game_length", curRound);
 			jsonReplay.put("user_url", "about:blank");
 			jsonReplay.put("game_url", "about:blank");
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+			SimpleDateFormat dateFormat =
+					new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 			jsonReplay.put("date", dateFormat.format(startDate));
 			jsonReplay.put("game_id", 0);
 			jsonReplay.put("worker_id", 0);

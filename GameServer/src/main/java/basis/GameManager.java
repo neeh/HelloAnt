@@ -367,7 +367,8 @@ public class GameManager extends TimerTask
 						"posToTest["+i+"] ("+
 								posToTest[i]+") must be smaller than v ("+v.size()+")");
 			
-			if (!v.elementAt(posToTest[i]).equals(v.elementAt(v.size() - posToTest.length + i)))
+			if (!v.elementAt(posToTest[i]).equals(
+					v.elementAt(v.size() - posToTest.length + i)))
 			{
 				posToTest[i]++;
 				for (int j=i+1; j < posToTest.length; j++)

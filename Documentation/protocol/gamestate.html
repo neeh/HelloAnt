@@ -7,7 +7,9 @@
 <body>
 <h1>gamestate</h1>
 Communication during one game round.<br />
-Once you received a "gamestate" message, you have a certain amount of time to send back your actions in a "gameactions" messages otherwise you will receive a "gamemute" message meaning you cannot play in this game anymore.
+Once you received a "gamestate" message, you have a certain amount of time to send back<br />
+your actions in a "gameactions" messages otherwise you will receive a "gamemute" message<br />
+meaning you cannot play in this game anymore.
 <h2>Server info</h2>
 <pre>
 {
@@ -21,6 +23,7 @@ Once you received a "gamestate" message, you have a certain amount of time to se
 			[ "F", 25, 60 ],
 			[ "A", 80, 12, 1 ],
 			[ "H", 77, 190, 1 ]
+			[ "A", row, col, owner ]
 		]
 	}
 }
@@ -35,6 +38,8 @@ H - hill
 F - food
 </pre>
 <h2>Warning</h2>
+<span style="font-family:monospace">row, col</span><br />
+<span style="font-family:monospace">owner = 0</span> means it's your ant.<br />
 <span style="font-family:monospace">"content":</span> depends on the type of game implemented in the game server via the Game class.
 </body>
 </html>

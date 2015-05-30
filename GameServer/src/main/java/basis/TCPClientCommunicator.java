@@ -636,13 +636,29 @@ public class TCPClientCommunicator implements Runnable
 	}
 	
 	/**
-	 * Sends a welcome message to the client. The client is not supposed to respond.
+	 * Sends a "welcome" message to the client. The client is not supposed to respond.
 	 * @see Documentation/protocol/welcome.html
 	 */
 	public void sendWelcome()
 	{
 		send("welcome", 0, "Welcome on HelloAnt game server. Have fun challenging other "
 				+ "bots!", null);
+	}
+	
+	/**
+	 * Sends a "bye" message to the client. The client is not supposed to respond.
+	 * @see Documentation/protocol/bye.html
+	 * @param reason the reason of the closing.
+	 */
+	public void sendBye(String reason)
+	{
+		JSONObject content = new JSONObject();
+		try
+		{
+			content.put("reason", reason);
+		}
+		catch (JSONException e) {}
+		send("welcome", 0, "Server closed your connection", content);
 	}
 	
 	/**
@@ -702,9 +718,11 @@ public class TCPClientCommunicator implements Runnable
 	 * The server will no longer listen to this client. If the client is logged in with a
 	 * bot, it will be logged out.
 	 * @warning this method is supposed to be called outside the client thread itself!
+	 * @param reason the reason of the closing.
 	 */
-	public void close()
+	public void close(String reason)
 	{
+		sendBye(reason);
 		// Call the _close method that does all the work.
 		_close();
 		// Interrupt the thread so it no longer reads messages from client.
