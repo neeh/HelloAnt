@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -228,6 +231,7 @@ public class TCPClientCommunicator implements Runnable
 		else if (type.equals("setmode"))	receiveSetMode(content);
 		else if (type.equals("token"))		receiveToken(content);
 		else if (type.equals("killbot"))	receiveKillBot(content);
+		else if (type.equals("ranking"))	receiveRanking(content);
 		else
 		{	// Notify the client we cannot treat its command.
 			send("error", 2, "Unknown command " + type, null);
@@ -556,6 +560,40 @@ public class TCPClientCommunicator implements Runnable
 		}
 		// Finally, send the response to the client.
 		send("killbot", error, outputMessage, null);
+	}
+	
+	/**
+	 * Receives a "ranking" client request and then sends back to the client a report
+	 * describing the operation(s) performed or the failure of the request and the reason
+	 * of the failure.
+	 * @see Documentation/protocol/ranking.html
+	 * @param content the content of the "ranking" message, should contains the list of
+	 *        bots ordered by score in a descending order.
+	 * @throws JSONException if the content is not correctly formed.
+	 */
+	private void receiveRanking(JSONObject content) throws JSONException
+	{
+		// Response message parameters:
+		int error = 0;
+		String outputMessage;
+		JSONObject outputContent = null;
+		// Test if the client is logged in as a bot.
+		if (isBotLoggedIn())
+		{	
+			// Get the bot ranking in the database.
+			ArrayList<String> ranking = dbm.getBotRanking();
+			outputContent = new JSONObject();
+			outputContent.put("ranking", new JSONArray(ranking));
+			int count = ranking.size();
+			outputMessage = count + " bot" + (count > 1 ? "s are" : " is") + " ranked";
+		}
+		else
+		{
+			error = 3;
+			outputMessage = "Not connected";
+		}
+		// Finally, send the response to the client.
+		send("ranking", error, outputMessage, outputContent);
 	}
 	
 	/**

@@ -24,6 +24,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,7 @@ public class DBManager implements BotDBCallback
 	private PreparedStatement logoutStmt;
 	private PreparedStatement createBotStmt;
 	private PreparedStatement removeBotStmt;
+	private PreparedStatement getBotRankingStmt;
 	private PreparedStatement updateBotScoreStmt;
 	private PreparedStatement resetBotStatusStmt;
 	
@@ -99,6 +101,8 @@ public class DBManager implements BotDBCallback
 					"UPDATE bots SET status = 0 WHERE nick = ?;");
 			createBotStmt = conn.prepareStatement("SELECT NewBot(?);");
 			removeBotStmt = conn.prepareStatement("DELETE FROM bots WHERE token = ?;");
+			getBotRankingStmt = conn.prepareStatement(
+					"SELECT nick FROM bots ORDER BY score DESC");
 			updateBotScoreStmt = conn.prepareStatement(
 					"UPDATE bots SET score = ? WHERE nick = ?;");
 			resetBotStatusStmt = conn.prepareStatement("UPDATE bots SET status = 0;");
@@ -339,6 +343,43 @@ public class DBManager implements BotDBCallback
 			logSQLException("Cannot execute the SQL statement for removing a bot", e);
 		}
 		return result > 0;
+	}
+	
+	/**
+	 * Gets the ranking of bots on the game server.
+	 * @return the list of bots ordered by score in a descending order.
+	 */
+	public ArrayList<String> getBotRanking()
+	{
+		// The ranking of bots to return.
+		ArrayList<String> ranking = new ArrayList<String>();
+		ResultSet result = null;
+		try
+		{	// SELECT nick FROM bots ORDER BY score DESC
+			result = getBotRankingStmt.executeQuery();
+			while (result.next())
+			{
+				ranking.add(result.getString(1));
+			}
+		}
+		catch (SQLException e)
+		{
+			logSQLException("Cannot execute the SQL statement for getting the ranking of "
+					+ "bots on the game server", e);
+		}
+		finally
+		{
+			if (result != null)
+			{	// Release ResultSet.
+				try
+				{
+					result.close();
+				}
+				catch (SQLException e) {}
+				result = null;
+			}
+		}
+		return ranking;
 	}
 	
 	/**
