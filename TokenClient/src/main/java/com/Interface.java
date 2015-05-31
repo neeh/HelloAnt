@@ -139,7 +139,7 @@ public class Interface
 				}
 				catch (UnknownHostException e1)
 				{
-					javax.swing.JOptionPane.showMessageDialog(null,e1.getMessage()+" ne correspond pas à une adresse de serveur.");
+					javax.swing.JOptionPane.showMessageDialog(null,e1.getMessage()+" Does not match");
 					return;
 				}
 			

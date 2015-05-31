@@ -55,8 +55,7 @@ public class RegisterSocket
 		Socket socket;
 		
 		socket = new Socket(serverIp,12345);
-		
-		
+		//creates the JSON object with the given botname
 		JSONObject message = new JSONObject();
 		message.put("type","token");
 		
@@ -64,36 +63,63 @@ public class RegisterSocket
 		content.put("nick",botName);
 		
 		message.put("content", content);
-		
-		
+		//send the botname in a JSON format
 		out = new PrintWriter(socket.getOutputStream());
-		out.println(message);
+		out.println(message.toString());
+		out.flush();
 		
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+		//read the answer
 		String reponse = in.readLine();
-		JSONObject reponseJson = new JSONObject(reponse);
-	
-		String test = reponseJson.getJSONObject("content").getString("token");
-		if (test!=null)
-		{
-			this.setResult(test);
-		}
-		else 
-		{
-			javax.swing.JOptionPane.showMessageDialog(null,"This nickname already exists"); 
-		}
 		
-
+		JSONObject reponseJson = new JSONObject(reponse);
+		String type = reponseJson.getString("type");
+		//The first answer message is a welcome made by the constructor 
+		//TCPClientCommunicator
+		if (type.equals("welcome"))
+		{
+			 reponse = in.readLine();
+			 reponseJson = new JSONObject(reponse);
+			 type = reponseJson.getString("type");
+		}
+		//Here we read the true token answer
+		if (type.equals("token"))
+		{
+			//First we check for errors
+			if(reponseJson.getInt("error") == 0)
+			{
+				String test = reponseJson.getJSONObject("content").getString("token");
+				if (test!=null)
+				{
+					this.setResult(test);
+				}
+			}
+			
+			else
+			{
+				javax.swing.JOptionPane.showMessageDialog(null,reponseJson.getString("message")); 
+			}
+		}
+		else
+		{
+			System.out.println("Wrong message Type : "+reponseJson.getString("type"));
+		}
 		socket.close();
 		
 	}
 
+	/**
+	 * Get the result  attribut with returned token
+	 * @return
+	 */
 	public String getResult() 
 	{
 		return result;
 	}
-
+	/**
+	 * Put the result  attribut with returned token
+	 * @return
+	 */
 	public void setResult(String result) 
 	{
 		this.result = result;

@@ -1,0 +1,256 @@
+ERROR [2015-05-31 09:49:31] [DBManager] : Cannot connect to MySQL database
+SQLException: Communications link failure
+
+Last packet sent to the server was 0 ms ago.
+SQLState: 08S01
+VendorError: 0
+INFO  [2015-05-31 09:49:31] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 09:49:31] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 09:50:36] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 09:50:36] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 09:51:10] [GameServer] : client joined
+INFO  [2015-05-31 09:51:25] [GameServer] : client left
+INFO  [2015-05-31 09:56:58] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 09:56:58] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 09:56:59] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 09:57:20] [GameServer] : client joined
+INFO  [2015-05-31 10:01:44] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:01:44] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:02:05] [GameServer] : client joined
+INFO  [2015-05-31 10:02:14] [GameServer] : client left
+INFO  [2015-05-31 10:08:47] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:08:47] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:09:11] [GameServer] : client joined
+INFO  [2015-05-31 10:09:24] [GameServer] : client left
+INFO  [2015-05-31 10:10:14] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:10:14] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:10:33] [GameServer] : client joined
+INFO  [2015-05-31 10:10:50] [GameServer] : client left
+INFO  [2015-05-31 10:12:07] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:12:07] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:12:28] [GameServer] : client joined
+INFO  [2015-05-31 10:13:30] [GameServer] : client left
+INFO  [2015-05-31 10:21:53] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:21:53] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:22:12] [GameServer] : client joined
+INFO  [2015-05-31 10:22:12] [GameServer] : client left
+INFO  [2015-05-31 10:22:32] [GameServer] : client joined
+INFO  [2015-05-31 10:23:47] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:23:47] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:24:21] [GameServer] : client joined
+INFO  [2015-05-31 10:24:21] [GameServer] : client left
+INFO  [2015-05-31 10:25:02] [GameServer] : client joined
+INFO  [2015-05-31 10:25:02] [GameServer] : client left
+INFO  [2015-05-31 10:25:10] [GameServer] : client joined
+INFO  [2015-05-31 10:32:06] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:32:06] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:32:34] [GameServer] : client joined
+INFO  [2015-05-31 10:32:34] [GameServer] : client left
+INFO  [2015-05-31 10:32:59] [GameServer] : client joined
+ERROR [2015-05-31 10:34:00] [TCPClientListener] : the client listener cannot start. Address already in use: JVM_Bind
+ERROR [2015-05-31 10:34:00] [App] : unable to start a server on port 12345
+INFO  [2015-05-31 10:34:36] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:34:36] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:34:36] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:34:36] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:34:36] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:34:36] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:34:36] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:34:36] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:34:36] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:34:37] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:34:37] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:34:59] [GameServer] : client joined
+INFO  [2015-05-31 10:34:59] [GameServer] : client left
+INFO  [2015-05-31 10:39:40] [GameServer] : client joined
+INFO  [2015-05-31 10:39:40] [GameServer] : client left
+INFO  [2015-05-31 10:39:40] [GameServer] : client joined
+INFO  [2015-05-31 10:39:40] [GameServer] : client left
+INFO  [2015-05-31 10:54:24] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:54:24] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:55:10] [GameServer] : client joined
+INFO  [2015-05-31 10:55:10] [GameServer] : client left
+INFO  [2015-05-31 10:56:31] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:56:31] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:57:14] [GameServer] : client joined
+INFO  [2015-05-31 10:57:14] [GameServer] : client left
+INFO  [2015-05-31 10:58:46] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 10:58:46] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 10:59:12] [GameServer] : client joined
+INFO  [2015-05-31 10:59:12] [GameServer] : client left
+INFO  [2015-05-31 11:00:43] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 11:00:43] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 11:01:08] [GameServer] : client joined
+INFO  [2015-05-31 11:01:08] [GameServer] : client left
+INFO  [2015-05-31 11:02:16] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 11:02:16] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 11:02:32] [GameServer] : client joined
+INFO  [2015-05-31 11:02:32] [GameServer] : client left
+INFO  [2015-05-31 11:03:16] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 11:03:16] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 11:03:36] [GameServer] : client joined
+INFO  [2015-05-31 11:03:36] [GameServer] : client left
+INFO  [2015-05-31 11:03:44] [GameServer] : client joined
+INFO  [2015-05-31 11:03:53] [GameServer] : client joined
+INFO  [2015-05-31 11:04:07] [GameServer] : client joined
+INFO  [2015-05-31 11:04:07] [GameServer] : client left
+INFO  [2015-05-31 11:04:24] [GameServer] : client left
+INFO  [2015-05-31 11:04:24] [GameServer] : client left
+INFO  [2015-05-31 11:10:34] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 11:10:34] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 11:11:03] [GameServer] : client joined
+INFO  [2015-05-31 11:11:03] [GameServer] : client left
+INFO  [2015-05-31 11:11:05] [GameServer] : client joined
+INFO  [2015-05-31 11:11:12] [GameServer] : client left
