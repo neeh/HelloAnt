@@ -148,7 +148,7 @@ public class Interface
 					RegisterSocket test = new RegisterSocket(botNameString,serverIp);
 					if (test.getResult()!=null)
 					{
-						tokenLab.setText(test.getResult());
+						tokenField.setText(test.getResult());
 					}
 				
 				} 

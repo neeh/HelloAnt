@@ -254,3 +254,31 @@ INFO  [2015-05-31 11:11:03] [GameServer] : client joined
 INFO  [2015-05-31 11:11:03] [GameServer] : client left
 INFO  [2015-05-31 11:11:05] [GameServer] : client joined
 INFO  [2015-05-31 11:11:12] [GameServer] : client left
+INFO  [2015-05-31 12:27:34] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 12:27:34] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 12:28:36] [GameServer] : working directory: D:\documents\Pil\HelloAnt\GameServer
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p02_18.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p02_19.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p02_20.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p02_21.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p03_20.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p03_25.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p04_19.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p04_20.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p04_24.map
+INFO  [2015-05-31 12:28:36] [GameServer] : map loaded: HA_cell_maze_p04_26.map
+INFO  [2015-05-31 12:29:00] [GameServer] : client joined
+INFO  [2015-05-31 12:29:00] [GameServer] : client left
+INFO  [2015-05-31 12:34:09] [GameServer] : client joined
+INFO  [2015-05-31 12:34:09] [GameServer] : client left
+INFO  [2015-05-31 12:35:09] [GameServer] : client joined
+INFO  [2015-05-31 12:35:09] [GameServer] : client left
