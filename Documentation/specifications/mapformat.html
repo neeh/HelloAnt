@@ -12,22 +12,22 @@ Map files are ASCII files formatted as follow: (based on the AIChallenge specifi
 players <i>%BOT_COUNT%</i>
 cols <i>%COLS%</i>
 rows <i>%ROWS%</i>
-m [.%*0-9]{<i>%ROWS</i>}
+m [.%*0-9]{<i>%ROWS%</i>}
 </pre>
 The following tokens are allowed:
 <pre>
-players		number of bots the map is designed for [2-10]
-cols		map column count
-rows		map row count
-m			map row descriptor
+players     number of bots the map is designed for [2-10]
+cols        map column count
+rows        map row count
+m           map row descriptor
 </pre>
 You should add a " " (space) after a token.<br />
 After a row descriptor token, each character represents a cell in the map row:
 <pre>
-.			void
-%			wall
-*			food spawn
-0-9			ant hill for bot i
+.           void
+%           wall
+*           food spawn
+0-9         ant hill for bot i
 </pre>
 Note that you can define several hills for the same bot.
 </body>

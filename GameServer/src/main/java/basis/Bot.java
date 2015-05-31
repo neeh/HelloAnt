@@ -94,39 +94,6 @@ public class Bot
 		this.score = score;
 		this.dbHandler = dbHandler;
 	}
-
-	/**
-	 * Increment the priority of a bot in the game lobby.
-	 */
-	public void incPriority()
-	{
-		priority++;
-	}
-	
-	/**
-	 * Decrement the priority of a bot in the game lobby.
-	 */
-	public void decPriority()
-	{
-		if (priority > 0) priority--;
-	}
-	
-	/** 
-	 * Reset to 0 the priority of a bot.
-	 */
-	public void resetPriority()
-	{
-		priority=0;
-	}
-	
-	/**
-	 * Gets the priority of a bot.
-	 * @return the priority of the bot.
-	 */
-	public int getPriority()
-	{
-		return priority;
-	}
 	
 	/**
 	 * Gets the communicator used to communicate with the bot.
@@ -167,16 +134,6 @@ public class Bot
 	}
 	
 	/**
-	 * Sets the gaming mode of a bot.
-	 * @param mode the new gaming mode of the bot.
-	 * @see BotMode
-	 */
-	public void setMode(BotMode mode)
-	{
-		this.mode = mode;
-	}
-	
-	/**
 	 * Returns whether the bot is currently playing in a game.
 	 * A bot which is not in game is waiting for a game.
 	 * @return true if the bot is in a game
@@ -196,6 +153,34 @@ public class Bot
 	}
 	
 	/**
+	 * Gets the general score of a bot.
+	 * @return the score of the bot.
+	 */
+	public double getScore()
+	{
+		return score;
+	}
+	
+	/**
+	 * Gets the priority of a bot.
+	 * @return the priority of the bot.
+	 */
+	public int getPriority()
+	{
+		return priority;
+	}
+	
+	/**
+	 * Sets the gaming mode of a bot.
+	 * @param mode the new gaming mode of the bot.
+	 * @see BotMode
+	 */
+	public void setMode(BotMode mode)
+	{
+		this.mode = mode;
+	}
+	
+	/**
 	 * Sets the game of a bot.
 	 * @param game the game the bot is in.
 	 */
@@ -209,15 +194,6 @@ public class Bot
 		{
 			LOGGER.warn("Attempt to change the game of a bot which is already in a game");
 		}
-	}
-	
-	/**
-	 * Gets the general score of a bot.
-	 * @return the score of the bot.
-	 */
-	public double getScore()
-	{
-		return score;
 	}
 	
 	/**
@@ -236,5 +212,29 @@ public class Bot
 			this.score = score;
 			dbHandler.updateBotScore(this);
 		}
+	}
+	
+	/**
+	 * Increment the priority of a bot in the game lobby.
+	 */
+	public void incPriority()
+	{
+		priority++;
+	}
+	
+	/**
+	 * Decrement the priority of a bot in the game lobby.
+	 */
+	public void decPriority()
+	{
+		if (priority > 0) priority--;
+	}
+	
+	/** 
+	 * Reset to 0 the priority of a bot.
+	 */
+	public void resetPriority()
+	{
+		priority = 0;
 	}
 }
