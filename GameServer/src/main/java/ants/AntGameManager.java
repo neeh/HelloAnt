@@ -37,7 +37,7 @@ import basis.GameManager;
 public class AntGameManager extends GameManager
 {
 	/** The number of rounds required for food to respawn. */
-	private static final int FOOD_RESPAWN_DELAY = 15;
+	private static final int FOOD_RESPAWN_DELAY = 25;
 	
 	/** The squared radius of the view mask. */
 	private static final float VIEW_RADIUS_2 = 77.0f;
@@ -132,8 +132,8 @@ public class AntGameManager extends GameManager
 			ArrayList<Bot> bots = new ArrayList<Bot>(botCount);
 			bots.add(bot);
 			// Create the ant game and run it on the server.
-			AntGame game = new AntGame(bots, MAX_ROUND, RESPONSE_TIME_MS, LOAD_TIME_MS, map,
-					FOOD_RESPAWN_DELAY, VIEW_RADIUS_2, ATTACK_RADIUS_2);
+			AntGame game = new AntGame(bots, MAX_ROUND, RESPONSE_TIME_MS, LOAD_TIME_MS,
+					map, FOOD_RESPAWN_DELAY, VIEW_RADIUS_2, ATTACK_RADIUS_2);
 			bot.setGame(game);
 			gameHandler.addGame(game);
 		}

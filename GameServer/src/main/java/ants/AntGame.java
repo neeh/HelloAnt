@@ -184,7 +184,7 @@ public class AntGame extends Game
 	 * Removes an ant from the game, while being safe used in a loop.
 	 * @param ant the ant to remove from the ants lists.
 	 * @param antIt the iterator used in the loop (used for safe removal, must be an
-	 * 		iterator on the "ants" array).
+	 * 		  iterator on the "ants" array).
 	 */
 	protected void removeAnt(Ant ant, Iterator<Ant> antIt)
 	{
@@ -598,17 +598,18 @@ public class AntGame extends Game
 			}
 		}
 		// Detect ants that did not move during this round.
-		for (Map.Entry<Bot, BotGameInfo> entry : botInfos.entrySet())
+		Iterator<Ant> antIt = ants.iterator();
+		while (antIt.hasNext())
 		{
-			AntBotGameInfo botInfo = (AntBotGameInfo) entry.getValue();
-			Iterator<Ant> antIt = botInfo.getAntIterator();
-			while (antIt.hasNext())
-			{
-				Ant ant = antIt.next();
-				// If the ant did not move during this round, just add a blank move in the
-				// replay track.
-				if (ant.hasMoved() == false) ant.addBlankMove();
-				else ant.setMoved(false);
+			Ant ant = antIt.next();
+			if (ant.isDead() == false && ant.hasMoved() == false)
+			{	// If an alive ant did not move during this round, just add a blank
+				// move in its replay track.
+				ant.addBlankMove();
+			}
+			else
+			{	// Enable the ant to move again
+				ant.setMoved(false);
 			}
 		}
 		// Detect dead bots

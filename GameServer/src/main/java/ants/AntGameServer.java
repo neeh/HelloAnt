@@ -79,25 +79,6 @@ public class AntGameServer extends GameServer
 	{
 		LOGGER.info("working directory: " + System.getProperty("user.dir"));
 		ArrayList<AntMapTemplate> mapTemplates = new ArrayList<AntMapTemplate>();
-		
-		// !!!!! DEBUG !!!!!
-		/*AntMapTemplate debug_map = new AntMapTemplate();
-		try
-		{
-			debug_map.loadFromFile("debug/2.map");
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		catch (InvalidMapFormatException e)
-		{
-			e.printStackTrace();
-		}
-		mapTemplates.add(debug_map);
-		if(true) return mapTemplates;*/
-		// !!!!! /DEBUG !!!!!
-		
 		// Get all the files in GameServer/res/maps/
 		File f = new File("./res/maps/");
 		File[] files = f.listFiles();

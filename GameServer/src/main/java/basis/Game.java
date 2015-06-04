@@ -121,8 +121,10 @@ public abstract class Game
 		{
 			Bot bot = i.next();
 			BotGameInfo info = botInfos.get(bot);
+			/*
 			bot.setScore(bot.getScore() + 200 * (n * (info.getGameScore() / sumGameScores)
 					- 1));
+			*/
 		}
 	}
 	

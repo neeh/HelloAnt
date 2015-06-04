@@ -207,8 +207,8 @@ public class DBManager implements BotDBCallback
 	 * @return a new bot if the login succeed.
 	 * @throws BotLoginException if the login failed.
 	 */
-	public Bot login(String token, TCPClientCommunicator com, BotMode mode, String ip)
-			throws BotLoginException
+	public synchronized Bot login(String token, TCPClientCommunicator com, BotMode mode,
+			String ip) throws BotLoginException
 	{
 		Bot bot = null;
 		ResultSet result = null;
@@ -355,7 +355,7 @@ public class DBManager implements BotDBCallback
 		ArrayList<String> ranking = new ArrayList<String>();
 		ResultSet result = null;
 		try
-		{	// SELECT nick FROM bots ORDER BY score DESC
+		{	// SELECT nick FROM bots ORDER BY score DESC;
 			result = getBotRankingStmt.executeQuery();
 			while (result.next())
 			{

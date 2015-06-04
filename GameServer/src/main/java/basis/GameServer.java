@@ -105,7 +105,6 @@ public class GameServer implements TCPClientHandler, GameHandler
 	{
 		clients.add(newClient);
 		LOGGER.info("client joined");
-		//System.out.println(System.currentTimeMillis() + ": client joined");
 	}
 	
 	/**
@@ -118,7 +117,6 @@ public class GameServer implements TCPClientHandler, GameHandler
 	{
 		clients.remove(oldClient);
 		LOGGER.info("client left");
-		//System.out.println(System.currentTimeMillis() + ": client left");
 	}
 	
 	/**
@@ -132,8 +130,6 @@ public class GameServer implements TCPClientHandler, GameHandler
 		gameManager.addBot(newBot);
 		LOGGER.info("bot logged in (nick: " + newBot.getNick() + ", mode: "
 				+ newBot.getMode().toString().toLowerCase() + ")");
-		//System.out.println(System.currentTimeMillis() + ": Bot " + newBot.getNick()
-		//		+ " logged in (" + newBot.getMode().toString().toLowerCase() + " mode)");
 	}
 	
 	/**
@@ -146,8 +142,6 @@ public class GameServer implements TCPClientHandler, GameHandler
 		// Attempt to remove the bot from the lobby.
 		gameManager.removeBot(oldBot);
 		LOGGER.info("bot logged out (nick: " + oldBot.getNick() + ")");
-		//System.out.println(System.currentTimeMillis() + ": Bot " + oldBot.getNick()
-		//		+ " logged out");
 	}
 	
 	/**
@@ -157,11 +151,33 @@ public class GameServer implements TCPClientHandler, GameHandler
 	@Override
 	public void addGame(Game game)
 	{
+		// Remove bots from the lobby.
+		Iterator<Bot> botIt = game.getBotIterator();
+		while (botIt.hasNext())
+		{
+			gameManager.removeBot(botIt.next());
+		}
+		// Create the game thread.
 		GameThread gameThread = new GameThread(game, this);
 		gameThreads.add(gameThread);
 		// Start the game.
 		gameThread.start();
-		System.out.println(System.currentTimeMillis() + ": Game created");
+		// Log game informations.
+		Iterator<TCPClientCommunicator> clientIt = clients.iterator();
+		TCPClientCommunicator client;
+		int clientsInGame = 0;
+		int gameCount = gameThreads.size();
+		while (clientIt.hasNext())
+		{
+			client = clientIt.next();
+			if (client.isBotLoggedIn() == true && client.getBot().isInGame() == true)
+			{
+				clientsInGame++;
+			}
+		}
+		LOGGER.info("game created (" + clientsInGame + " client"
+				+ (clientsInGame > 1 ? "s are" : " is") + " in " + gameCount + "game"
+				+ (gameCount > 1 ? ")" : "s)"));
 	}
 	
 	/**
@@ -170,7 +186,6 @@ public class GameServer implements TCPClientHandler, GameHandler
 	 */
 	public void removeGameThread(GameThread gameThread)
 	{
-		System.out.println(System.currentTimeMillis() + ": Game terminated");
 		gameThreads.remove(gameThread);
 		// If the server is closing, don't reinsert the bots.
 		if (closing)
@@ -199,5 +214,21 @@ public class GameServer implements TCPClientHandler, GameHandler
 				}
 			}
 		}
+		// Log game informations.
+		Iterator<TCPClientCommunicator> clientIt = clients.iterator();
+		TCPClientCommunicator client;
+		int clientsInGame = 0;
+		int gameCount = gameThreads.size();
+		while (clientIt.hasNext())
+		{
+			client = clientIt.next();
+			if (client.isBotLoggedIn() == true && client.getBot().isInGame() == true)
+			{
+				clientsInGame++;
+			}
+		}
+		LOGGER.info("game terminated (" + clientsInGame + " client"
+				+ (clientsInGame > 1 ? "s are" : " is") + " in " + gameCount + "game"
+				+ (gameCount > 1 ? ")" : "s)"));
 	}
 }

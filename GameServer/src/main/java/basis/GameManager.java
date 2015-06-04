@@ -151,7 +151,10 @@ public class GameManager extends TimerTask
 							&& (canMatchBot.getScore() <= bot.getScore()
 								+ bot.getPriority()))
 					{
-						botMap.get(bot).add(canMatchBot);
+						if (botMap.get(bot).contains(canMatchBot) == false)
+						{
+							botMap.get(bot).add(canMatchBot);
+						}
 					}
 				}
 			}
@@ -168,7 +171,7 @@ public class GameManager extends TimerTask
 	public ArrayList<ArrayList<Bot>> chooseFights(ArrayList<ArrayList<Bot>> matchsList)
 	{
 		ArrayList<ArrayList<Bot>> toRet = new ArrayList<>();
-		while(!isEachListUnique(matchsList))
+		while (isEachListUnique(matchsList) == false)
 		{
 			double[] weight = new double[matchsList.size()];
 			/*
@@ -205,7 +208,7 @@ public class GameManager extends TimerTask
 			{
 				for (int i = 0; i < matchsList.size(); i++)
 				{
-					if(matchsList.get(i).contains(b))
+					if (matchsList.get(i).contains(b))
 					{
 						matchsList.remove(i);
 						i--;
@@ -246,47 +249,55 @@ public class GameManager extends TimerTask
 		{
 			ArrayList<ArrayList<Bot>> toMatch = new ArrayList<>();
 			
-			for (Bot keyBot : botMap.keySet())
+			synchronized (botMap)
 			{
-				Vector<Bot> botVect = botMap.get(keyBot);
-				
-				if (botVect.size() >= nbPlayers-1)
+				for (Bot keyBot : botMap.keySet())
 				{
-					int[] posToTest = new int[nbPlayers - 1];
-					for (int i = 0; i < posToTest.length; i++)
-						posToTest[i] = i;
+					Vector<Bot> botVect = botMap.get(keyBot);
 					
-					boolean isFinished = false;
-					
-					while (!isFinished)
+					if (botVect.size() >= nbPlayers-1)
 					{
-						boolean isPresent = true;
-						for (int pos : posToTest)
+						int[] posToTest = new int[nbPlayers - 1];
+						for (int i = 0; i < posToTest.length; i++)
+							posToTest[i] = i;
+						
+						boolean isFinished = false;
+						
+						while (!isFinished)
 						{
-							// CAUTION : NULL POINTER EXCEPTION POSSIBLE
-							// 			 IF A BOTVECT CONTAINS A BOT NOT IN HASHMAP KEYS
-							
-							isPresent &= botMap.get(
-									botVect.elementAt(pos)).contains(keyBot);
-							for (int p : posToTest)
-								if (p != pos)
-									isPresent &= botMap.get(
-											botVect.elementAt(pos)).contains(
-													botVect.elementAt(p));
-						}
-						if (isPresent)
-						{
-							ArrayList<Bot> toAdd = new ArrayList<>();
-							toAdd.add(keyBot);
+							boolean isPresent = true;
 							for (int pos : posToTest)
 							{
-								toAdd.add(botVect.elementAt(pos));
+								// CAUTION : NULL POINTER EXCEPTION POSSIBLE
+								// IF A BOTVECT CONTAINS A BOT NOT IN HASHMAP KEYS
+								
+								isPresent &= botMap.get(botVect.elementAt(pos))
+										.contains(keyBot);
+								for (int p : posToTest)
+								{
+									if (p != pos)
+									{
+										isPresent &= botMap.get(botVect.elementAt(pos))
+												.contains(botVect.elementAt(p));
+									}
+								}
 							}
-							
-							if(!isListInMatrix(toAdd, toMatch))
-								toMatch.add(toAdd);
+							if (isPresent)
+							{
+								ArrayList<Bot> toAdd = new ArrayList<>();
+								toAdd.add(keyBot);
+								for (int pos : posToTest)
+								{
+									toAdd.add(botVect.elementAt(pos));
+								}
+								
+								if (isListInMatrix(toAdd, toMatch) == false)
+								{
+									toMatch.add(toAdd);
+								}
+							}
+							isFinished = !incrementPosToTest(posToTest, botVect);
 						}
-						isFinished = !incrementPosToTest(posToTest, botVect);
 					}
 				}
 			}
@@ -333,8 +344,10 @@ public class GameManager extends TimerTask
 				{
 					for (int k=0; k<botMatrix.get(i).size(); k++)
 					{
-						if(botMatrix.get(j).contains(botMatrix.get(i).get(k)))
+						if (botMatrix.get(j).contains(botMatrix.get(i).get(k)))
+						{
 							return false;
+						}
 					}
 				}
 			}
@@ -388,14 +401,23 @@ public class GameManager extends TimerTask
 	public String toString()
 	{
 		StringBuffer sb = new StringBuffer();
+		boolean first = true;
 		for (Bot keyBot : botMap.keySet())
 		{
-			sb.append("[ "+keyBot.getNick()+" |");
+			sb.append("[ "+keyBot.getNick()+" | ");
 			for (Bot bot : botMap.get(keyBot))
 			{
-				sb.append(" " + bot.getNick());
+				if (first == false)
+				{
+					sb.append(", ");
+				}
+				else
+				{
+					first = false;
+				}
+				sb.append(bot.getNick());
 			}
-			sb.append("]\n");
+			sb.append(" ]\n");
 		}
 		return sb.toString();
 	}
@@ -407,9 +429,12 @@ public class GameManager extends TimerTask
 	 */
 	public void addBot(Bot bot)
 	{
-		if (!botMap.containsKey(bot))
+		synchronized (botMap)
 		{
-			botMap.put(bot, new Vector<Bot>());
+			if (!botMap.containsKey(bot))
+			{
+				botMap.put(bot, new Vector<Bot>());
+			}
 		}
 	}
 	
@@ -421,18 +446,21 @@ public class GameManager extends TimerTask
 	 */
 	public boolean removeBot(Bot bot)
 	{
-		if (botMap.containsKey(bot))
+		synchronized (botMap)
 		{
-			bot.resetPriority();
-			botMap.remove(bot);
-			for (Bot key : botMap.keySet())
+			if (botMap.containsKey(bot))
 			{
-				if (botMap.get(key).contains(bot))
+				bot.resetPriority();
+				botMap.remove(bot);
+				for (Bot key : botMap.keySet())
 				{
-					botMap.get(key).remove(bot);
+					if (botMap.get(key).contains(bot))
+					{
+						botMap.get(key).remove(bot);
+					}
 				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
