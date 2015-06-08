@@ -15,8 +15,8 @@ namespace BotExample
     class Program
     {
         /* CHANGE SETTINGS HERE */
-        private const string TOKEN = "abc";
-        private const bool TRAINING = false;
+        private const string DEFAULT_TOKEN = "abc";
+        private const bool DEFAULT_TRAINING = true;
         // Directory.GetCurrentDirectory() while running in debug-mode = [PROJECT-PATH]/bin/debug
         private readonly string SAVE_DIRECTORY = Directory.GetCurrentDirectory();
 
@@ -27,9 +27,11 @@ namespace BotExample
         private bool inGame;
         private bool muted;
         private GameMap map;
+        private string token;
 
-        public Program()
+        public Program(string ip, string token, bool training)
         {
+            this.token = token;
             inGame = false;
             muted = false;
 
@@ -37,7 +39,8 @@ namespace BotExample
             serializer.RegisterConverters(new[] { new DynamicJsonConverter() });
 
             sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint serverAddress = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 12345);
+            string[] ep = ip.Split(':');
+            IPEndPoint serverAddress = new IPEndPoint(IPAddress.Parse(ep[0]), Convert.ToInt32(ep[1]));
             try
             {
                 sock.Connect(serverAddress);
@@ -50,7 +53,7 @@ namespace BotExample
             }
             new Thread(new ThreadStart(ReceiveData)).Start();
 
-            SendMessage(new LoginMessage(TOKEN, TRAINING));
+            SendMessage(new LoginMessage(token, training));
             
             Console.ReadLine();
         }
@@ -92,8 +95,8 @@ namespace BotExample
             try
             {
                 string nick = content.nick;
-                int score = content.score;
-                Console.WriteLine("Successfully logged in as " + nick + " (" + score + " points)");
+                decimal score = content.score;
+                Console.WriteLine("Successfully logged in as " + nick + " (token "+token+"; " + score + " points)");
             }
             catch (RuntimeBinderException)
             {
@@ -104,6 +107,7 @@ namespace BotExample
         {
             try
             {
+                // Init a game
                 map = new GameMap(content.map.cols, content.map.rows);
                 var hills = content.map.hills;
                 for (int i = 0, len = hills.Count; i < len; i++)
@@ -116,7 +120,7 @@ namespace BotExample
             }
             catch (RuntimeBinderException)
             {
-                Console.WriteLine("Error: malformed server message (gamestart)");
+                Console.WriteLine("Error: malformed server message (gamestart). " + content);
             }
         }
         private void ReceivedGameState(dynamic content)
@@ -166,29 +170,29 @@ namespace BotExample
                 }
                 map.RemoveUnconfirmedAnts();
                 // Uncomment to display the map in the console every turn
-                Console.Write("\n"+map);
+                //Console.Write("\n"+map);
                 GameActionsMessage msg = new GameActionsMessage();
                 map.ComputeMoves(msg);
                 SendMessage(msg);
             }
             catch (RuntimeBinderException)
             {
-                Console.WriteLine("Error: malformed server message (gamestate)");
+                Console.WriteLine("Error: malformed server message (gamestate). " + content);
             }
         }
         private void ReceivedGameEnd(dynamic content)
         {
             try
             {
-                SendMessage(new LogoutMessage());
+                //SendMessage(new LogoutMessage());
                 inGame = false;
-                string filename = SAVE_DIRECTORY + "\\replay-" + DateTime.Now.Ticks + ".json";
+                string filename = SAVE_DIRECTORY + "\\replay-" + token + "-" + DateTime.Now.Ticks + ".json";
                 File.WriteAllText(filename, content.replay.ToString());
                 Console.WriteLine("Game ended (" + content.replay.replaydata.cutoff + ") ... Saving replay to " + filename);
             }
             catch (RuntimeBinderException)
             {
-                Console.WriteLine("Error: malformed server message (gameend)");
+                Console.WriteLine("Error: malformed server message (gameend). " + content);
             }
         }
         private void ReceivedGameMute(dynamic content)
@@ -200,7 +204,7 @@ namespace BotExample
             }
             catch (RuntimeBinderException)
             {
-                Console.WriteLine("Error: malformed server message (gamemute)");
+                Console.WriteLine("Error: malformed server message (gamemute). " + content);
             }
         }
 
@@ -262,7 +266,22 @@ namespace BotExample
 
         static void Main(string[] args)
         {
-            new Program();
+            string ip = "127.0.0.1:12345";
+            if (args.Length >= 1)
+            {
+                ip = args[0];
+            }
+            string token = DEFAULT_TOKEN;
+            if (args.Length >= 2)
+            {
+                token = args[1];
+            }
+            bool training = DEFAULT_TRAINING;
+            if (args.Length >= 3)
+            {
+                training = Convert.ToBoolean(args[2]);
+            }
+            new Program(ip, token, training);
         }
     }
 }

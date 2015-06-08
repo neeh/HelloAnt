@@ -1,8 +1,0 @@
-[2015-05-31 09:49:31] [DBManager] : Cannot connect to MySQL database
-SQLException: Communications link failure
-
-Last packet sent to the server was 0 ms ago.
-SQLState: 08S01
-VendorError: 0
-[2015-05-31 10:34:00] [TCPClientListener] : the client listener cannot start. Address already in use: JVM_Bind
-[2015-05-31 10:34:00] [App] : unable to start a server on port 12345
