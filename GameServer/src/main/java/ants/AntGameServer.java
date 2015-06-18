@@ -84,7 +84,7 @@ public class AntGameServer extends GameServer
 		File[] files = f.listFiles();
 		for (File file : files)
 		{
-			if (file.isDirectory() == false)
+			if (!file.isDirectory())
 			{
 				String filename = file.getName();
 				LOGGER.info("map loaded: " + filename);

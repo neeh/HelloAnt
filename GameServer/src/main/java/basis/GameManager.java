@@ -151,7 +151,7 @@ public class GameManager extends TimerTask
 							&& (canMatchBot.getScore() <= bot.getScore()
 								+ bot.getPriority()))
 					{
-						if (botMap.get(bot).contains(canMatchBot) == false)
+						if (!botMap.get(bot).contains(canMatchBot))
 						{
 							botMap.get(bot).add(canMatchBot);
 						}
@@ -171,7 +171,7 @@ public class GameManager extends TimerTask
 	public ArrayList<ArrayList<Bot>> chooseFights(ArrayList<ArrayList<Bot>> matchsList)
 	{
 		ArrayList<ArrayList<Bot>> toRet = new ArrayList<>();
-		while (isEachListUnique(matchsList) == false)
+		while (!isEachListUnique(matchsList))
 		{
 			double[] weight = new double[matchsList.size()];
 			/*
@@ -291,7 +291,7 @@ public class GameManager extends TimerTask
 									toAdd.add(botVect.elementAt(pos));
 								}
 								
-								if (isListInMatrix(toAdd, toMatch) == false)
+								if (!isListInMatrix(toAdd, toMatch))
 								{
 									toMatch.add(toAdd);
 								}
@@ -407,7 +407,7 @@ public class GameManager extends TimerTask
 			sb.append("[ "+keyBot.getNick()+" | ");
 			for (Bot bot : botMap.get(keyBot))
 			{
-				if (first == false)
+				if (!first)
 				{
 					sb.append(", ");
 				}

@@ -148,7 +148,7 @@ public class AntBotGameInfo extends BotGameInfo implements Comparable<AntBotGame
 		Iterator<Ant> antIt = ants.iterator();
 		while (antIt.hasNext())
 		{
-			if (antIt.next().isDead() == false) count++;
+			if (!antIt.next().isDead()) count++;
 		}
 		return count;
 	}

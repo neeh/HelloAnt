@@ -222,7 +222,7 @@ public class AntGameMap implements AntGameMapCallback, AntGameMapView
 		while (gobIt.hasNext())
 		{	// Search an alive ant in the list.
 			gob = gobIt.next();
-			if (gob instanceof Ant && ((Ant) gob).isDead() == false) return (Ant) gob;
+			if (gob instanceof Ant && !((Ant) gob).isDead()) return (Ant) gob;
 		}
 		return null;
 	}

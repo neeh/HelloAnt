@@ -536,7 +536,7 @@ public class AntGame extends Game
 					if (razerAnt.getBot() == bot)
 					{	// Both ant and hill belong to the bot.
 						hill.setLastVisitRound(curRound);
-						if (razerAnt.hasFood() == true)
+						if (razerAnt.hasFood())
 						{	// If the ant holds a food unit, then increment the hive.
 							botInfo.incrementHive();
 							razerAnt.setFood(false);
@@ -576,10 +576,10 @@ public class AntGame extends Game
 		while (foodSpawnIt.hasNext())
 		{
 			AntFoodSpawn foodSpawn = foodSpawnIt.next();
-			if (foodSpawn.hasFood() == true)
+			if (foodSpawn.hasFood())
 			{	// Gather food.
 				Ant gatherAnt = map.getAntAt(foodSpawn.getCol(), foodSpawn.getRow());
-				if (gatherAnt != null && gatherAnt.hasFood() == false)
+				if (gatherAnt != null && !gatherAnt.hasFood())
 				{	// There's an ant that does not hold food on the spawn food.
 					AntBotGameInfo gatherBotInfo = (AntBotGameInfo)
 							botInfos.get(gatherAnt.getBot());
@@ -589,7 +589,7 @@ public class AntGame extends Game
 			}
 			else
 			{	// Spawn food.
-				if (foodSpawn.hasFood() == false &&
+				if (!foodSpawn.hasFood() &&
 						curRound - foodSpawn.getLastHarvestRound() > foodRespawnDelay)
 				{	// Time to add food.
 					foodSpawn.createFood(curRound);
@@ -602,7 +602,7 @@ public class AntGame extends Game
 		while (antIt.hasNext())
 		{
 			Ant ant = antIt.next();
-			if (ant.isDead() == false && ant.hasMoved() == false)
+			if (!ant.isDead() && !ant.hasMoved())
 			{	// If an alive ant did not move during this round, just add a blank
 				// move in its replay track.
 				ant.addBlankMove();
@@ -656,7 +656,7 @@ public class AntGame extends Game
 			Move direction = Move.fromString(move.getString(2));
 			// Get game objects from the game map.
 			Ant ant = map.getAntAt(col, row);
-			if (ant != null && ant.getBot() == bot && ant.hasMoved() == false)
+			if (ant != null && ant.getBot() == bot && !ant.hasMoved())
 			{	// there's an alive ant at this cell and this ant belongs to the bot.
 				// We can move it in the desired direction.
 				ant.move(direction);
@@ -683,7 +683,7 @@ public class AntGame extends Game
 		while (antIt.hasNext())
 		{
 			Ant ant = antIt.next();
-			if (ant.isDead() == false)
+			if (!ant.isDead())
 			{	// If the ant is alive, show all the game objects in its vision radius.
 				visibleGobs.addAll(map.applyMask(ant.getCol(), ant.getRow(), viewMask));
 			}

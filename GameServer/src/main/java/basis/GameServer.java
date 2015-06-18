@@ -170,7 +170,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 		while (clientIt.hasNext())
 		{
 			client = clientIt.next();
-			if (client.isBotLoggedIn() == true && client.getBot().isInGame() == true)
+			if (client.isBotLoggedIn() && client.getBot().isInGame())
 			{
 				clientsInGame++;
 			}
@@ -199,7 +199,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 			Bot bot = botIt.next();
 			// He is not in a game anymore
 			bot.setGame(null);
-			if (bot.isFake() == false)
+			if (!bot.isFake())
 			{	// If it's a real bot, add it to the lobby.
 				if (bot.getCommunicator().isBotLoggedIn())
 				{	// TRICKY FIX /!\
@@ -222,7 +222,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 		while (clientIt.hasNext())
 		{
 			client = clientIt.next();
-			if (client.isBotLoggedIn() == true && client.getBot().isInGame() == true)
+			if (client.isBotLoggedIn() && client.getBot().isInGame())
 			{
 				clientsInGame++;
 			}

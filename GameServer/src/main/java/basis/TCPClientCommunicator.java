@@ -169,9 +169,9 @@ public class TCPClientCommunicator implements Runnable
 	 */
 	public void run()
 	{
-		while (closed == false)
+		while (!closed)
 		{	// Don't read client messages if client is muted.
-			if (muted == false)
+			if (!muted)
 			{
 				try
 				{	// Read an input message.
@@ -312,7 +312,7 @@ public class TCPClientCommunicator implements Runnable
 		String outputMessage;
 		JSONObject outputContent = null;
 		// First, check if the client is not already logged in as a bot.
-		if (isBotLoggedIn() == false)
+		if (!isBotLoggedIn())
 		{
 			// Get the desired gaming mode, default is "regular".
 			BotMode mode = BotMode.REGULAR;
@@ -487,7 +487,7 @@ public class TCPClientCommunicator implements Runnable
 		JSONObject outputContent = null;
 		// Check if the bot is not already logged in as the bot
 		// (the token demand might be an error)
-		if (isBotLoggedIn() == false)
+		if (!isBotLoggedIn())
 		{
 			String nick = content.getString("nick");
 			// Check the validity of the desired nickname
@@ -540,7 +540,7 @@ public class TCPClientCommunicator implements Runnable
 		// Get the token to remove.
 		String token = content.getString("token");
 		// Check that the bot is not logged in elsewhere.
-		if (dbm.isBotOnline(token) == false)
+		if (!dbm.isBotOnline(token))
 		{
 			// Try to remove the bot.
 			if (dbm.removeBot(token))

@@ -158,8 +158,8 @@ public abstract class Game
 		{	// For each bot, test whether it played.
 			Bot bot = info.getKey();
 			BotGameInfo botInfo = info.getValue();
-			if (bot.getCommunicator().isBotLoggedIn() && botInfo.hasPlayed() == false &&
-					botInfo.isMuted() == false)
+			if (bot.getCommunicator().isBotLoggedIn() && !botInfo.hasPlayed() &&
+					!botInfo.isMuted())
 			{	// The bot has not played for this round, mute it.
 				muteBot(bot, "You did not send your game actions");
 			}
@@ -194,10 +194,10 @@ public abstract class Game
 		// Get the current state of the bot.
 		BotGameInfo botInfo = botInfos.get(bot);
 		// Check if the bot is not muted.
-		if (botInfo.isMuted() == false)
+		if (!botInfo.isMuted())
 		{
 			// Check if the bot has not already played for this round.
-			if (botInfo.hasPlayed() == false)
+			if (!botInfo.hasPlayed())
 			{
 				// Check if the bot has not exceeded the response time limit.
 				if (System.currentTimeMillis() - botInfo.getGamestateTimestampMs() <=
@@ -210,13 +210,13 @@ public abstract class Game
 					boolean ok = true;
 					for (Map.Entry<Bot, BotGameInfo> info : botInfos.entrySet())
 					{	// For each bot, test whether it played.
-						if (info.getValue().hasPlayed() == false)
+						if (!info.getValue().hasPlayed())
 						{	// A bot has not played yet.
 							ok = false;
 						}
 					}
 					// I added a boolean 'ok' to avoid modifying 'ready' directly.
-					if (ok == true) ready = true;
+					if (ok) ready = true;
 					error = 0;
 				}
 				else
@@ -251,7 +251,7 @@ public abstract class Game
 	{
 		// Get the current state of the bot.
 		BotGameInfo info = botInfos.get(bot);
-		if (canPlay == true && info.isMuted() == false)
+		if (canPlay && !info.isMuted())
 		{	// Memorize the timestamp of the sending.
 			info.setGamestateTimestampMs(System.currentTimeMillis());
 			// Wait for the bot to play during this round.

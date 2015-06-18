@@ -218,7 +218,7 @@ public class DBManager implements BotDBCallback
 			result = loginSelectStmt.executeQuery();
 			if (result.next())
 			{
-				if (result.getBoolean(1) == false)
+				if (!result.getBoolean(1))
 				{	// (status = 0 = false) implies that the bot is not logged in.
 					// We can login it safely.
 					bot = new Bot(com, result.getString(2), mode, result.getDouble(3),

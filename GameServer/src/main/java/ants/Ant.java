@@ -168,7 +168,7 @@ public class Ant extends AntGameObject
 		JSONArray array = new JSONArray();
 		try
 		{
-			array.put(0, dead == false ? food == false ? "A" : "B" : "X");
+			array.put(0, !dead ? !food ? "A" : "B" : "X");
 			array.put(1, row);
 			array.put(2, col);
 			array.put(3, botId);

@@ -68,15 +68,15 @@ public class GameThread extends Thread
 			end();
 			return;
 		}
-		while (game.isFinished() == false)
+		while (!game.isFinished())
 		{
 			// Send the current game state to bots.
 			game.sendGameState();
 			long ms = System.currentTimeMillis();
-			while (game.isReady() == false &&
+			while (!game.isReady() &&
 					System.currentTimeMillis() - ms < game.getResponseTimeMs())
 			{	// Wait for all bots to give actions OR response delay overcame
-				try
+				/*try
 				{
 					Thread.sleep(50);
 				}
@@ -85,7 +85,7 @@ public class GameThread extends Thread
 					// Game has been cancelled.
 					end();
 					return;
-				}
+				}*/
 			}
 			// Mute bot(s) that has not played.
 			game.muteNonPlayerBots();

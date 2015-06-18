@@ -142,7 +142,7 @@ public class AntFoodSpawn extends AntGameObject
 	 */
 	public JSONArray toJSONArray()
 	{
-		if (food == false) return null;
+		if (!food) return null;
 		JSONArray array = new JSONArray();
 		try
 		{
