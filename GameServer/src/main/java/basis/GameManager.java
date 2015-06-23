@@ -55,7 +55,7 @@ public class GameManager extends TimerTask
 	/**
 	 * The maximum number of round of a game.
 	 */
-	protected static final int MAX_ROUND = 1500;
+	protected static final int MAX_ROUND = 300;
 	
 	private HashMap<Bot, Vector<Bot>> botMap;
 	

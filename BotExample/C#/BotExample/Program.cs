@@ -16,7 +16,7 @@ namespace BotExample
     {
         /* CHANGE SETTINGS HERE */
         private const string DEFAULT_TOKEN = "abc";
-        private const bool DEFAULT_TRAINING = true;
+        private const bool DEFAULT_TRAINING = false;
         // Directory.GetCurrentDirectory() while running in debug-mode = [PROJECT-PATH]/bin/debug
         private readonly string SAVE_DIRECTORY = Directory.GetCurrentDirectory();
 
