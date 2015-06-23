@@ -117,8 +117,8 @@ public class TCPClientListener implements Runnable
 			}
 			catch (IOException e)
 			{
-				LOGGER.error("Cannot accept a connection on the game server\n"
-						+ e.getMessage());
+				LOGGER.error("Cannot accept a connection on the game server\n{}",
+						e.getMessage());
 			}
 		}
 	}

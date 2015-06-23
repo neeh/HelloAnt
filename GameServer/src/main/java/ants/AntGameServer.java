@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import basis.GameServer;
 
 /**
@@ -34,6 +37,8 @@ import basis.GameServer;
  */
 public class AntGameServer extends GameServer
 {
+	protected static final Logger LOGGER = LoggerFactory.getLogger(AntGameServer.class);
+	
 	/**
 	 * The timer used to schedule the game management.
 	 */

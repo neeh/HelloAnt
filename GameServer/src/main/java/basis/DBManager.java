@@ -190,7 +190,10 @@ public class DBManager implements BotDBCallback
 				{
 					result.close();
 				}
-				catch (SQLException e) {}
+				catch (SQLException e)
+				{
+					logSQLException("Error closing a ResultSet", e);
+				}
 				result = null;
 			}
 		}
@@ -252,7 +255,10 @@ public class DBManager implements BotDBCallback
 				{
 					result.close();
 				}
-				catch (SQLException e) {}
+				catch (SQLException e)
+				{
+					logSQLException("Error closing a ResultSet", e);
+				}
 				result = null;
 			}
 		}
@@ -316,7 +322,10 @@ public class DBManager implements BotDBCallback
 				{
 					result.close();
 				}
-				catch (SQLException e) {}
+				catch (SQLException e)
+				{
+					logSQLException("Error closing a ResultSet", e);
+				}
 				result = null;
 			}
 		}
@@ -375,7 +384,10 @@ public class DBManager implements BotDBCallback
 				{
 					result.close();
 				}
-				catch (SQLException e) {}
+				catch (SQLException e)
+				{
+					logSQLException("Error closing a ResultSet", e);
+				}
 				result = null;
 			}
 		}

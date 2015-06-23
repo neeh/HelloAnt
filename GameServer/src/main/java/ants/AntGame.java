@@ -289,6 +289,7 @@ public class AntGame extends Game
 	public void terminate()
 	{
 		// TODO : Bonus points
+		// (i.e. remaining ants get points for the remaining hills)
 		// Kill remaining ants
 		for (Ant ant : ants)
 		{
@@ -720,7 +721,10 @@ public class AntGame extends Game
 		{
 			content.put("gameobjects", gobs);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error generating game state message content ({})", e.getMessage());
+		}
 		return content;
 	}
 	

@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Game is the class that should be overloaded to create a new game type.
@@ -36,6 +38,8 @@ import org.json.JSONObject;
  */
 public abstract class Game
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
+	
 	/**
 	 * The list of bots in the game.
 	 * If a bot was kicked during the match, it remains in this list but no longer
@@ -106,25 +110,33 @@ public abstract class Game
 	 */
 	public void computeBotScores()
 	{
-		// the number of bots.
-		int n = bots.size();
-		int sumGameScores = 0;
-		// Get the sum of all bot game scores.
-		for (Iterator<Bot> i = bots.iterator(); i.hasNext(); )
+		for (Bot bot : bots)
 		{
-			Bot bot = i.next();
+			// We use integer scores
+			int score = (int) bot.getScore();
 			BotGameInfo info = botInfos.get(bot);
-			sumGameScores += info.getGameScore();
-		}
-		// Update the general score of a bot.
-		for (Iterator<Bot> i = bots.iterator(); i.hasNext(); )
-		{
-			Bot bot = i.next();
-			BotGameInfo info = botInfos.get(bot);
-			/*
-			bot.setScore(bot.getScore() + 200 * (n * (info.getGameScore() / sumGameScores)
-					- 1));
-			*/
+			// Total "win value" (depending on how a player performs and if the result was
+			//  expected)
+			double win = 0;
+			for (Bot opponent : bots)
+			{
+				if(opponent == bot) continue;
+				int difference = (int) (bot.getScore() - opponent.getScore());
+				// Limit the max value
+				if(Math.abs(difference) > 400)
+					difference = (int) (Math.signum(difference) * 400);
+				double odds = 1 / (1 + Math.pow(10, -difference / 400d));
+				// Result : 1 for a win, .5 for a tie, 0 for a lose
+				double result = (Math.signum(
+						info.getGameScore() - botInfos.get(opponent).getGameScore()
+						) + 1) * .5;
+				win += (result - odds);
+			}
+			// Here, 30 is a coefficient (K) to determine
+			// A higher value will lead to bigger variations
+			// We could also make it higher for the first games of a user
+			// (To allow him to get more quickly ranked)
+			bot.setScore(score + (int) Math.round(30 * win));
 		}
 	}
 	
@@ -342,7 +354,10 @@ public abstract class Game
 		{
 			content.put("reason", reason);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Could not generate the game mute message content.");
+		}
 		return content;
 	}
 	

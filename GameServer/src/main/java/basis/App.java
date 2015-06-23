@@ -136,7 +136,7 @@ public class App implements ActionListener
 		}
 		catch (IllegalArgumentException e)
 		{
-			LOGGER.error("unable to start a server on port " + port);
+			LOGGER.error("Unable to start a server on port {}", port);
 			return;
 		}
 		Menu serverMenu = new Menu(":" + port);
@@ -167,7 +167,10 @@ public class App implements ActionListener
 			{
 				Desktop.getDesktop().open(new File("./logs/full.log"));
 			}
-			catch (IOException ex) {}
+			catch (IOException ex)
+			{
+				LOGGER.error("Error opening logs ({})", ex.getMessage());
+			}
 		}
 		else if (cmd.equals("errlog"))
 		{
@@ -175,7 +178,10 @@ public class App implements ActionListener
 			{
 				Desktop.getDesktop().open(new File("./logs/error.log"));
 			}
-			catch (IOException ex) {}
+			catch (IOException ex)
+			{
+				LOGGER.error("Error opening error logs ({})", ex.getMessage());
+			}
 		}
 		else if (cmd.equals("closeserver"))
 		{

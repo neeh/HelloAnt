@@ -167,7 +167,7 @@ public class AntFakeCommunicator extends FakeCommunicator
 		}
 		catch (JSONException e)
 		{
-			LOGGER.error("Error while taking actions\n" + e.getMessage());
+			LOGGER.error("Error while taking actions ({})", e.getMessage());
 		}
 	}
 	

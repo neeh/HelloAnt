@@ -21,6 +21,8 @@ package ants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import util.Cell;
 import basis.Bot;
@@ -33,6 +35,8 @@ import basis.Bot;
  */
 public class AntHill extends AntGameObject implements Comparable<AntHill>
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AntHill.class);
+	
 	/**
 	 * The bot that owns the ant hill.
 	 */
@@ -95,7 +99,10 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 			replayData.put(1, col);
 			replayData.put(2, botId);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Cannot create replay data for an ant hill ({})", e.getMessage());
+		}
 	}
 	
 	/**
@@ -108,7 +115,10 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 		{
 			replayData.put(3, round);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error while razing an ant hill ({})", e.getMessage());
+		}
 	}
 	
 	/**
@@ -137,7 +147,10 @@ public class AntHill extends AntGameObject implements Comparable<AntHill>
 			array.put(2, col);
 			array.put(3, botId);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error converting an ant hill to a JSON array ({})", e.getMessage());
+		}
 		return array;
 	}
 	

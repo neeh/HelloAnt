@@ -21,6 +21,8 @@ package ants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import util.Cell;
 
@@ -33,6 +35,8 @@ import util.Cell;
  */
 public class AntFoodSpawn extends AntGameObject
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AntFoodSpawn.class);
+	
 	/**
 	 * Whether food is available on the spawn.
 	 */
@@ -90,7 +94,10 @@ public class AntFoodSpawn extends AntGameObject
 			replayData.put(1, col);
 			replayData.put(2, round);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error creating replay data for food ({})", e.getMessage());
+		}
 		food = true;
 	}
 	
@@ -106,7 +113,10 @@ public class AntFoodSpawn extends AntGameObject
 			replayData.put(3, round);
 			replayData.put(4, botId);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error saving harvesting food data ({})", e.getMessage());
+		}
 		replayData = null;
 		// replay data is cleared here, but there's still a reference to it in the food
 		// track list in the game replay data class.
@@ -126,7 +136,10 @@ public class AntFoodSpawn extends AntGameObject
 			{
 				replayData.put(3, round);
 			}
-			catch (JSONException e) {}
+			catch (JSONException e)
+			{
+				LOGGER.error("Error cleaning food ({})", e.getMessage());
+			}
 			replayData = null;
 			food = false;
 			lastHarvestRound = round;
@@ -150,7 +163,10 @@ public class AntFoodSpawn extends AntGameObject
 			array.put(1, row);
 			array.put(2, col);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error converting food to JSON ({})", e.getMessage());
+		}
 		return array;
 	}
 	

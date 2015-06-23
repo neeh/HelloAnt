@@ -73,20 +73,10 @@ public class GameThread extends Thread
 			// Send the current game state to bots.
 			game.sendGameState();
 			long ms = System.currentTimeMillis();
+			// Wait for all bots to give actions OR response delay overcame
 			while (!game.isReady() &&
 					System.currentTimeMillis() - ms < game.getResponseTimeMs())
-			{	// Wait for all bots to give actions OR response delay overcame
-				/*try
-				{
-					Thread.sleep(50);
-				}
-				catch (InterruptedException e)
-				{
-					// Game has been cancelled.
-					end();
-					return;
-				}*/
-			}
+				; // We're waiting ...
 			// Mute bot(s) that has not played.
 			game.muteNonPlayerBots();
 			// Update the game.

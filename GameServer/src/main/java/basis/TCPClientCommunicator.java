@@ -140,8 +140,8 @@ public class TCPClientCommunicator implements Runnable
 		}
 		catch (IOException e)
 		{
-			LOGGER.error("Cannot create reader or writer to communicate with a client\n"
-					+ e.getMessage());
+			LOGGER.error("Cannot create reader or writer to communicate with a client\n{}"
+					, e.getMessage());
 		}
 		bot = null;
 		dbm = DBManager.getInstance();
@@ -203,14 +203,6 @@ public class TCPClientCommunicator implements Runnable
 					// So we close the communicator properly here.
 					_close();
 				}
-			}
-			else
-			{	// If the client was muted.
-				try
-				{   // Sleep 250ms to slow down the loop.
-					Thread.sleep(250);
-				}
-				catch (InterruptedException e) {}
 			}
 		}
 	}
@@ -322,7 +314,10 @@ public class TCPClientCommunicator implements Runnable
 				String modeString = content.getString("mode");
 				mode = BotMode.fromString(modeString);
 			}
-			catch (JSONException e) {}
+			catch (JSONException e)
+			{
+				LOGGER.info("Bot did not specify mode, defaulting to REGULAR.");
+			}
 			// Get the IP address of the client.
 			String ip = socket.getInetAddress().getHostAddress();
 			try
@@ -695,7 +690,10 @@ public class TCPClientCommunicator implements Runnable
 		{
 			content.put("reason", reason);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error generating goodbye message.");
+		}
 		send("welcome", 0, "Server closed your connection", content);
 	}
 	
@@ -746,7 +744,10 @@ public class TCPClientCommunicator implements Runnable
 		{	// Close the socket
 			socket.close();
 		}
-		catch (IOException e) {}
+		catch (IOException e)
+		{
+			LOGGER.error("Error closing the client socket.");
+		}
 		// Stop the thread loop by setting 'closed' to true.
 		closed = true;
 	}

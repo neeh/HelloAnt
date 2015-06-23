@@ -21,6 +21,8 @@ package ants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import util.Cell;
 import util.Move;
@@ -34,6 +36,8 @@ import basis.Bot;
  */
 public class Ant extends AntGameObject
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Ant.class);
+	
 	/**
 	 * The bot that owns the ant.
 	 */
@@ -116,7 +120,10 @@ public class Ant extends AntGameObject
 			replayData.put(4, botId);
 			replayData.put(5, "");
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Cannot create replay data for an ant ({})", e.getMessage());
+		}
 	}
 	
 	/**
@@ -129,7 +136,10 @@ public class Ant extends AntGameObject
 		{
 			replayData.put(5, replayData.getString(5) + "-");
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error adding a blank move to an ant ({})", e.getMessage());
+		}
 	}
 	
 	/**
@@ -154,7 +164,10 @@ public class Ant extends AntGameObject
 			// ---------------------------------------------------------------------------
 			moved = true;
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error adding a move to an ant ({})", e.getMessage());
+		}
 	}
 	
 	/**
@@ -173,7 +186,10 @@ public class Ant extends AntGameObject
 			array.put(2, col);
 			array.put(3, botId);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error converting an ant to JSON ({})", e.getMessage());
+		}
 		return array;
 	}
 	
@@ -242,7 +258,10 @@ public class Ant extends AntGameObject
 		{
 			replayData.put(3, round);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error killing an ant ({})", e.getMessage());
+		}
 	}
 	
 	/**
@@ -250,13 +269,15 @@ public class Ant extends AntGameObject
 	 */
 	public void kill()
 	{
-		dead = true;
 		try
 		{
-			replayData.put(3,
-					replayData.getInt(2) + ((String) replayData.get(5)).length());
+			// kill round = spawn round + number of movements
+			kill(replayData.getInt(2) + ((String) replayData.get(5)).length());
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error killing an ant ({})", e.getMessage());
+		}
 	}
 	
 	/**

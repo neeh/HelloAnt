@@ -176,7 +176,7 @@ public class GameServer implements TCPClientHandler, GameHandler
 			}
 		}
 		LOGGER.info("game created (" + clientsInGame + " client"
-				+ (clientsInGame > 1 ? "s are" : " is") + " in " + gameCount + "game"
+				+ (clientsInGame > 1 ? "s are" : " is") + " in " + gameCount + " game"
 				+ (gameCount > 1 ? ")" : "s)"));
 	}
 	
@@ -229,6 +229,6 @@ public class GameServer implements TCPClientHandler, GameHandler
 		}
 		LOGGER.info("game terminated (" + clientsInGame + " client"
 				+ (clientsInGame > 1 ? "s are" : " is") + " in " + gameCount + "game"
-				+ (gameCount > 1 ? ")" : "s)"));
+				+ (gameCount > 1 ? "s)" : ")"));
 	}
 }

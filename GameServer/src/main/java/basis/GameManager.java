@@ -356,7 +356,7 @@ public class GameManager extends TimerTask
 	}
 	
 	/**
-	 * Function that permit to update the values in posToTest,
+	 * Function that enables to update the values in posToTest,
 	 * so it helps explore the tree.
 	 * @param posToTest array to update.
 	 * @param v a vector representing the tree.

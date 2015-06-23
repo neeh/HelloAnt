@@ -21,6 +21,8 @@ package ants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import util.Cell;
 
@@ -31,6 +33,8 @@ import util.Cell;
  */
 public class AntWall extends AntGameObject
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AntWall.class);
+	
 	/**
 	 * Creates a wall from a column and a row identifier.
 	 * @constructor
@@ -68,7 +72,10 @@ public class AntWall extends AntGameObject
 			array.put(1, row);
 			array.put(2, col);
 		}
-		catch (JSONException e) {}
+		catch (JSONException e)
+		{
+			LOGGER.error("Error converting a wall to a JSON array ({})", e.getMessage());
+		}
 		return array;
 	}
 }
