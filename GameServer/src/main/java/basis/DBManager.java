@@ -164,7 +164,7 @@ public class DBManager implements BotDBCallback
 	 * @param token the token of the bot to test.
 	 * @return true if the bot is logged in, false otherwise.
 	 */
-	public boolean isBotOnline(String token)
+	public synchronized boolean isBotOnline(String token)
 	{
 		// The number of result:
 		int count = 0;
@@ -270,7 +270,7 @@ public class DBManager implements BotDBCallback
 	 * The bot to log out is identified by its nickname.
 	 * @param nick the nickname of the bot to log out.
 	 */
-	public void logout(String nick)
+	public synchronized void logout(String nick)
 	{
 		try
 		{	// UPDATE bots SET status = 0 WHERE nick = ?;
@@ -294,7 +294,7 @@ public class DBManager implements BotDBCallback
 	 * @return the generated token for the created bot OR null if the nickname is already
 	 *         taken by another bot.
 	 */
-	public String createBot(String nick)
+	public synchronized String createBot(String nick)
 	{
 		// The token that will be returned.
 		String token = null;
@@ -338,7 +338,7 @@ public class DBManager implements BotDBCallback
 	 * @param token the token of the bot to remove.
 	 * @return true if the bot was successfully removed, false otherwise.
 	 */
-	public boolean removeBot(String token) {
+	public synchronized boolean removeBot(String token) {
 		int result = 0;
 		try
 		{	// DELETE FROM bots WHERE token = ?;
@@ -358,7 +358,7 @@ public class DBManager implements BotDBCallback
 	 * Gets the ranking of bots on the game server.
 	 * @return the list of bots ordered by score in a descending order.
 	 */
-	public ArrayList<String> getBotRanking()
+	public synchronized ArrayList<String> getBotRanking()
 	{
 		// The ranking of bots to return.
 		ArrayList<String> ranking = new ArrayList<String>();
@@ -399,7 +399,7 @@ public class DBManager implements BotDBCallback
 	 * @param bot the bot whose score needs an update.
 	 */
 	@Override
-	public void updateBotScore(Bot bot)
+	public synchronized void updateBotScore(Bot bot)
 	{
 		try
 		{	// UPDATE bots SET score = ? WHERE nick = ?;
@@ -420,7 +420,7 @@ public class DBManager implements BotDBCallback
 	 * Should be called once at the start-up of the database connection to prevent unfair
 	 * impossible logins.
 	 */
-	private void resetBotStatus()
+	private synchronized void resetBotStatus()
 	{
 		try
 		{	// UPDATE bots SET status = 0;
