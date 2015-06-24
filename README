@@ -1,0 +1,21 @@
+
+GUIDE CLIENT
+1 -	Lire les règles du jeu : http://ants.aichallenge.org/specification.php
+	HelloAnt ajoute 3 règles par rapport à celles d'AIChallenge:
+		* les spawns de nourriture sont fixes
+		* lorsqu'une fourmie récolte de la nourriture, elle doit la ramener à la ruche
+		* une fourmie qui possède de la nourriture peut survivre à une attaque, cependant la nourriture disparait pendant la bataille.
+2 -	Lire le protocole : Documentation/protocol/
+3 -	Ajouter son bot sur le serveur, en créant une archive de TokenClient/ ou en se basant sur le protocole
+4 - Créer son bot dans le langage de son choix en respectant le protocole
+	Un bot simple en C# est disponible dans BotExample/C#/ à titre d'exemple
+5 -	Déboguer son programme en utilisant le mode training
+6 -	Rejouer les parties grâce au visualiseur disponible dans AIVisualizer/visualizer.html
+
+GUIDE SERVEUR
+1 -	Installer et lancer une base de données MySQL.
+2 -	Créer la base à l'aide du fichier DataBase/dbants.sql
+3 -	Créer et lancer l'archive du serveur de jeu dans GameServer/
+4 -	Pour améliorer/déboguer le serveur, il est possible utiliser la javadoc du serveur disponible dans Documentation/server/
+	Les documents du projet sont disponibles dans Documentation/project/
+5 -	ClientTest/ a pour vocation de tester le serveur de jeu (incomplet!)
